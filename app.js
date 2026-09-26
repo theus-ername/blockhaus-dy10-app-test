@@ -4,12 +4,24 @@ const navItems = [...document.querySelectorAll('.nav-item')];
 const chatScreen = document.querySelector('#screen-chat');
 const chatTitle = document.querySelector('#chat-title');
 const chatAvatar = document.querySelector('#chat-avatar');
+const themeToggle = document.querySelector('#theme-toggle');
+const themeKey = 'blockhaus-grey-test';
 
 const chatNames = {
   general: ['Général', '#'], programmation: ['Programmation', 'P'], technique: ['Technique scène', 'T'],
   maya: ['Maya', 'M'], presence: ['Qui est là ?', '⌂'], atelier: ['Atelier', 'A'],
   concerts: ['Concerts', '♪'], agenda: ['Agenda', '09'], administratif: ['Administratif', '⌑']
 };
+
+function setGreyTest(enabled) {
+  document.body.classList.toggle('theme-grey-test', enabled);
+  themeToggle.setAttribute('aria-pressed', String(enabled));
+  themeToggle.textContent = enabled ? 'Fond original' : 'Fond gris';
+  localStorage.setItem(themeKey, enabled ? '1' : '0');
+}
+
+setGreyTest(localStorage.getItem(themeKey) === '1');
+themeToggle.addEventListener('click', () => setGreyTest(!document.body.classList.contains('theme-grey-test')));
 
 function showScreen(name) {
   chatScreen.hidden = true;
