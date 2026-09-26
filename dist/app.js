@@ -16,7 +16,7 @@ const chatNames = {
 function setGreyTest(enabled) {
   document.body.classList.toggle('theme-grey-test', enabled);
   themeToggle.setAttribute('aria-pressed', String(enabled));
-  themeToggle.textContent = enabled ? 'Fond original' : 'Fond gris';
+  themeToggle.textContent = enabled ? 'Fond clair' : 'Fond sombre';
   localStorage.setItem(themeKey, enabled ? '1' : '0');
 }
 
