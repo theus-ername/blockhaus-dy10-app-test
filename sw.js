@@ -1,4 +1,4 @@
-const CACHE = 'blockhaus-prototype-v2';
+const CACHE = 'blockhaus-prototype-v3';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './icon.svg', './manifest.webmanifest'];
 self.addEventListener('install', (event) => event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS))));
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));

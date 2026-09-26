@@ -22,7 +22,7 @@
         </div>
         <div class="top-actions">
           <button class="icon-button" aria-label="Rechercher">⌕</button>
-          <button class="icon-button accent" aria-label="Nouvelle discussion">＋</button>
+          <button class="icon-button accent" data-open-room-modal="private" aria-label="Nouvelle discussion">＋</button>
         </div>
       </header>
 
@@ -53,66 +53,22 @@
         <button id="mark-read">Tout lire</button>
       </div>
 
-      <div class="conversation-list">
-        <button class="conversation" data-open-chat="general">
-          <span class="avatar avatar-accent">#</span>
-          <span class="conversation-copy">
-            <span class="conversation-line"><strong>Général</strong><time>16:42</time></span>
-            <span class="preview unread">Maya : qui passe ce soir pour préparer la salle ?</span>
-          </span>
-          <span class="unread-count">4</span>
-        </button>
-        <button class="conversation" data-open-chat="programmation">
-          <span class="avatar avatar-sand">P</span>
-          <span class="conversation-copy">
-            <span class="conversation-line"><strong>Programmation</strong><time>14:08</time></span>
-            <span class="preview">Noé a partagé une affiche.</span>
-          </span>
-        </button>
-        <button class="conversation" data-open-chat="technique">
-          <span class="avatar avatar-grey">T</span>
-          <span class="conversation-copy">
-            <span class="conversation-line"><strong>Technique scène</strong><time>hier</time></span>
-            <span class="preview">Samira : les câbles sont dans la réserve.</span>
-          </span>
-        </button>
-        <button class="conversation" data-open-chat="maya">
-          <span class="avatar avatar-accent">M<span class="presence"></span></span>
-          <span class="conversation-copy">
-            <span class="conversation-line"><strong>Maya</strong><time>lun.</time></span>
-            <span class="preview">Parfait, je te confirme demain.</span>
-          </span>
-        </button>
-      </div>
+      <div class="conversation-list" id="conversation-list"></div>
     </section>
 
     <section class="screen" id="screen-salons" aria-labelledby="salons-title" hidden>
       <header class="topbar">
         <button class="profile-button" aria-label="Ouvrir mon profil">JR</button>
         <div class="topbar-title"><span class="eyebrow">COMMUNAUTÉ</span><h1 id="salons-title">Salons</h1></div>
-        <div class="top-actions"><button class="icon-button" aria-label="Rechercher">⌕</button><button class="icon-button accent" aria-label="Nouveau salon">＋</button></div>
+        <div class="top-actions"><button class="icon-button" aria-label="Rechercher">⌕</button><button class="icon-button accent" data-open-room-modal="room" aria-label="Nouveau salon">＋</button></div>
       </header>
       <article class="server-banner">
         <span class="server-mark">B//10</span>
         <div><strong>Le réseau du Blockhaus</strong><small>6 membres en ligne</small></div>
         <button aria-label="Options du réseau">•••</button>
       </article>
-      <div class="channel-group">
-        <div class="channel-group-title"><span>VIE DU LIEU</span><button aria-label="Ajouter un salon">＋</button></div>
-        <button class="channel active" data-open-chat="general"><span class="channel-icon">#</span><span><strong>général</strong><small>Le fil commun du Blockhaus</small></span><b>4</b></button>
-        <button class="channel" data-open-chat="presence"><span class="channel-icon">⌂</span><span><strong>qui-est-là</strong><small>Présences et coups de main</small></span><b>2</b></button>
-        <button class="channel" data-open-chat="atelier"><span class="channel-icon">#</span><span><strong>atelier</strong><small>Fabrication, expo, résidence</small></span></button>
-        <button class="channel" data-open-chat="technique"><span class="channel-icon">#</span><span><strong>technique</strong><small>Son, lumière et matériel</small></span></button>
-      </div>
-      <div class="channel-group">
-        <div class="channel-group-title"><span>PROGRAMMATION</span><button aria-label="Ajouter un salon">＋</button></div>
-        <button class="channel" data-open-chat="concerts"><span class="channel-icon">♪</span><span><strong>concerts</strong><small>Dates et propositions</small></span></button>
-        <button class="channel" data-open-chat="agenda"><span class="channel-icon">09</span><span><strong>agenda</strong><small>Événements confirmés</small></span><b>1</b></button>
-      </div>
-      <div class="channel-group">
-        <div class="channel-group-title"><span>ÉQUIPE</span></div>
-        <button class="channel locked" data-open-chat="administratif"><span class="channel-icon">⌑</span><span><strong>administratif</strong><small>Accès membres du bureau</small></span></button>
-      </div>
+      <p class="prototype-note">Aperçu local : ces salons montrent l'arborescence cible. Sur le forum gratuit, les salons natifs Forumactif ne sont pas encore activables.</p>
+      <div id="channel-groups"></div>
     </section>
 
     <section class="screen agenda-screen" id="screen-agenda" aria-labelledby="agenda-title" hidden>
@@ -181,6 +137,32 @@
       </div>
       <form class="composer" id="composer"><button type="button" class="attach-button" aria-label="Ajouter une pièce jointe">＋</button><input id="message-input" aria-label="Message" placeholder="Message…" autocomplete="off"><button type="submit" class="send-button" aria-label="Envoyer">↑</button></form>
     </section>
+
+    <dialog class="room-modal" id="room-modal" aria-labelledby="room-modal-title">
+      <form method="dialog" class="room-sheet" id="room-form">
+        <header class="room-sheet-header">
+          <button type="button" class="back-button" data-close-room-modal aria-label="Fermer">‹</button>
+          <div>
+            <span class="eyebrow">NOUVEAU FIL</span>
+            <h2 id="room-modal-title">Créer une room</h2>
+          </div>
+          <button class="text-action" type="submit">Créer</button>
+        </header>
+        <div class="mode-tabs" role="tablist" aria-label="Type de room">
+          <button type="button" class="is-active" data-room-mode="private">Privée</button>
+          <button type="button" data-room-mode="room">Salon</button>
+        </div>
+        <label class="field-label">Nom
+          <input id="room-name" placeholder="Ex. Set/30' équipe affiche" autocomplete="off">
+        </label>
+        <label class="field-label">Destinataires
+          <input id="member-picker-search" type="search" placeholder="Chercher un membre actif" autocomplete="off">
+        </label>
+        <div class="selected-members" id="selected-members" aria-live="polite"></div>
+        <div class="member-picker" id="member-picker"></div>
+        <p class="prototype-note compact">Prévisualisation locale : la room créée reste sur cet appareil. Pour que plusieurs membres la voient, il faudra un backend de chat avec comptes, droits et messages temps réel.</p>
+      </form>
+    </dialog>
 
     <nav class="bottom-nav" aria-label="Navigation principale">
       <button class="nav-item is-active" data-screen="chats"><span>●</span><strong>Discussions</strong></button>
