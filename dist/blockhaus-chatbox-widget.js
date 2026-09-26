@@ -16,7 +16,10 @@
 
   function nativeFrame() {
     return Array.prototype.find.call(document.querySelectorAll("iframe"), function (frame) {
-      return /\/chatbox(?:\/|\?|$)/i.test(frame.getAttribute("src") || "") || /chatbox/i.test(frame.getAttribute("title") || "");
+      if (/\/chatbox(?:\/|\?|$)/i.test(frame.getAttribute("src") || "") || /chatbox/i.test(frame.getAttribute("title") || "")) return true;
+      // Forumactif may populate its embedded ChatBox inside an about:blank frame.
+      try { return !!(frame.contentDocument && frame.contentDocument.getElementById("chatbox")); }
+      catch (error) { return false; }
     });
   }
 
