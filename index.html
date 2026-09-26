@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="Prototype mobile du réseau privé Blockhaus DY10.">
+  <title>Blockhaus — Discussions</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell" aria-label="Application Blockhaus">
+    <section class="screen is-active" id="screen-chats" aria-labelledby="chats-title">
+      <header class="topbar">
+        <button class="profile-button" aria-label="Ouvrir mon profil">JR</button>
+        <div class="topbar-title">
+          <span class="eyebrow">BLOCKHAUS / DY10</span>
+          <h1 id="chats-title">Discussions</h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" aria-label="Rechercher">⌕</button>
+          <button class="icon-button accent" aria-label="Nouvelle discussion">＋</button>
+        </div>
+      </header>
+
+      <label class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input id="chat-search" type="search" placeholder="Rechercher une discussion" autocomplete="off">
+      </label>
+
+      <div class="people-strip" aria-label="Membres actifs">
+        <button class="person is-you"><span class="avatar add">＋</span><span>Mon statut</span></button>
+        <button class="person"><span class="avatar avatar-accent">M<span class="presence"></span></span><span>Maya</span></button>
+        <button class="person"><span class="avatar avatar-sand">N<span class="presence"></span></span><span>Noé</span></button>
+        <button class="person"><span class="avatar avatar-grey">S<span class="presence"></span></span><span>Samira</span></button>
+        <button class="person"><span class="avatar avatar-ink">J</span><span>Jules</span></button>
+      </div>
+
+      <article class="signal-card">
+        <div>
+          <span class="signal-label">SIGNAL DU JOUR</span>
+          <strong>Montage vendredi à 18:00</strong>
+          <p>Il manque encore deux personnes côté lumière.</p>
+        </div>
+        <button aria-label="Ouvrir le signal du jour">→</button>
+      </article>
+
+      <div class="section-heading">
+        <h2>Messages</h2>
+        <button id="mark-read">Tout lire</button>
+      </div>
+
+      <div class="conversation-list">
+        <button class="conversation" data-open-chat="general">
+          <span class="avatar avatar-accent">#</span>
+          <span class="conversation-copy">
+            <span class="conversation-line"><strong>Général</strong><time>16:42</time></span>
+            <span class="preview unread">Maya : qui passe ce soir pour préparer la salle ?</span>
+          </span>
+          <span class="unread-count">4</span>
+        </button>
+        <button class="conversation" data-open-chat="programmation">
+          <span class="avatar avatar-sand">P</span>
+          <span class="conversation-copy">
+            <span class="conversation-line"><strong>Programmation</strong><time>14:08</time></span>
+            <span class="preview">Noé a partagé une affiche.</span>
+          </span>
+        </button>
+        <button class="conversation" data-open-chat="technique">
+          <span class="avatar avatar-grey">T</span>
+          <span class="conversation-copy">
+            <span class="conversation-line"><strong>Technique scène</strong><time>hier</time></span>
+            <span class="preview">Samira : les câbles sont dans la réserve.</span>
+          </span>
+        </button>
+        <button class="conversation" data-open-chat="maya">
+          <span class="avatar avatar-accent">M<span class="presence"></span></span>
+          <span class="conversation-copy">
+            <span class="conversation-line"><strong>Maya</strong><time>lun.</time></span>
+            <span class="preview">Parfait, je te confirme demain.</span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-salons" aria-labelledby="salons-title" hidden>
+      <header class="topbar">
+        <button class="profile-button" aria-label="Ouvrir mon profil">JR</button>
+        <div class="topbar-title"><span class="eyebrow">COMMUNAUTÉ</span><h1 id="salons-title">Salons</h1></div>
+        <div class="top-actions"><button class="icon-button" aria-label="Rechercher">⌕</button><button class="icon-button accent" aria-label="Nouveau salon">＋</button></div>
+      </header>
+      <article class="server-banner">
+        <span class="server-mark">B//10</span>
+        <div><strong>Le réseau du Blockhaus</strong><small>6 membres en ligne</small></div>
+        <button aria-label="Options du réseau">•••</button>
+      </article>
+      <div class="channel-group">
+        <div class="channel-group-title"><span>VIE DU LIEU</span><button aria-label="Ajouter un salon">＋</button></div>
+        <button class="channel active" data-open-chat="general"><span class="channel-icon">#</span><span><strong>général</strong><small>Le fil commun du Blockhaus</small></span><b>4</b></button>
+        <button class="channel" data-open-chat="presence"><span class="channel-icon">⌂</span><span><strong>qui-est-là</strong><small>Présences et coups de main</small></span><b>2</b></button>
+        <button class="channel" data-open-chat="atelier"><span class="channel-icon">#</span><span><strong>atelier</strong><small>Fabrication, expo, résidence</small></span></button>
+        <button class="channel" data-open-chat="technique"><span class="channel-icon">#</span><span><strong>technique</strong><small>Son, lumière et matériel</small></span></button>
+      </div>
+      <div class="channel-group">
+        <div class="channel-group-title"><span>PROGRAMMATION</span><button aria-label="Ajouter un salon">＋</button></div>
+        <button class="channel" data-open-chat="concerts"><span class="channel-icon">♪</span><span><strong>concerts</strong><small>Dates et propositions</small></span></button>
+        <button class="channel" data-open-chat="agenda"><span class="channel-icon">09</span><span><strong>agenda</strong><small>Événements confirmés</small></span><b>1</b></button>
+      </div>
+      <div class="channel-group">
+        <div class="channel-group-title"><span>ÉQUIPE</span></div>
+        <button class="channel locked" data-open-chat="administratif"><span class="channel-icon">⌑</span><span><strong>administratif</strong><small>Accès membres du bureau</small></span></button>
+      </div>
+    </section>
+
+    <section class="screen agenda-screen" id="screen-agenda" aria-labelledby="agenda-title" hidden>
+      <header class="topbar">
+        <div class="topbar-title"><span class="eyebrow">AGENDA BLOCKHAUS</span><h1 id="agenda-title">Agenda</h1></div>
+        <button class="icon-button accent" aria-label="Ajouter un événement">＋</button>
+      </header>
+      <div class="date-tabs" role="tablist" aria-label="Filtrer les événements">
+        <button class="is-active" data-agenda-filter="all">À venir</button><button data-agenda-filter="today">Ce soir</button><button data-agenda-filter="week">Cette semaine</button>
+      </div>
+      <article class="featured-event" data-event-period="today">
+        <span class="poster-type">SET/<b>30'</b></span>
+        <div class="featured-copy"><span class="signal-label">SIGNAL DU JOUR</span><h2>Vâcarme</h2><p>Vendredi 9 octobre · 19:30<br>Blockhaus DY10 · 3,50 €</p><div class="event-actions"><button>J’y vais</button><button data-open-chat="concerts">Discussion</button></div></div>
+      </article>
+      <div class="agenda-day" data-event-period="week">
+        <h2><span>SAM.</span> 10 OCT.</h2>
+        <article class="event-row"><time>14:00</time><div><strong>Montage de l’exposition</strong><span>Atelier · bénévoles bienvenus</span></div><button aria-label="Ouvrir">→</button></article>
+        <article class="event-row"><time>20:30</time><div><strong>Projection surprise</strong><span>Grande salle · prix libre</span></div><button aria-label="Ouvrir">→</button></article>
+      </div>
+      <div class="agenda-day" data-event-period="all">
+        <h2><span>JEU.</span> 15 OCT.</h2>
+        <article class="event-row"><time>18:30</time><div><strong>Réunion programmation</strong><span>Cuisine · membres actifs</span></div><button aria-label="Ouvrir">→</button></article>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-forum" aria-labelledby="forum-title" hidden>
+      <header class="topbar"><div class="topbar-title"><span class="eyebrow">MÉMOIRE COLLECTIVE</span><h1 id="forum-title">Forum</h1></div><button class="icon-button accent" aria-label="Nouveau sujet">＋</button></header>
+      <p class="screen-intro">Les décisions, documents et discussions longues restent ici.</p>
+      <div class="forum-list">
+        <button class="forum-section"><span class="forum-icon">A</span><span><strong>Annonces importantes</strong><small>3 sujets · dernier message hier</small></span><b>1</b></button>
+        <button class="forum-section"><span class="forum-icon">P</span><span><strong>Projets en cours</strong><small>12 sujets · programmation octobre</small></span></button>
+        <button class="forum-section"><span class="forum-icon">T</span><span><strong>Technique & matériel</strong><small>8 sujets · inventaire son</small></span></button>
+        <button class="forum-section"><span class="forum-icon">C</span><span><strong>Comptes-rendus</strong><small>Les décisions archivées</small></span></button>
+        <button class="forum-section"><span class="forum-icon">∞</span><span><strong>Archives du forum</strong><small>Depuis le 9 février 2019</small></span></button>
+      </div>
+      <a class="external-forum" href="https://blockhaus-dy10.forumactif.com/" target="_blank" rel="noreferrer">Ouvrir le forum Forumactif <span>↗</span></a>
+    </section>
+
+    <section class="screen" id="screen-membres" aria-labelledby="membres-title" hidden>
+      <header class="topbar"><div class="topbar-title"><span class="eyebrow">67 COMPTES</span><h1 id="membres-title">Membres</h1></div><button class="icon-button" aria-label="Rechercher un membre">⌕</button></header>
+      <div class="member-summary"><strong>6</strong><span>en ligne maintenant</span><button>Inviter</button></div>
+      <h2 class="list-title">En ligne</h2>
+      <div class="member-list">
+        <button class="member"><span class="avatar avatar-accent">M<span class="presence"></span></span><span><strong>Maya</strong><small>Atelier · en ligne</small></span><em>Message</em></button>
+        <button class="member"><span class="avatar avatar-sand">N<span class="presence"></span></span><span><strong>Noé</strong><small>Programmation · en ligne</small></span><em>Message</em></button>
+        <button class="member"><span class="avatar avatar-grey">S<span class="presence"></span></span><span><strong>Samira</strong><small>Technique · en ligne</small></span><em>Message</em></button>
+      </div>
+      <h2 class="list-title">Membres actifs</h2>
+      <div class="member-list">
+        <button class="member"><span class="avatar avatar-ink">J</span><span><strong>Jules</strong><small>Membre</small></span><em>Message</em></button>
+        <button class="member"><span class="avatar avatar-sand">C</span><span><strong>Camille</strong><small>Modération</small></span><em>Message</em></button>
+      </div>
+    </section>
+
+    <section class="chat-screen" id="screen-chat" aria-labelledby="chat-title" hidden>
+      <header class="chat-header">
+        <button class="back-button" id="chat-back" aria-label="Retour aux discussions">‹</button><span class="avatar avatar-accent" id="chat-avatar">#</span>
+        <div><h1 id="chat-title">Général</h1><span><i></i> 6 membres en ligne</span></div><button class="icon-button" aria-label="Informations sur le salon">•••</button>
+      </header>
+      <div class="chat-history" id="chat-history" aria-live="polite">
+        <div class="day-divider"><span>Aujourd’hui</span></div>
+        <article class="message incoming"><span class="avatar avatar-accent">M</span><div><span class="message-author">Maya · 16:38</span><p>Qui passe ce soir pour préparer la salle ?</p><button class="reaction" aria-label="Réagir avec un pouce">👍 <span>2</span></button></div></article>
+        <article class="message outgoing"><div><p>Je peux être là vers 18 h. Il faut surtout quoi ?</p><span class="message-status">16:40 · Lu</span></div></article>
+        <article class="message incoming"><span class="avatar avatar-sand">N</span><div><span class="message-author">Noé · 16:41</span><p>Les praticables et deux lignes lumière. J’ai mis la liste complète dans le sujet technique.</p><a href="https://blockhaus-dy10.forumactif.com/" target="_blank" rel="noreferrer" class="topic-link"><span>SUJET DU FORUM</span><strong>Préparation technique — vendredi</strong><small>Ouvrir la discussion longue ↗</small></a></div></article>
+        <article class="message incoming"><span class="avatar avatar-grey">S</span><div><span class="message-author">Samira · 16:42</span><p>Je passe aussi. Les câbles sont déjà dans la réserve.</p></div></article>
+      </div>
+      <form class="composer" id="composer"><button type="button" class="attach-button" aria-label="Ajouter une pièce jointe">＋</button><input id="message-input" aria-label="Message" placeholder="Message…" autocomplete="off"><button type="submit" class="send-button" aria-label="Envoyer">↑</button></form>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <button class="nav-item is-active" data-screen="chats"><span>●</span><strong>Discussions</strong></button>
+      <button class="nav-item" data-screen="salons"><span>#</span><strong>Salons</strong></button>
+      <button class="nav-item main-action" data-screen="agenda"><span>09</span><strong>Agenda</strong></button>
+      <button class="nav-item" data-screen="forum"><span>▤</span><strong>Forum</strong></button>
+      <button class="nav-item" data-screen="membres"><span>◉</span><strong>Membres</strong></button>
+    </nav>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
