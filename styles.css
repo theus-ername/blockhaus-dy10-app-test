@@ -1,13 +1,13 @@
 :root {
   color-scheme: dark;
-  --black: #080808;
-  --body-bg: #0d0d0d;
+  --black: #22231f;
+  --body-bg: #30302b;
   --shell-bg: var(--black);
-  --chrome-bg: rgba(8,8,8,.94);
-  --composer-bg: rgba(8,8,8,.96);
-  --desktop-bg: radial-gradient(circle at 50% 0, #282725, #080808 58%);
-  --surface: #151515;
-  --surface-2: #20201f;
+  --chrome-bg: rgba(34,35,31,.94);
+  --composer-bg: rgba(34,35,31,.96);
+  --desktop-bg: radial-gradient(circle at 50% 0, #56544d, #30302b 62%);
+  --surface: #30312d;
+  --surface-2: #3b3b36;
   --paper: #f3f0e9;
   --muted: #aaa69d;
   --grey: #928e85;
@@ -18,15 +18,15 @@
 }
 
 body.theme-grey-test {
-  --black: #161716;
-  --body-bg: #242420;
-  --shell-bg: #1f201e;
-  --chrome-bg: rgba(31,32,30,.94);
-  --composer-bg: rgba(31,32,30,.96);
-  --surface: #292a27;
-  --surface-2: #343430;
-  --line: #484741;
-  --desktop-bg: radial-gradient(circle at 50% 0, #45433d, #242420 62%);
+  --black: #111211;
+  --body-bg: #171816;
+  --shell-bg: #141514;
+  --chrome-bg: rgba(20,21,20,.94);
+  --composer-bg: rgba(20,21,20,.96);
+  --surface: #20211f;
+  --surface-2: #292a27;
+  --line: #3a3934;
+  --desktop-bg: radial-gradient(circle at 50% 0, #383630, #171816 62%);
 }
 
 * { box-sizing: border-box; }
