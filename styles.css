@@ -51,28 +51,6 @@ button { font: inherit; }
   padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 
-.theme-toggle {
-  position: fixed;
-  z-index: 20;
-  right: max(12px, calc((100vw - 520px) / 2 + 12px));
-  bottom: calc(84px + env(safe-area-inset-bottom));
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(146,142,133,.22);
-  color: var(--paper);
-  padding: 8px 11px;
-  font-size: .72rem;
-  font-weight: 800;
-  letter-spacing: .03em;
-  cursor: pointer;
-  backdrop-filter: blur(14px);
-}
-
-body.theme-grey-test .theme-toggle {
-  background: var(--paper);
-  color: var(--black);
-}
-
 .screen { padding: env(safe-area-inset-top) 18px 24px; }
 .screen[hidden], .chat-screen[hidden] { display: none; }
 
@@ -574,7 +552,6 @@ body.theme-grey-test .server-banner { background: linear-gradient(120deg, #48474
   .app-shell { min-height: calc(100vh - 56px); border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0,0,0,.45); }
   .bottom-nav { bottom: 28px; }
   .composer { bottom: 28px; }
-  .theme-toggle { bottom: 112px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
