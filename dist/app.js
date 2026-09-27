@@ -17,10 +17,15 @@ const memberPicker = document.querySelector('#member-picker');
 const selectedMembers = document.querySelector('#selected-members');
 const liveTestCard = document.querySelector('#live-test-card');
 const liveTestStatus = document.querySelector('#live-test-status');
+const liveCreateButton = liveTestCard.querySelector('button');
 const roomModalNote = document.querySelector('#room-modal-note');
 const identityModal = document.querySelector('#identity-modal');
 const identityForm = document.querySelector('#identity-form');
 const identityName = document.querySelector('#identity-name');
+const authModal = document.querySelector('#auth-modal');
+const authForm = document.querySelector('#auth-form');
+const authEmail = document.querySelector('#auth-email');
+const authMessage = document.querySelector('#auth-message');
 const inviteModal = document.querySelector('#invite-modal');
 const inviteLink = document.querySelector('#invite-link');
 const themeKey = 'blockhaus-grey-test';
@@ -74,6 +79,8 @@ let liveRooms = [];
 let liveMessages = {};
 let eventSource = null;
 let pendingInvite = null;
+let backendMode = 'local';
+let supabaseChannels = [];
 
 function loadJson(key, fallback) {
   try {
@@ -197,7 +204,7 @@ function openRoomModal(mode = 'private') {
     : 'Prévisualisation locale : cette room restera sur cet appareil.';
   roomModal.showModal();
   renderRoomModal();
-  setTimeout(() => (mode === 'room' ? roomNameInput : memberSearch).focus(), 50);
+  setTimeout(() => (mode === 'room' || livePrivate ? roomNameInput : memberSearch).focus(), 50);
 }
 
 function renderRoomModal() {
@@ -230,11 +237,18 @@ async function createRoom() {
 
   if (liveEnabled && modalMode === 'private') {
     try {
-      const result = await apiPost('/api/rooms', { userId: liveUser.id, name });
+      const result = backendMode === 'supabase'
+        ? await window.BlockhausSupabase.createPrivateRoom(name)
+        : await apiPost('/api/rooms', { userId: liveUser.id, name });
       roomModal.close();
       await loadLiveState();
-      openChat(result.room.id);
-      const url = new URL(result.invite, window.location.href).href;
+      const roomId = backendMode === 'supabase' ? result.room_id : result.room.id;
+      openChat(roomId);
+      if (backendMode === 'supabase') await connectLiveEvents();
+      const invitePath = backendMode === 'supabase'
+        ? `?room=${encodeURIComponent(roomId)}&invite=${encodeURIComponent(result.invite_token)}`
+        : result.invite;
+      const url = new URL(invitePath, window.location.href).href;
       inviteLink.value = url;
       inviteModal.showModal();
     } catch (error) {
@@ -297,9 +311,30 @@ function formatLiveTime(value) {
 
 async function loadLiveState() {
   if (!liveEnabled || !liveUser) return;
-  const response = await fetch(`/api/state?userId=${encodeURIComponent(liveUser.id)}`, { cache: 'no-store' });
-  if (!response.ok) throw new Error('Impossible de charger les discussions.');
-  const state = await response.json();
+  let state;
+  if (backendMode === 'supabase') {
+    const roomsFromDatabase = await window.BlockhausSupabase.listRooms();
+    const roomStates = await Promise.all(roomsFromDatabase.map(async (room) => {
+      const messages = await window.BlockhausSupabase.listMessages(room.id);
+      return {
+        id: room.id,
+        name: room.name,
+        members: (room.room_members || []).map((member) => member.profiles?.display_name).filter(Boolean),
+        messages: messages.map((message) => ({
+          id: message.id,
+          authorId: message.author_id,
+          author: message.profiles?.display_name || 'Membre',
+          text: message.body,
+          time: message.created_at
+        }))
+      };
+    }));
+    state = { rooms: roomStates };
+  } else {
+    const response = await fetch(`/api/state?userId=${encodeURIComponent(liveUser.id)}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error('Impossible de charger les discussions.');
+    state = await response.json();
+  }
   liveRooms = state.rooms.map(liveRoomFromServer);
   liveMessages = Object.fromEntries(state.rooms.map((room) => [room.id, room.messages.map((message) => [
     message.authorId === liveUser.id ? 'outgoing' : 'incoming',
@@ -314,7 +349,12 @@ async function loadLiveState() {
   if (isLiveRoom(currentChatId) && !chatScreen.hidden) renderMessages(roomById(currentChatId));
 }
 
-function connectLiveEvents() {
+async function connectLiveEvents() {
+  if (backendMode === 'supabase') {
+    await Promise.all(supabaseChannels.map((channel) => channel.unsubscribe()));
+    supabaseChannels = await Promise.all(liveRooms.map((room) => window.BlockhausSupabase.subscribeToRoom(room.id, () => loadLiveState().catch(() => {}))));
+    return;
+  }
   eventSource?.close();
   eventSource = new EventSource(`/api/events?userId=${encodeURIComponent(liveUser.id)}`);
   eventSource.addEventListener('update', () => loadLiveState().catch(() => {}));
@@ -329,13 +369,22 @@ async function createOrRestoreSession(name) {
     button.textContent = liveUser.name.slice(0, 2).toUpperCase();
   });
   await loadLiveState();
-  connectLiveEvents();
+  await connectLiveEvents();
   await joinPendingInvite();
 }
 
 async function joinPendingInvite() {
   if (!pendingInvite || !liveUser) return;
   try {
+    if (backendMode === 'supabase') {
+      const roomId = await window.BlockhausSupabase.joinWithInvite(pendingInvite.token);
+      pendingInvite = null;
+      history.replaceState({}, '', location.pathname);
+      await loadLiveState();
+      await connectLiveEvents();
+      openChat(roomId);
+      return;
+    }
     const result = await apiPost('/api/join', {
       userId: liveUser.id,
       roomId: pendingInvite.roomId,
@@ -350,16 +399,65 @@ async function joinPendingInvite() {
   }
 }
 
+async function activateSupabaseSession() {
+  const profile = await window.BlockhausSupabase.profile();
+  if (!profile) {
+    authModal.showModal();
+    return;
+  }
+  if (!profile.approved || profile.disabled_at) {
+    liveTestCard.hidden = false;
+    liveTestStatus.textContent = profile.disabled_at
+      ? 'Ce compte a été désactivé.'
+      : 'Compte créé — validation par un administrateur en attente.';
+    return;
+  }
+  liveUser = { id: profile.id, name: profile.display_name };
+  liveCreateButton.disabled = false;
+  liveTestStatus.textContent = `Connecté comme ${liveUser.name}`;
+  document.querySelectorAll('.profile-button').forEach((button) => {
+    button.textContent = liveUser.name.slice(0, 2).toUpperCase();
+  });
+  await loadLiveState();
+  await connectLiveEvents();
+  await joinPendingInvite();
+}
+
+async function bootSupabase() {
+  backendMode = 'supabase';
+  liveEnabled = true;
+  liveUser = null;
+  liveTestCard.hidden = false;
+  liveCreateButton.disabled = true;
+  liveTestCard.querySelector('.signal-label').textContent = 'MESSAGERIE PRIVÉE';
+  liveTestCard.querySelector('p').textContent = 'Crée une discussion puis partage une invitation limitée aux membres validés.';
+  liveTestStatus.textContent = 'Connexion sécurisée au réseau Blockhaus';
+  const currentSession = await window.BlockhausSupabase.session();
+  if (!currentSession) authModal.showModal();
+  else await activateSupabaseSession();
+}
+
 async function bootLiveTest() {
   const params = new URLSearchParams(location.search);
   if (params.get('room') && params.get('invite')) {
     pendingInvite = { roomId: params.get('room'), token: params.get('invite') };
   }
+  if (window.BlockhausSupabase?.isConfigured()) {
+    try {
+      await bootSupabase();
+    } catch (error) {
+      liveTestCard.hidden = false;
+      liveTestStatus.textContent = `Backend indisponible : ${error.message}`;
+    }
+    return;
+  }
   try {
     const response = await fetch('/api/health', { cache: 'no-store' });
     if (!response.ok) return;
+    backendMode = 'lan';
     liveEnabled = true;
     liveTestCard.hidden = false;
+    liveCreateButton.disabled = false;
     roomModalNote.textContent = "Crée une discussion privée puis partage son invitation.";
     if (liveUser?.name) await createOrRestoreSession(liveUser.name);
     else identityModal.showModal();
@@ -413,7 +511,8 @@ document.querySelector('#composer').addEventListener('submit', async (event) => 
   if (liveEnabled && isLiveRoom(currentChatId)) {
     input.value = '';
     try {
-      await apiPost('/api/messages', { roomId: currentChatId, userId: liveUser.id, text });
+      if (backendMode === 'supabase') await window.BlockhausSupabase.sendMessage(currentChatId, text);
+      else await apiPost('/api/messages', { roomId: currentChatId, userId: liveUser.id, text });
       await loadLiveState();
       chatHistory.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     } catch (error) {
@@ -470,9 +569,26 @@ identityForm.addEventListener('submit', async (event) => {
   }
 });
 
+authForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const email = authEmail.value.trim();
+  if (!email) return;
+  const submit = authForm.querySelector('button[type="submit"]');
+  submit.disabled = true;
+  try {
+    await window.BlockhausSupabase.sendMagicLink(email);
+    authMessage.textContent = 'Lien envoyé. Ouvre ton e-mail puis touche le lien pour revenir dans Blockhaus.';
+    submit.textContent = 'Lien envoyé';
+  } catch (error) {
+    authMessage.textContent = error.message;
+    submit.disabled = false;
+  }
+});
+
 document.querySelectorAll('.profile-button').forEach((button) => {
   button.addEventListener('click', () => {
     if (!liveEnabled) return;
+    if (backendMode === 'supabase') return;
     identityName.value = liveUser?.name || '';
     identityModal.showModal();
   });

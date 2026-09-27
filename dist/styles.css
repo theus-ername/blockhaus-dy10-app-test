@@ -214,6 +214,7 @@ h1 { margin: 3px 0 0; font-size: 1.8rem; line-height: 1; letter-spacing: -.04em;
   padding: 0 15px;
   font-weight: 850;
 }
+.live-test-card > button:disabled { opacity: .45; cursor: not-allowed; }
 
 .section-heading {
   display: flex;

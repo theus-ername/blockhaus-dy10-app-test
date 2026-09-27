@@ -183,6 +183,16 @@
       </form>
     </dialog>
 
+    <dialog class="identity-modal" id="auth-modal" aria-labelledby="auth-title">
+      <form class="identity-sheet" id="auth-form">
+        <span class="eyebrow">ACCÈS MEMBRES BLOCKHAUS</span>
+        <h2 id="auth-title">Connexion sans mot de passe</h2>
+        <p id="auth-message">Entre ton e-mail. Tu recevras un lien de connexion sécurisé.</p>
+        <input id="auth-email" type="email" placeholder="ton-adresse@email.fr" autocomplete="email" required>
+        <button type="submit">Recevoir mon lien</button>
+      </form>
+    </dialog>
+
     <dialog class="identity-modal" id="invite-modal" aria-labelledby="invite-title">
       <div class="identity-sheet">
         <span class="eyebrow">DISCUSSION PRIVÉE CRÉÉE</span>
@@ -202,6 +212,8 @@
       <button class="nav-item" data-screen="membres"><span>◉</span><strong>Membres</strong></button>
     </nav>
   </main>
-  <script src="app.js?v=6"></script>
+  <script src="backend-config.js?v=7"></script>
+  <script src="supabase-backend.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
