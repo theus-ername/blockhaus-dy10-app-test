@@ -1,10 +1,10 @@
 (function () {
   "use strict";
 
-  var VERSION = "12";
+  var VERSION = "13";
   var ROOT_ID = "bh-chat-widget";
-  var STYLE_ID = "bh-chat-widget-v12-style";
-  var FRAME_STYLE_ID = "bh-chat-frame-v12-style";
+  var STYLE_ID = "bh-chat-widget-v13-style";
+  var FRAME_STYLE_ID = "bh-chat-frame-v13-style";
   var CHATBOX_URL = window.BLOCKHAUS_CHATBOX_URL || "/chatbox/";
   var FULL_CHAT_URL = window.BLOCKHAUS_FULL_CHAT_URL || (CHATBOX_URL + (CHATBOX_URL.indexOf("?") === -1 ? "?" : "&") + "bh_desktop=1");
 
@@ -25,6 +25,7 @@
 
   function nativeFrame() {
     return Array.prototype.find.call(document.querySelectorAll("iframe"), function (frame) {
+      if (frame.closest("#" + ROOT_ID)) return false;
       if (/\/chatbox(?:\/|\?|$)/i.test(frame.getAttribute("src") || "") || /chatbox/i.test(frame.getAttribute("title") || "")) return true;
       try { return !!(frame.contentDocument && frame.contentDocument.getElementById("chatbox")); }
       catch (error) { return false; }
@@ -36,6 +37,60 @@
     var candidate = frame.closest(".forumline, .module, .panel, .chatbox, table");
     if (candidate && candidate.querySelectorAll("iframe").length === 1 && candidate.getBoundingClientRect().height < 900) return candidate;
     return frame;
+  }
+
+  function isModernMobile() {
+    return document.body && (document.body.id === "mpage-body-modern" || window.innerWidth <= 700);
+  }
+
+  function hideNativeChatbox() {
+    var frame = nativeFrame();
+    var block = frameContainer(frame);
+    if (!block) return false;
+    block.style.setProperty("display", "none", "important");
+    block.setAttribute("data-bh-native-chat-hidden", "true");
+    return true;
+  }
+
+  function watchForNativeChatbox() {
+    if (hideNativeChatbox()) return;
+    var observer = new MutationObserver(function () {
+      if (hideNativeChatbox()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  function setupMobileNavigation() {
+    function findChatLink() {
+      return Array.prototype.find.call(document.querySelectorAll("#tab-bar a"), function (link) {
+        return /chatbox|chat box/i.test((link.getAttribute("href") || "") + " " + (link.className || "") + " " + (link.textContent || ""));
+      });
+    }
+
+    function prepareChatLink() {
+      var link = findChatLink();
+      if (!link) return false;
+      link.href = "/chatbox/?bh_mobile=1";
+      link.target = "_self";
+      link.removeAttribute("onclick");
+      link.setAttribute("aria-label", "Ouvrir la ChatBox");
+      return true;
+    }
+
+    if (!prepareChatLink()) {
+      var observer = new MutationObserver(function () {
+        if (prepareChatLink()) observer.disconnect();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest("#tab-bar a");
+      if (!link || !/chatbox|chat box/i.test((link.getAttribute("href") || "") + " " + (link.className || "") + " " + (link.textContent || ""))) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window.location.href = "/chatbox/?bh_mobile=1";
+    }, true);
   }
 
   var widgetCss = [
@@ -149,6 +204,12 @@
   }
 
   function setupWidget() {
+    if (isModernMobile()) {
+      var staleWidget = document.getElementById(ROOT_ID);
+      if (staleWidget) staleWidget.remove();
+      setupMobileNavigation();
+      return;
+    }
     if (document.getElementById(ROOT_ID)) return;
     var existingFrame = nativeFrame();
     var nativeBlock = frameContainer(existingFrame);
@@ -159,7 +220,7 @@
     root.dataset.version = VERSION;
     root.innerHTML = '<div class="bh-entry"' + (existingFrame ? '' : ' hidden') + '><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-entry-copy"><strong>Chat du Blockhaus</strong><span>La ChatBox reste disponible dans la nouvelle interface.</span></span><button class="bh-open" type="button">Rejoindre le chat</button></div>' +
       '<button class="bh-fab" type="button" aria-controls="bh-chat-panel" aria-expanded="false"><span class="bh-fab-mark">B//<i class="bh-presence"></i></span><span>Chat DY10</span></button>' +
-      '<section class="bh-panel" id="bh-chat-panel" role="dialog" aria-modal="true" aria-label="Chat du Blockhaus"><div class="bh-head"><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-head-title">Chat du Blockhaus<small>En direct · interface V12</small></span><a class="bh-head-action bh-expand" href="' + FULL_CHAT_URL + '" target="_blank" rel="noopener" aria-label="Agrandir le chat">↗</a><button class="bh-head-action bh-close" type="button" aria-label="Fermer le chat">×</button></div><iframe title="ChatBox du Blockhaus" data-src="' + CHATBOX_URL + '?bh_widget=1"></iframe></section>';
+      '<section class="bh-panel" id="bh-chat-panel" role="dialog" aria-modal="true" aria-label="Chat du Blockhaus"><div class="bh-head"><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-head-title">Chat du Blockhaus<small>En direct · interface V13</small></span><a class="bh-head-action bh-expand" href="' + FULL_CHAT_URL + '" target="_blank" rel="noopener" aria-label="Agrandir le chat">↗</a><button class="bh-head-action bh-close" type="button" aria-label="Fermer le chat">×</button></div><iframe title="ChatBox du Blockhaus" data-src="' + CHATBOX_URL + '?bh_widget=1"></iframe></section>';
 
     if (nativeBlock && nativeBlock.parentNode) nativeBlock.parentNode.insertBefore(root, nativeBlock);
     else document.body.appendChild(root);
@@ -194,7 +255,8 @@
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && panel.classList.contains("is-open")) close();
     });
-    if (nativeBlock) nativeBlock.style.display = "none";
+    if (nativeBlock) nativeBlock.style.setProperty("display", "none", "important");
+    watchForNativeChatbox();
   }
 
   ready(function () {
