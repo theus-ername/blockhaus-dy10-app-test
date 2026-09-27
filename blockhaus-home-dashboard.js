@@ -123,7 +123,7 @@
     var requested = new URLSearchParams(window.location.search).get("bh_beta");
     try {
       if (requested === "1") window.localStorage.setItem(BETA_STORAGE_KEY, "1");
-      if (requested === "0") window.localStorage.removeItem(BETA_STORAGE_KEY);
+      else if (requested !== null) window.localStorage.removeItem(BETA_STORAGE_KEY);
       return window.localStorage.getItem(BETA_STORAGE_KEY) === "1";
     } catch (error) {
       return requested === "1";
@@ -136,7 +136,7 @@
     if (!nav) return;
     var item = document.createElement(nav.tagName === "UL" ? "li" : "span");
     item.id = BETA_NAV_ID;
-    item.innerHTML = '<a class="mainmenu bh-beta-toggle" href="/?bh_beta=' + (enabled ? "0" : "1") + '">' + (enabled ? "Quitter la bêta" : "Bêta accueil") + "</a> &nbsp;";
+    item.innerHTML = '<a class="mainmenu bh-beta-toggle" href="/?bh_beta=' + (enabled ? "off" : "1") + '">' + (enabled ? "Quitter la bêta" : "Bêta accueil") + "</a> &nbsp;";
     nav.appendChild(item);
   }
 
@@ -163,7 +163,7 @@
     root.dataset.version = VERSION;
     root.setAttribute("aria-label", "Accueil des membres du Blockhaus");
     root.innerHTML =
-      '<header class="bh-dash-head"><div><span class="bh-dash-kicker">Blockhaus / DY10</span><h1>À la une des membres</h1></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=0">Quitter la bêta</a></div></header>' +
+      '<header class="bh-dash-head"><div><span class="bh-dash-kicker">Blockhaus / DY10</span><h1>À la une des membres</h1></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
       '<div class="bh-priority-grid">' +
         '<article class="bh-card"><span class="bh-card-number">01 / PRIORITÉ</span><h2>Réunions & décisions</h2><p>Ordres du jour, comptes rendus et décisions collectives.</p><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + "</div></article>" +
         '<article class="bh-card"><span class="bh-card-number">02 / À VENIR</span><h2>Agenda & événements</h2><p>Les soirées et rendez-vous à venir dans l’agenda partagé.</p><div class="bh-actions">' + link("Ouvrir l’agenda", agendaHref, true) + link("Événements du forum", "/events", false) + "</div></article>" +
