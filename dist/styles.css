@@ -30,6 +30,7 @@ body.theme-grey-test {
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 body {
   margin: 0;
@@ -189,6 +190,30 @@ h1 { margin: 3px 0 0; font-size: 1.8rem; line-height: 1; letter-spacing: -.04em;
 .signal-card strong { display: block; margin-top: 8px; font-size: 1rem; }
 .signal-card p { margin: 5px 0 0; color: #c6c2ba; font-size: .88rem; line-height: 1.35; }
 .signal-card button { width: 38px; height: 38px; background: var(--accent); border-radius: 50%; font-size: 1.25rem; }
+
+.live-test-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #747168;
+  border-radius: 5px;
+  background: var(--surface);
+}
+.live-test-card[hidden] { display: none; }
+.live-test-card > div { flex: 1; }
+.live-test-card strong { display: block; margin-top: 7px; }
+.live-test-card p { margin: 5px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.35; }
+.live-test-card > button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--paper);
+  color: var(--black);
+  padding: 0 15px;
+  font-weight: 850;
+}
 
 .section-heading {
   display: flex;
@@ -500,6 +525,38 @@ body.theme-grey-test .server-banner { background: linear-gradient(120deg, #48474
   font-weight: 900;
 }
 .picker-member.is-selected em { background: var(--paper); color: var(--black); }
+
+.identity-modal {
+  width: min(100% - 28px, 440px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--shell-bg);
+  color: var(--paper);
+}
+.identity-modal::backdrop { background: rgba(0,0,0,.72); backdrop-filter: blur(8px); }
+.identity-sheet { display: grid; gap: 14px; padding: 24px; }
+.identity-sheet h2 { margin: 0; font-size: 1.5rem; }
+.identity-sheet p { margin: -5px 0 2px; color: var(--muted); line-height: 1.45; }
+.identity-sheet input {
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  outline: 0;
+  background: var(--surface);
+  color: var(--paper);
+  padding: 0 16px;
+  font: inherit;
+}
+.identity-sheet > button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--paper);
+  color: var(--black);
+  font-weight: 850;
+}
+.identity-sheet > .secondary-action { border: 1px solid var(--line); background: transparent; color: var(--paper); }
 
 @media (min-width: 760px) {
   body { padding: 28px; background: var(--desktop-bg); }

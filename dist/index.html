@@ -8,7 +8,7 @@
   <title>Blockhaus — Discussions</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <main class="app-shell" aria-label="Application Blockhaus">
@@ -46,6 +46,15 @@
           <p>Il manque encore deux personnes côté lumière.</p>
         </div>
         <button aria-label="Ouvrir le signal du jour">→</button>
+      </article>
+
+      <article class="live-test-card" id="live-test-card" hidden>
+        <div>
+          <span class="signal-label">TEST À 2 TÉLÉPHONES</span>
+          <strong id="live-test-status">Connexion au serveur…</strong>
+          <p>Crée une discussion privée puis partage son invitation à ton pote.</p>
+        </div>
+        <button type="button" data-open-room-modal="private">Créer</button>
       </article>
 
       <div class="section-heading">
@@ -160,8 +169,29 @@
         </label>
         <div class="selected-members" id="selected-members" aria-live="polite"></div>
         <div class="member-picker" id="member-picker"></div>
-        <p class="prototype-note compact">Prévisualisation locale : la room créée reste sur cet appareil. Pour que plusieurs membres la voient, il faudra un backend de chat avec comptes, droits et messages temps réel.</p>
+        <p class="prototype-note compact" id="room-modal-note">Prévisualisation locale : la room créée reste sur cet appareil.</p>
       </form>
+    </dialog>
+
+    <dialog class="identity-modal" id="identity-modal" aria-labelledby="identity-title">
+      <form class="identity-sheet" id="identity-form">
+        <span class="eyebrow">TEST PRIVÉ BLOCKHAUS</span>
+        <h2 id="identity-title">Quel prénom afficher ?</h2>
+        <p>Il sera visible uniquement dans les discussions de ce test.</p>
+        <input id="identity-name" maxlength="32" placeholder="Ex. Rémy" autocomplete="name" required>
+        <button type="submit">Entrer dans le test</button>
+      </form>
+    </dialog>
+
+    <dialog class="identity-modal" id="invite-modal" aria-labelledby="invite-title">
+      <div class="identity-sheet">
+        <span class="eyebrow">DISCUSSION PRIVÉE CRÉÉE</span>
+        <h2 id="invite-title">Invite ton pote</h2>
+        <p>Envoie-lui ce lien. Il pourra rejoindre uniquement cette discussion.</p>
+        <input id="invite-link" readonly aria-label="Lien d'invitation">
+        <button type="button" id="share-invite">Partager l’invitation</button>
+        <button type="button" class="secondary-action" id="close-invite">Continuer dans le chat</button>
+      </div>
     </dialog>
 
     <nav class="bottom-nav" aria-label="Navigation principale">
@@ -172,6 +202,6 @@
       <button class="nav-item" data-screen="membres"><span>◉</span><strong>Membres</strong></button>
     </nav>
   </main>
-  <script src="app.js"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

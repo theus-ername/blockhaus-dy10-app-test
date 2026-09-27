@@ -15,9 +15,18 @@ const roomNameInput = document.querySelector('#room-name');
 const memberSearch = document.querySelector('#member-picker-search');
 const memberPicker = document.querySelector('#member-picker');
 const selectedMembers = document.querySelector('#selected-members');
+const liveTestCard = document.querySelector('#live-test-card');
+const liveTestStatus = document.querySelector('#live-test-status');
+const roomModalNote = document.querySelector('#room-modal-note');
+const identityModal = document.querySelector('#identity-modal');
+const identityForm = document.querySelector('#identity-form');
+const identityName = document.querySelector('#identity-name');
+const inviteModal = document.querySelector('#invite-modal');
+const inviteLink = document.querySelector('#invite-link');
 const themeKey = 'blockhaus-grey-test';
 const customRoomsKey = 'blockhaus-custom-rooms-v1';
 const customMessagesKey = 'blockhaus-custom-messages-v1';
+const liveUserKey = 'blockhaus-live-user-v1';
 
 const members = [
   { id: 'maya', name: 'Maya', role: 'Atelier', avatar: 'M', tone: 'avatar-accent', online: true },
@@ -59,6 +68,12 @@ let modalMode = 'private';
 let selectedRecipientIds = new Set(['maya']);
 let customRooms = loadJson(customRoomsKey, []);
 let customMessages = loadJson(customMessagesKey, {});
+let liveEnabled = false;
+let liveUser = loadJson(liveUserKey, null);
+let liveRooms = [];
+let liveMessages = {};
+let eventSource = null;
+let pendingInvite = null;
 
 function loadJson(key, fallback) {
   try {
@@ -74,7 +89,11 @@ function saveState() {
 }
 
 function rooms() {
-  return [...baseRooms, ...customRooms];
+  return [...liveRooms, ...baseRooms, ...customRooms];
+}
+
+function isLiveRoom(id) {
+  return liveRooms.some((room) => room.id === id);
 }
 
 function roomById(id) {
@@ -126,7 +145,7 @@ function renderChannels() {
 }
 
 function renderMessages(room) {
-  const messages = customMessages[room.id] || seedMessages[room.id] || [
+  const messages = liveMessages[room.id] || customMessages[room.id] || seedMessages[room.id] || [
     ['incoming', 'Blockhaus', '#', 'avatar-grey', 'Local', 'Cette room est prête côté interface.']
   ];
   chatHistory.innerHTML = `<div class="day-divider"><span>Aujourd'hui</span></div>` + messages.map(([direction, author, avatar, tone, time, text]) => {
@@ -166,8 +185,16 @@ function openChat(key, sourceButton) {
 
 function openRoomModal(mode = 'private') {
   modalMode = mode;
-  selectedRecipientIds = new Set(mode === 'private' ? ['maya'] : []);
-  roomNameInput.value = mode === 'room' ? '' : 'Nouvelle discussion';
+  const livePrivate = liveEnabled && mode === 'private';
+  selectedRecipientIds = new Set(mode === 'private' && !livePrivate ? ['maya'] : []);
+  roomNameInput.value = livePrivate || mode === 'room' ? '' : 'Nouvelle discussion';
+  roomNameInput.placeholder = livePrivate ? 'Ex. Rémy + Phil' : "Ex. Set/30' équipe affiche";
+  memberSearch.closest('.field-label').hidden = livePrivate;
+  selectedMembers.hidden = livePrivate;
+  memberPicker.hidden = livePrivate;
+  roomModalNote.textContent = livePrivate
+    ? "Une invitation privée sera créée. Envoie-la à la personne qui doit rejoindre la discussion."
+    : 'Prévisualisation locale : cette room restera sur cet appareil.';
   roomModal.showModal();
   renderRoomModal();
   setTimeout(() => (mode === 'room' ? roomNameInput : memberSearch).focus(), 50);
@@ -193,13 +220,28 @@ function renderRoomModal() {
     `).join('');
 }
 
-function createRoom() {
+async function createRoom() {
   const selected = [...selectedRecipientIds];
   const pickedMembers = selected.map((id) => members.find((member) => member.id === id)).filter(Boolean);
   const defaultName = modalMode === 'room'
     ? 'Nouveau salon'
     : pickedMembers.map((member) => member.name).join(', ') || 'Discussion privée';
   const name = roomNameInput.value.trim() || defaultName;
+
+  if (liveEnabled && modalMode === 'private') {
+    try {
+      const result = await apiPost('/api/rooms', { userId: liveUser.id, name });
+      roomModal.close();
+      await loadLiveState();
+      openChat(result.room.id);
+      const url = new URL(result.invite, window.location.href).href;
+      inviteLink.value = url;
+      inviteModal.showModal();
+    } catch (error) {
+      roomModalNote.textContent = error.message;
+    }
+    return;
+  }
   const id = `local-${Date.now()}`;
   const room = {
     id,
@@ -220,6 +262,110 @@ function createRoom() {
   renderChannels();
   roomModal.close();
   openChat(id);
+}
+
+async function apiPost(path, body) {
+  const response = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || 'Erreur de connexion.');
+  return result;
+}
+
+function liveRoomFromServer(room) {
+  const lastMessage = [...room.messages].reverse().find((message) => !message.system);
+  return {
+    id: room.id,
+    type: 'private',
+    group: 'Discussions privées en direct',
+    name: room.name,
+    avatar: 'MP',
+    desc: room.members.join(', '),
+    time: lastMessage ? formatLiveTime(lastMessage.time) : 'maintenant',
+    preview: lastMessage ? `${lastMessage.author} : ${lastMessage.text}` : 'Discussion privée prête.',
+    online: `${room.members.length} participant(s)`,
+    network: true
+  };
+}
+
+function formatLiveTime(value) {
+  return new Date(value).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+
+async function loadLiveState() {
+  if (!liveEnabled || !liveUser) return;
+  const response = await fetch(`/api/state?userId=${encodeURIComponent(liveUser.id)}`, { cache: 'no-store' });
+  if (!response.ok) throw new Error('Impossible de charger les discussions.');
+  const state = await response.json();
+  liveRooms = state.rooms.map(liveRoomFromServer);
+  liveMessages = Object.fromEntries(state.rooms.map((room) => [room.id, room.messages.map((message) => [
+    message.authorId === liveUser.id ? 'outgoing' : 'incoming',
+    message.author,
+    message.system ? '#' : message.author.slice(0, 1).toUpperCase(),
+    message.system ? 'avatar-grey' : 'avatar-accent',
+    formatLiveTime(message.time),
+    message.text
+  ])]));
+  renderConversations();
+  renderChannels();
+  if (isLiveRoom(currentChatId) && !chatScreen.hidden) renderMessages(roomById(currentChatId));
+}
+
+function connectLiveEvents() {
+  eventSource?.close();
+  eventSource = new EventSource(`/api/events?userId=${encodeURIComponent(liveUser.id)}`);
+  eventSource.addEventListener('update', () => loadLiveState().catch(() => {}));
+}
+
+async function createOrRestoreSession(name) {
+  const result = await apiPost('/api/session', { userId: liveUser?.id, name });
+  liveUser = result.user;
+  localStorage.setItem(liveUserKey, JSON.stringify(liveUser));
+  liveTestStatus.textContent = `Connecté comme ${liveUser.name}`;
+  document.querySelectorAll('.profile-button').forEach((button) => {
+    button.textContent = liveUser.name.slice(0, 2).toUpperCase();
+  });
+  await loadLiveState();
+  connectLiveEvents();
+  await joinPendingInvite();
+}
+
+async function joinPendingInvite() {
+  if (!pendingInvite || !liveUser) return;
+  try {
+    const result = await apiPost('/api/join', {
+      userId: liveUser.id,
+      roomId: pendingInvite.roomId,
+      token: pendingInvite.token
+    });
+    pendingInvite = null;
+    history.replaceState({}, '', location.pathname);
+    await loadLiveState();
+    openChat(result.room.id);
+  } catch (error) {
+    liveTestStatus.textContent = error.message;
+  }
+}
+
+async function bootLiveTest() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('room') && params.get('invite')) {
+    pendingInvite = { roomId: params.get('room'), token: params.get('invite') };
+  }
+  try {
+    const response = await fetch('/api/health', { cache: 'no-store' });
+    if (!response.ok) return;
+    liveEnabled = true;
+    liveTestCard.hidden = false;
+    roomModalNote.textContent = "Crée une discussion privée puis partage son invitation.";
+    if (liveUser?.name) await createOrRestoreSession(liveUser.name);
+    else identityModal.showModal();
+  } catch {
+    // La version GitHub Pages reste un prototype local sans serveur de test.
+  }
 }
 
 setGreyTest(localStorage.getItem(themeKey) !== '0');
@@ -245,9 +391,9 @@ document.addEventListener('click', (event) => {
 
 document.querySelector('#chat-back').addEventListener('click', () => showScreen('chats'));
 
-roomForm.addEventListener('submit', (event) => {
+roomForm.addEventListener('submit', async (event) => {
   event.preventDefault();
-  createRoom();
+  await createRoom();
 });
 
 document.querySelectorAll('[data-room-mode]').forEach((button) => {
@@ -259,11 +405,23 @@ document.querySelectorAll('[data-room-mode]').forEach((button) => {
 
 memberSearch.addEventListener('input', renderRoomModal);
 
-document.querySelector('#composer').addEventListener('submit', (event) => {
+document.querySelector('#composer').addEventListener('submit', async (event) => {
   event.preventDefault();
   const input = document.querySelector('#message-input');
   const text = input.value.trim();
   if (!text) return;
+  if (liveEnabled && isLiveRoom(currentChatId)) {
+    input.value = '';
+    try {
+      await apiPost('/api/messages', { roomId: currentChatId, userId: liveUser.id, text });
+      await loadLiveState();
+      chatHistory.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    } catch (error) {
+      input.value = text;
+      liveTestStatus.textContent = error.message;
+    }
+    return;
+  }
   const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   customMessages[currentChatId] = [...(customMessages[currentChatId] || seedMessages[currentChatId] || []), ['outgoing', 'Moi', 'JR', '', now, text]];
   saveState();
@@ -297,6 +455,52 @@ document.querySelectorAll('[data-agenda-filter]').forEach((button) => {
   });
 });
 
-if ('serviceWorker' in navigator) {
+identityForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const name = identityName.value.trim();
+  if (!name) return;
+  const submit = identityForm.querySelector('button[type="submit"]');
+  submit.disabled = true;
+  try {
+    await createOrRestoreSession(name);
+    identityModal.close();
+  } catch (error) {
+    liveTestStatus.textContent = error.message;
+    submit.disabled = false;
+  }
+});
+
+document.querySelectorAll('.profile-button').forEach((button) => {
+  button.addEventListener('click', () => {
+    if (!liveEnabled) return;
+    identityName.value = liveUser?.name || '';
+    identityModal.showModal();
+  });
+});
+
+document.querySelector('#share-invite').addEventListener('click', async () => {
+  const shareButton = document.querySelector('#share-invite');
+  const shareData = { title: 'Discussion privée Blockhaus', text: 'Rejoins ma discussion privée Blockhaus.', url: inviteLink.value };
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+    }
+  }
+  inviteLink.select();
+  if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(inviteLink.value);
+  else document.execCommand('copy');
+  shareButton.textContent = 'Lien copié';
+});
+
+document.querySelector('#close-invite').addEventListener('click', () => inviteModal.close());
+
+bootLiveTest();
+if (!navigator.share) document.querySelector('#share-invite').textContent = 'Copier le lien';
+
+const localTestHost = ['localhost', '127.0.0.1'].includes(location.hostname) || /^192\.168\.|^10\.|^172\.(1[6-9]|2\d|3[01])\./.test(location.hostname);
+if ('serviceWorker' in navigator && !localTestHost) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
 }
