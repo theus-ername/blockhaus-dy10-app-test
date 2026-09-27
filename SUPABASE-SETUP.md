@@ -4,7 +4,7 @@ Le code de la fondation sécurisée est prêt. Il reste à créer le projet qui 
 
 ## 1. Créer le projet
 
-Créer un projet Supabase nommé `blockhaus-chat` dans une organisation contrôlée par l’association ou par Phil.
+Créer un projet Supabase nommé `blockhaus-chat` dans une organisation contrôlée collectivement par l’association.
 
 Conserver dans un gestionnaire de mots de passe :
 
@@ -12,15 +12,19 @@ Conserver dans un gestionnaire de mots de passe :
 - la clé publique/publishable ;
 - les accès administrateur du projet.
 
+Inviter individuellement tous les administrateurs Forumactif dans l’organisation ou le projet Supabase. Ne pas utiliser un compte ou un mot de passe partagé.
+
 Ne jamais placer la clé `service_role` dans le site ou dans GitHub.
 
 ## 2. Installer le schéma
 
-Dans **SQL Editor**, exécuter le fichier :
+Dans **SQL Editor**, exécuter ces fichiers dans l’ordre :
 
 `supabase/migrations/202609270001_initial_chat.sql`
 
-Cette migration crée les profils, les rooms, les membres, les messages, les invitations et les règles RLS.
+`supabase/migrations/202609270002_shared_admin.sql`
+
+Ces migrations créent les profils, les rooms, les membres, les messages, les invitations, l’administration partagée, le journal administratif et les règles RLS.
 
 ## 3. Préparer la configuration du site
 
@@ -41,17 +45,17 @@ Dans les réglages Auth de Supabase :
 
 Pour une bêta réelle, il faudra également configurer un service SMTP. Le service d’e-mail de démonstration Supabase n’est pas prévu pour envoyer des liens à tous les membres.
 
-## 5. Créer le premier administrateur
+## 5. Créer les administrateurs
 
-Après la première connexion de Phil, exécuter en remplaçant le pseudonyme :
+Après la première connexion de chaque administrateur Forumactif, exécuter en remplaçant le pseudonyme et l’identifiant :
 
 ```sql
 update public.profiles
-set approved = true, role = 'admin', forum_username = 'Phil Tremble'
-where id = '<UUID DU COMPTE DE PHIL>';
+set approved = true, role = 'admin', forum_username = '<PSEUDONYME FORUM>'
+where id = '<UUID DU COMPTE>';
 ```
 
-Les autres comptes restent bloqués jusqu’à leur validation.
+Répéter cette opération pour chaque administrateur. Les autres comptes restent bloqués jusqu’à leur validation.
 
 ## 6. Tests obligatoires
 

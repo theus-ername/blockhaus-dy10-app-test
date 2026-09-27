@@ -15,6 +15,8 @@ const roomNameInput = document.querySelector('#room-name');
 const memberSearch = document.querySelector('#member-picker-search');
 const memberPicker = document.querySelector('#member-picker');
 const selectedMembers = document.querySelector('#selected-members');
+const adminPanel = document.querySelector('#admin-panel');
+const adminMembers = document.querySelector('#admin-members');
 const liveTestCard = document.querySelector('#live-test-card');
 const liveTestStatus = document.querySelector('#live-test-status');
 const liveCreateButton = liveTestCard.querySelector('button');
@@ -81,6 +83,7 @@ let eventSource = null;
 let pendingInvite = null;
 let backendMode = 'local';
 let supabaseChannels = [];
+let adminProfiles = [];
 
 function loadJson(key, fallback) {
   try {
@@ -193,18 +196,22 @@ function openChat(key, sourceButton) {
 function openRoomModal(mode = 'private') {
   modalMode = mode;
   const livePrivate = liveEnabled && mode === 'private';
+  const adminChannel = backendMode === 'supabase' && mode === 'room' && liveUser?.role === 'admin';
+  const simplifiedCreation = livePrivate || adminChannel;
   selectedRecipientIds = new Set(mode === 'private' && !livePrivate ? ['maya'] : []);
-  roomNameInput.value = livePrivate || mode === 'room' ? '' : 'Nouvelle discussion';
-  roomNameInput.placeholder = livePrivate ? 'Ex. Rémy + Phil' : "Ex. Set/30' équipe affiche";
-  memberSearch.closest('.field-label').hidden = livePrivate;
-  selectedMembers.hidden = livePrivate;
-  memberPicker.hidden = livePrivate;
+  roomNameInput.value = simplifiedCreation || mode === 'room' ? '' : 'Nouvelle discussion';
+  roomNameInput.placeholder = livePrivate ? 'Ex. Rémy + Phil' : "Ex. Transmission";
+  memberSearch.closest('.field-label').hidden = simplifiedCreation;
+  selectedMembers.hidden = simplifiedCreation;
+  memberPicker.hidden = simplifiedCreation;
   roomModalNote.textContent = livePrivate
     ? "Une invitation privée sera créée. Envoie-la à la personne qui doit rejoindre la discussion."
+    : adminChannel
+      ? 'Ce salon officiel sera visible et modifiable par tous les administrateurs.'
     : 'Prévisualisation locale : cette room restera sur cet appareil.';
   roomModal.showModal();
   renderRoomModal();
-  setTimeout(() => (mode === 'room' || livePrivate ? roomNameInput : memberSearch).focus(), 50);
+  setTimeout(() => (mode === 'room' || simplifiedCreation ? roomNameInput : memberSearch).focus(), 50);
 }
 
 function renderRoomModal() {
@@ -234,6 +241,20 @@ async function createRoom() {
     ? 'Nouveau salon'
     : pickedMembers.map((member) => member.name).join(', ') || 'Discussion privée';
   const name = roomNameInput.value.trim() || defaultName;
+
+  if (backendMode === 'supabase' && modalMode === 'room') {
+    try {
+      if (liveUser?.role !== 'admin') throw new Error('Action réservée aux administrateurs.');
+      const roomId = await window.BlockhausSupabase.adminCreateChannel(name);
+      roomModal.close();
+      await loadLiveState();
+      await connectLiveEvents();
+      openChat(roomId);
+    } catch (error) {
+      roomModalNote.textContent = error.message;
+    }
+    return;
+  }
 
   if (liveEnabled && modalMode === 'private') {
     try {
@@ -412,7 +433,7 @@ async function activateSupabaseSession() {
       : 'Compte créé — validation par un administrateur en attente.';
     return;
   }
-  liveUser = { id: profile.id, name: profile.display_name };
+  liveUser = { id: profile.id, name: profile.display_name, role: profile.role };
   liveCreateButton.disabled = false;
   liveTestStatus.textContent = `Connecté comme ${liveUser.name}`;
   document.querySelectorAll('.profile-button').forEach((button) => {
@@ -420,7 +441,64 @@ async function activateSupabaseSession() {
   });
   await loadLiveState();
   await connectLiveEvents();
+  await configureAdminUi();
   await joinPendingInvite();
+}
+
+async function configureAdminUi() {
+  if (backendMode !== 'supabase') return;
+  const isAdmin = liveUser?.role === 'admin';
+  adminPanel.hidden = !isAdmin;
+  document.querySelectorAll('[data-open-room-modal="room"]').forEach((button) => { button.hidden = !isAdmin; });
+  document.querySelector('[data-room-mode="room"]').hidden = !isAdmin;
+  if (isAdmin) await renderAdminMembers();
+}
+
+async function renderAdminMembers() {
+  adminProfiles = await window.BlockhausSupabase.adminListProfiles();
+  adminMembers.innerHTML = adminProfiles.map((profile) => {
+    const status = profile.disabled_at ? 'désactivé' : profile.approved ? profile.role : 'en attente';
+    const isSelf = profile.id === liveUser.id;
+    return `
+      <article class="admin-member">
+        <div class="admin-member-header">
+          <span><strong>${escapeHtml(profile.display_name)}</strong><small>${escapeHtml(profile.forum_username || 'Sans pseudo Forumactif')}</small></span>
+          <em class="admin-badge">${status}</em>
+        </div>
+        ${isSelf ? '<div class="admin-actions"><span class="prototype-note compact">Ton propre compte administrateur</span></div>' : `
+          <div class="admin-actions">
+            ${!profile.approved ? `<button class="primary" data-admin-action="approve" data-admin-user="${profile.id}">Valider</button>` : ''}
+            <button data-admin-action="member" data-admin-user="${profile.id}">Membre</button>
+            <button data-admin-action="moderator" data-admin-user="${profile.id}">Modérateur</button>
+            <button data-admin-action="admin" data-admin-user="${profile.id}">Admin</button>
+            <button data-admin-action="${profile.disabled_at ? 'enable' : 'disable'}" data-admin-user="${profile.id}">${profile.disabled_at ? 'Réactiver' : 'Désactiver'}</button>
+          </div>`}
+      </article>`;
+  }).join('');
+}
+
+async function handleAdminAction(button) {
+  const profile = adminProfiles.find((item) => item.id === button.dataset.adminUser);
+  if (!profile) return;
+  let approved = profile.approved;
+  let role = profile.role;
+  let disabled = Boolean(profile.disabled_at);
+  switch (button.dataset.adminAction) {
+    case 'approve': approved = true; disabled = false; break;
+    case 'member': approved = true; role = 'member'; disabled = false; break;
+    case 'moderator': approved = true; role = 'moderator'; disabled = false; break;
+    case 'admin': approved = true; role = 'admin'; disabled = false; break;
+    case 'disable': disabled = true; break;
+    case 'enable': disabled = false; approved = true; break;
+  }
+  button.disabled = true;
+  try {
+    await window.BlockhausSupabase.adminSetMember(profile.id, approved, role, disabled);
+    await renderAdminMembers();
+  } catch (error) {
+    button.disabled = false;
+    adminPanel.querySelector('.prototype-note').textContent = error.message;
+  }
 }
 
 async function bootSupabase() {
@@ -473,7 +551,12 @@ renderChannels();
 themeToggle.addEventListener('click', () => setGreyTest(!document.body.classList.contains('theme-grey-test')));
 navItems.forEach((item) => item.addEventListener('click', () => showScreen(item.dataset.screen)));
 
-document.addEventListener('click', (event) => {
+document.addEventListener('click', async (event) => {
+  const adminAction = event.target.closest('[data-admin-action]');
+  if (adminAction) {
+    await handleAdminAction(adminAction);
+    return;
+  }
   const trigger = event.target.closest('[data-open-chat]');
   if (trigger) openChat(trigger.dataset.openChat, trigger);
   const modalTrigger = event.target.closest('[data-open-room-modal]');

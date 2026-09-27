@@ -24,6 +24,9 @@ Statut : **préparée dans le dépôt**
 - [x] Invitations révocables et limitées dans le temps
 - [x] Préparation des messages temps réel
 - [x] Adaptateur webapp prêt à basculer vers Supabase
+- [x] Administration partagée prévue pour tous les administrateurs Forumactif
+- [x] Confidentialité maintenue : un admin extérieur à une discussion privée ne peut pas la lire
+- [x] Journal des modifications administratives et protection du dernier compte admin
 - [ ] Créer le projet Supabase Blockhaus
 - [ ] Exécuter la migration SQL
 - [ ] Brancher l’URL et la clé publique du projet
@@ -37,7 +40,9 @@ Critère de validation : deux téléphones situés sur des réseaux différents 
 - [ ] Tester l’envoi réel des liens magiques
 - [ ] Tester la validation manuelle d’un nouveau membre
 - [ ] Pseudonyme Forumactif associé au profil
-- [ ] Rôles membre, modérateur et administrateur
+- [x] Rôles membre, modérateur et administrateur préparés dans la base
+- [x] Première interface visuelle de validation, rôles et désactivation des membres
+- [ ] Interface avancée pour renommer et archiver les salons
 - [ ] Refus d’accès immédiat pour un compte désactivé
 
 Critère de validation : un troisième compte non membre ne peut ni voir ni rejoindre une discussion privée.

@@ -366,6 +366,16 @@ body.theme-grey-test .server-banner { background: linear-gradient(120deg, #48474
 .member > span:nth-child(2) { flex: 1; display: grid; gap: 4px; }
 .member small { color: var(--muted); }
 .member em { color: var(--paper); font-size: .78rem; font-style: normal; }
+.admin-panel { margin-top: 30px; padding-top: 8px; border-top: 1px solid var(--line); }
+.admin-members { display: grid; gap: 10px; }
+.admin-member { padding: 13px; border: 1px solid var(--line); background: var(--surface); }
+.admin-member-header { display: flex; align-items: start; gap: 10px; }
+.admin-member-header > span { flex: 1; display: grid; gap: 3px; }
+.admin-member-header small { color: var(--muted); }
+.admin-badge { color: var(--accent); font: 800 .68rem/1 monospace; text-transform: uppercase; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.admin-actions button { min-height: 34px; border: 1px solid var(--line); border-radius: 18px; background: transparent; color: var(--paper); padding: 0 11px; font-size: .74rem; font-weight: 750; }
+.admin-actions button.primary { background: var(--paper); color: var(--black); }
 
 .chat-screen { min-height: 100vh; padding-bottom: calc(78px + env(safe-area-inset-bottom)); background: var(--shell-bg); }
 .chat-header { position: sticky; z-index: 5; top: 0; display: flex; align-items: center; gap: 10px; padding: calc(11px + env(safe-area-inset-top)) 13px 11px; border-bottom: 1px solid var(--line); background: var(--chrome-bg); backdrop-filter: blur(18px); }

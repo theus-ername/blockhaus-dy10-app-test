@@ -105,6 +105,46 @@
       .subscribe();
   }
 
+  async function adminListProfiles() {
+    const supabase = await client();
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, display_name, forum_username, role, approved, disabled_at, created_at')
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data;
+  }
+
+  async function adminSetMember(userId, approved, role, disabled = false) {
+    const supabase = await client();
+    const { data, error } = await supabase.rpc('admin_set_member', {
+      target_user: userId,
+      new_approved: approved,
+      new_role: role,
+      new_disabled: disabled
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async function adminCreateChannel(name) {
+    const supabase = await client();
+    const { data, error } = await supabase.rpc('admin_create_channel', { channel_name: name });
+    if (error) throw error;
+    return data;
+  }
+
+  async function adminUpdateChannel(roomId, name, archived = false) {
+    const supabase = await client();
+    const { data, error } = await supabase.rpc('admin_update_channel', {
+      target_room: roomId,
+      new_name: name,
+      archive_channel: archived
+    });
+    if (error) throw error;
+    return data;
+  }
+
   window.BlockhausSupabase = {
     isConfigured,
     client,
@@ -116,6 +156,10 @@
     createPrivateRoom,
     joinWithInvite,
     sendMessage,
-    subscribeToRoom
+    subscribeToRoom,
+    adminListProfiles,
+    adminSetMember,
+    adminCreateChannel,
+    adminUpdateChannel
   };
 })();
