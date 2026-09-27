@@ -12,14 +12,19 @@
 
 La version gratuite de Forumactif fournit un seul vrai salon. `Général` fonctionne réellement. Intermix, Transmission, Set/30’ et Archives apparaissent dans la vue ordinateur comme arborescence cible, mais seront activés uniquement après le branchement du backend Supabase.
 
-## Installation conseillée
+## Installation active sur le forum
 
-Ajouter dans la gestion des codes JavaScript Forumactif, sur toutes les pages :
+Forumactif traite la ChatBox comme un emplacement séparé. Deux entrées actives sont donc nécessaires dans `Modules > HTML & JAVASCRIPT > Gestion des codes Javascript` :
+
+- `Interface ChatBox Blockhaus V10` — placement `Sur toutes les pages` ;
+- `Interface ChatBox Desktop V10` — placement `Sur la ChatBox`.
+
+Les deux entrées chargent le même fichier :
 
 ```javascript
 (function () {
   var script = document.createElement('script');
-  script.src = 'https://theus-ername.github.io/blockhaus-dy10-app-test/blockhaus-chatbox-widget.js?v=10';
+  script.src = 'https://theus-ername.github.io/blockhaus-dy10-app-test/blockhaus-chatbox-widget.js?v=10&build=02f602a';
   script.async = true;
   document.head.appendChild(script);
 })();
@@ -31,8 +36,10 @@ Le fichier principal reste ainsi modifiable dans le dépôt GitHub par les admin
 
 Pour restaurer immédiatement l’ancienne ChatBox :
 
-1. désactiver ce code JavaScript dans Forumactif ;
+1. désactiver les deux codes JavaScript V10 dans Forumactif ;
 2. vider le cache du navigateur ou recharger la page sans cache ;
 3. vérifier que l’entrée native « Rejoindre le Chat » est de nouveau visible.
+
+Ne pas désactiver `Connexion automatique ChatBox` : ce script existant reste indépendant de l’interface V10.
 
 Le script masque uniquement l’ancien bloc dans le navigateur. Il ne supprime aucune donnée ni aucun message Forumactif.
