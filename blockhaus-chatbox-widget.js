@@ -23,13 +23,26 @@
     doc.head.appendChild(style);
   }
 
+  function isNativeChatFrame(frame) {
+    if (!frame || frame.closest("#" + ROOT_ID) || frame.hasAttribute("data-bh-widget-frame")) return false;
+    var signature = [
+      frame.getAttribute("src") || "",
+      frame.getAttribute("title") || "",
+      frame.id || "",
+      frame.getAttribute("name") || "",
+      frame.className || ""
+    ].join(" ");
+    if (/chat[\s_-]*box|\/chatbox(?:\/|\?|$)/i.test(signature)) return true;
+    try { return !!(frame.contentDocument && frame.contentDocument.getElementById("chatbox")); }
+    catch (error) { return false; }
+  }
+
+  function nativeFrames() {
+    return Array.prototype.filter.call(document.querySelectorAll("iframe"), isNativeChatFrame);
+  }
+
   function nativeFrame() {
-    return Array.prototype.find.call(document.querySelectorAll("iframe"), function (frame) {
-      if (frame.closest("#" + ROOT_ID)) return false;
-      if (/\/chatbox(?:\/|\?|$)/i.test(frame.getAttribute("src") || "") || /chatbox/i.test(frame.getAttribute("title") || "")) return true;
-      try { return !!(frame.contentDocument && frame.contentDocument.getElementById("chatbox")); }
-      catch (error) { return false; }
-    });
+    return nativeFrames()[0] || null;
   }
 
   function frameContainer(frame) {
@@ -44,20 +57,33 @@
   }
 
   function hideNativeChatbox() {
-    var frame = nativeFrame();
-    var block = frameContainer(frame);
-    if (!block) return false;
-    block.style.setProperty("display", "none", "important");
-    block.setAttribute("data-bh-native-chat-hidden", "true");
-    return true;
+    var hidden = false;
+    nativeFrames().forEach(function (frame) {
+      var block = frameContainer(frame);
+      frame.style.setProperty("display", "none", "important");
+      frame.setAttribute("data-bh-native-chat-hidden", "true");
+      if (block && block !== frame) {
+        block.style.setProperty("display", "none", "important");
+        block.setAttribute("data-bh-native-chat-hidden", "true");
+      }
+      hidden = true;
+    });
+    return hidden;
   }
 
   function watchForNativeChatbox() {
-    if (hideNativeChatbox()) return;
-    var observer = new MutationObserver(function () {
-      if (hideNativeChatbox()) observer.disconnect();
-    });
+    hideNativeChatbox();
+    var observer = new MutationObserver(hideNativeChatbox);
     observer.observe(document.body, { childList: true, subtree: true });
+    var checks = 0;
+    var timer = window.setInterval(function () {
+      hideNativeChatbox();
+      checks += 1;
+      if (checks >= 60) {
+        window.clearInterval(timer);
+        observer.disconnect();
+      }
+    }, 500);
   }
 
   function setupMobileNavigation() {
@@ -220,7 +246,7 @@
     root.dataset.version = VERSION;
     root.innerHTML = '<div class="bh-entry"' + (existingFrame ? '' : ' hidden') + '><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-entry-copy"><strong>Chat du Blockhaus</strong><span>La ChatBox reste disponible dans la nouvelle interface.</span></span><button class="bh-open" type="button">Rejoindre le chat</button></div>' +
       '<button class="bh-fab" type="button" aria-controls="bh-chat-panel" aria-expanded="false"><span class="bh-fab-mark">B//<i class="bh-presence"></i></span><span>Chat DY10</span></button>' +
-      '<section class="bh-panel" id="bh-chat-panel" role="dialog" aria-modal="true" aria-label="Chat du Blockhaus"><div class="bh-head"><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-head-title">Chat du Blockhaus<small>En direct · interface V13</small></span><a class="bh-head-action bh-expand" href="' + FULL_CHAT_URL + '" target="_blank" rel="noopener" aria-label="Agrandir le chat">↗</a><button class="bh-head-action bh-close" type="button" aria-label="Fermer le chat">×</button></div><iframe title="ChatBox du Blockhaus" data-src="' + CHATBOX_URL + '?bh_widget=1"></iframe></section>';
+      '<section class="bh-panel" id="bh-chat-panel" role="dialog" aria-modal="true" aria-label="Chat du Blockhaus"><div class="bh-head"><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-head-title">Chat du Blockhaus<small>En direct · interface V13</small></span><a class="bh-head-action bh-expand" href="' + FULL_CHAT_URL + '" target="_blank" rel="noopener" aria-label="Agrandir le chat">↗</a><button class="bh-head-action bh-close" type="button" aria-label="Fermer le chat">×</button></div><iframe title="ChatBox du Blockhaus" data-bh-widget-frame="true" data-src="' + CHATBOX_URL + '?bh_widget=1"></iframe></section>';
 
     if (nativeBlock && nativeBlock.parentNode) nativeBlock.parentNode.insertBefore(root, nativeBlock);
     else document.body.appendChild(root);
