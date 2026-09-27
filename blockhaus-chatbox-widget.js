@@ -235,6 +235,7 @@
       var staleWidget = document.getElementById(ROOT_ID);
       if (staleWidget) staleWidget.remove();
       setupMobileNavigation();
+      watchForNativeChatbox();
       return;
     }
     if (document.getElementById(ROOT_ID)) return;
