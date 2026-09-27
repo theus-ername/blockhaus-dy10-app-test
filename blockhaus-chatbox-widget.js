@@ -27,6 +27,7 @@
     if (!frame || frame.closest("#" + ROOT_ID) || frame.hasAttribute("data-bh-widget-frame")) return false;
     var signature = [
       frame.getAttribute("src") || "",
+      frame.getAttribute("data") || "",
       frame.getAttribute("title") || "",
       frame.id || "",
       frame.getAttribute("name") || "",
@@ -38,7 +39,7 @@
   }
 
   function nativeFrames() {
-    return Array.prototype.filter.call(document.querySelectorAll("iframe"), isNativeChatFrame);
+    return Array.prototype.filter.call(document.querySelectorAll("iframe, object, embed"), isNativeChatFrame);
   }
 
   function nativeFrame() {
@@ -48,7 +49,7 @@
   function frameContainer(frame) {
     if (!frame) return null;
     var candidate = frame.closest(".forumline, .module, .panel, .chatbox, table");
-    if (candidate && candidate.querySelectorAll("iframe").length === 1 && candidate.getBoundingClientRect().height < 900) return candidate;
+    if (candidate && candidate.querySelectorAll("iframe, object, embed").length === 1 && candidate.getBoundingClientRect().height < 900) return candidate;
     return frame;
   }
 
