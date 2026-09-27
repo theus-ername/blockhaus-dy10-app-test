@@ -24,7 +24,7 @@ Les deux entrées chargent le même fichier :
 ```javascript
 (function () {
   var script = document.createElement('script');
-  script.src = 'https://theus-ername.github.io/blockhaus-dy10-app-test/blockhaus-chatbox-widget.js?v=11&build=c61c133';
+  script.src = 'https://theus-ername.github.io/blockhaus-dy10-app-test/blockhaus-chatbox-widget.js?v=12&build=c910f1d';
   script.async = true;
   document.head.appendChild(script);
 })();
