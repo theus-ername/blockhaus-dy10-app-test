@@ -1,5 +1,5 @@
-const CACHE = 'blockhaus-prototype-v8';
-const ASSETS = ['./', './index.html', './styles.css?v=8', './backend-config.js?v=8', './supabase-backend.js?v=8', './app.js?v=8', './icon.svg', './manifest.webmanifest'];
+const CACHE = 'blockhaus-prototype-v9';
+const ASSETS = ['./', './index.html', './styles.css?v=9', './backend-config.js?v=9', './supabase-backend.js?v=9', './app.js?v=9', './icon.svg', './manifest.webmanifest'];
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });

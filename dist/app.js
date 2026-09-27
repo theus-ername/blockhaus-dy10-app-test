@@ -6,7 +6,6 @@ const chatTitle = document.querySelector('#chat-title');
 const chatAvatar = document.querySelector('#chat-avatar');
 const chatStatus = document.querySelector('.chat-header div span');
 const chatHistory = document.querySelector('#chat-history');
-const themeToggle = document.querySelector('#theme-toggle');
 const conversationList = document.querySelector('#conversation-list');
 const channelGroups = document.querySelector('#channel-groups');
 const roomModal = document.querySelector('#room-modal');
@@ -30,7 +29,6 @@ const authEmail = document.querySelector('#auth-email');
 const authMessage = document.querySelector('#auth-message');
 const inviteModal = document.querySelector('#invite-modal');
 const inviteLink = document.querySelector('#invite-link');
-const themeKey = 'blockhaus-grey-test';
 const customRoomsKey = 'blockhaus-custom-rooms-v1';
 const customMessagesKey = 'blockhaus-custom-messages-v1';
 const liveUserKey = 'blockhaus-live-user-v1';
@@ -108,13 +106,6 @@ function isLiveRoom(id) {
 
 function roomById(id) {
   return rooms().find((room) => room.id === id) || rooms()[0];
-}
-
-function setGreyTest(enabled) {
-  document.body.classList.toggle('theme-grey-test', enabled);
-  themeToggle.setAttribute('aria-pressed', String(enabled));
-  themeToggle.textContent = enabled ? 'Fond sombre' : 'Fond clair';
-  localStorage.setItem(themeKey, enabled ? '1' : '0');
 }
 
 function avatarHtml(room) {
@@ -544,11 +535,9 @@ async function bootLiveTest() {
   }
 }
 
-setGreyTest(localStorage.getItem(themeKey) !== '0');
 renderConversations();
 renderChannels();
 
-themeToggle.addEventListener('click', () => setGreyTest(!document.body.classList.contains('theme-grey-test')));
 navItems.forEach((item) => item.addEventListener('click', () => showScreen(item.dataset.screen)));
 
 document.addEventListener('click', async (event) => {
