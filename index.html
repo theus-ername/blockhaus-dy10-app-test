@@ -8,7 +8,7 @@
   <title>Blockhaus — Discussions</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
   <main class="app-shell" aria-label="Application Blockhaus">
@@ -130,6 +130,11 @@
         <button class="member"><span class="avatar avatar-ink">J</span><span><strong>Jules</strong><small>Membre</small></span><em>Message</em></button>
         <button class="member"><span class="avatar avatar-sand">C</span><span><strong>Camille</strong><small>Modération</small></span><em>Message</em></button>
       </div>
+      <section class="admin-panel" id="admin-panel" hidden>
+        <div class="section-heading"><h2>Administration partagée</h2></div>
+        <p class="prototype-note">Tous les administrateurs validés disposent des mêmes commandes. Les discussions privées restent accessibles uniquement à leurs participants.</p>
+        <div class="admin-members" id="admin-members"></div>
+      </section>
     </section>
 
     <section class="chat-screen" id="screen-chat" aria-labelledby="chat-title" hidden>
@@ -212,8 +217,8 @@
       <button class="nav-item" data-screen="membres"><span>◉</span><strong>Membres</strong></button>
     </nav>
   </main>
-  <script src="backend-config.js?v=7"></script>
-  <script src="supabase-backend.js?v=7"></script>
-  <script src="app.js?v=7"></script>
+  <script src="backend-config.js?v=8"></script>
+  <script src="supabase-backend.js?v=8"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>
