@@ -1,10 +1,10 @@
 (function () {
   "use strict";
 
-  var VERSION = "13";
+  var VERSION = "14";
   var ROOT_ID = "bh-chat-widget";
-  var STYLE_ID = "bh-chat-widget-v13-style";
-  var FRAME_STYLE_ID = "bh-chat-frame-v13-style";
+  var STYLE_ID = "bh-chat-widget-v14-style";
+  var FRAME_STYLE_ID = "bh-chat-frame-v14-style";
   var CHATBOX_URL = window.BLOCKHAUS_CHATBOX_URL || "/chatbox/";
   var FULL_CHAT_URL = window.BLOCKHAUS_FULL_CHAT_URL || (CHATBOX_URL + (CHATBOX_URL.indexOf("?") === -1 ? "?" : "&") + "bh_desktop=1");
 
@@ -169,7 +169,16 @@
     "#chatbox_footer form{display:flex!important;align-items:center!important;flex:1!important;min-width:0!important;gap:5px!important}",
     "#message{flex:1!important;min-width:70px!important;width:auto!important;max-width:none!important;background:#fffaf0!important;color:#20211f!important;border:1px solid #8b867b!important;border-radius:18px!important;padding:8px 11px!important}",
     "#submit_button{background:#20211f!important;color:#fffaf0!important;border:0!important;border-radius:18px!important;padding:8px 11px!important}",
-    "@media(max-width:700px){#chatbox_members,#chatbox_channels{width:78px!important}#chatbox{left:79px!important}#chatbox_footer{min-height:78px!important}#chatbox,#chatbox_members,#chatbox_channels{bottom:78px!important}.chatbox-options{font-size:10px!important;margin-right:5px!important}}"
+    "body.bh-mobile-chat{height:100%!important;overflow:hidden!important;background:#66645c!important}",
+    "body.bh-mobile-chat #chatbox_header{position:fixed!important;left:0!important;right:0!important;top:0!important;height:50px!important}",
+    "body.bh-mobile-chat #chatbox_members,body.bh-mobile-chat #chatbox_channels{display:none!important}",
+    "body.bh-mobile-chat #chatbox{position:fixed!important;left:0!important;right:0!important;top:50px!important;bottom:118px!important;width:auto!important;padding:4px!important;background:#66645c!important}",
+    "body.bh-mobile-chat #chatbox .chatbox_row_1,body.bh-mobile-chat #chatbox .chatbox_row_2,body.bh-mobile-chat #chatbox .chatbox_row_3{margin:0 0 5px!important;border:1px solid #8b867b!important;border-radius:0!important;background:#706e65!important}",
+    "body.bh-mobile-chat #chatbox_footer{position:fixed!important;left:0!important;right:0!important;bottom:0!important;min-height:118px!important;padding:8px!important;align-content:flex-start!important;background:#747167!important}",
+    "body.bh-mobile-chat #chatbox_footer form{flex-basis:100%!important;order:1!important}",
+    "body.bh-mobile-chat #message{min-height:44px!important;border-radius:0!important;font-size:16px!important}",
+    "body.bh-mobile-chat #submit_button{min-height:44px!important;border-radius:0!important}",
+    "@media(max-width:700px){html,body{height:100%!important;overflow:hidden!important;background:#66645c!important}#chatbox_header{position:fixed!important;left:0!important;right:0!important;top:0!important;height:50px!important}#chatbox_members,#chatbox_channels{display:none!important}#chatbox{position:fixed!important;left:0!important;right:0!important;top:50px!important;bottom:118px!important;width:auto!important;padding:4px!important;background:#66645c!important}#chatbox .chatbox_row_1,#chatbox .chatbox_row_2,#chatbox .chatbox_row_3{margin:0 0 5px!important;border:1px solid #8b867b!important;border-radius:0!important;background:#706e65!important}#chatbox_footer{position:fixed!important;left:0!important;right:0!important;bottom:0!important;min-height:118px!important;padding:8px!important;align-content:flex-start!important;background:#747167!important}#chatbox_footer form{flex-basis:100%!important;order:1!important}#message{min-height:44px!important;border-radius:0!important;font-size:16px!important}#submit_button{min-height:44px!important;border-radius:0!important}.chatbox-options{font-size:10px!important;margin-right:5px!important}}"
   ].join("\n");
 
   var desktopCss = [
@@ -214,7 +223,8 @@
   function setupFullPage() {
     var titleLink = document.querySelector(".chatbox-title a");
     if (titleLink && /chatbox/i.test(titleLink.textContent || "")) titleLink.textContent = "Général";
-    if (window.innerWidth < 760) {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("bh_mobile") === "1" || window.innerWidth < 760) {
       document.body.classList.add("bh-mobile-chat");
       addStyle(FRAME_STYLE_ID, embeddedChatCss, document);
       return;
@@ -248,7 +258,7 @@
     root.dataset.version = VERSION;
     root.innerHTML = '<div class="bh-entry"' + (existingFrame ? '' : ' hidden') + '><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-entry-copy"><strong>Chat du Blockhaus</strong><span>La ChatBox reste disponible dans la nouvelle interface.</span></span><button class="bh-open" type="button">Rejoindre le chat</button></div>' +
       '<button class="bh-fab" type="button" aria-controls="bh-chat-panel" aria-expanded="false"><span class="bh-fab-mark">B//<i class="bh-presence"></i></span><span>Chat DY10</span></button>' +
-      '<section class="bh-panel" id="bh-chat-panel" role="dialog" aria-modal="true" aria-label="Chat du Blockhaus"><div class="bh-head"><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-head-title">Chat du Blockhaus<small>En direct · interface V13</small></span><a class="bh-head-action bh-expand" href="' + FULL_CHAT_URL + '" target="_blank" rel="noopener" aria-label="Agrandir le chat">↗</a><button class="bh-head-action bh-close" type="button" aria-label="Fermer le chat">×</button></div><iframe title="ChatBox du Blockhaus" data-bh-widget-frame="true" data-src="' + CHATBOX_URL + '?bh_widget=1"></iframe></section>';
+      '<section class="bh-panel" id="bh-chat-panel" role="dialog" aria-modal="true" aria-label="Chat du Blockhaus"><div class="bh-head"><span class="bh-mark" aria-hidden="true">B//</span><span class="bh-head-title">Chat du Blockhaus<small>En direct · interface V14</small></span><a class="bh-head-action bh-expand" href="' + FULL_CHAT_URL + '" target="_blank" rel="noopener" aria-label="Agrandir le chat">↗</a><button class="bh-head-action bh-close" type="button" aria-label="Fermer le chat">×</button></div><iframe title="ChatBox du Blockhaus" data-bh-widget-frame="true" data-src="' + CHATBOX_URL + '?bh_widget=1"></iframe></section>';
 
     if (nativeBlock && nativeBlock.parentNode) nativeBlock.parentNode.insertBefore(root, nativeBlock);
     else document.body.appendChild(root);
@@ -289,7 +299,7 @@
 
   ready(function () {
     var params = new URLSearchParams(window.location.search);
-    if (/\/chatbox\/?$/i.test(window.location.pathname) || (params.get("bh_desktop") === "1" && document.getElementById("chatbox"))) setupFullPage();
+    if (/\/chatbox\/?$/i.test(window.location.pathname) || ((params.get("bh_desktop") === "1" || params.get("bh_mobile") === "1") && document.getElementById("chatbox"))) setupFullPage();
     else setupWidget();
   });
 })();
