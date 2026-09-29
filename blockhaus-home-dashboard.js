@@ -143,7 +143,7 @@
 
   function row(label, href, icon, status, active) {
     if (!href || href === "#") href = "/";
-    return '<a class="bh-row' + (active ? " active" : "") + '" href="' + href + '"><span class="bh-row-icon" aria-hidden="true">' + icon + '</span><span class="bh-row-main">' + label + '</span>' + (status ? '<span class="bh-status">' + status + "</span>" : "") + "</a>";
+    return '<a class="bh-row" data-bh-folder="true" href="' + href + '"><span class="bh-row-icon" aria-hidden="true">' + icon + '</span><span class="bh-row-main">' + label + '</span>' + (status ? '<span class="bh-status">' + status + "</span>" : "") + '<span class="bh-chevron" aria-hidden="true">›</span></a>';
   }
 
   function fixAgendaNavigation() {
@@ -295,10 +295,15 @@
     }
     back.addEventListener("click", function () { setLevel(level - 1); });
     forward.addEventListener("click", function () { setLevel(level + 1); });
-    root.querySelectorAll(".bh-row").forEach(function (entry) {
+    root.querySelectorAll(".bh-row[data-bh-folder]").forEach(function (entry) {
       entry.addEventListener("click", function () {
         var column = Array.prototype.indexOf.call(root.querySelectorAll(".bh-col"), entry.closest(".bh-col"));
-        if (column >= 0) setLevel(column);
+        if (column < 0) return;
+        if (!(event && (event.metaKey || event.ctrlKey || event.shiftKey))) event.preventDefault();
+        root.querySelectorAll(".bh-row.active").forEach(function (item) { item.classList.remove("active"); });
+        entry.classList.add("active");
+        if (column < 3) setLevel(column + 1);
+        path.textContent = "Accueil › " + entry.querySelector(".bh-row-main").textContent.trim();
       });
     });
     hideClassicHome(root, main);
