@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.5";
+  var VERSION = "10.6";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-5-style";
+  var STYLE_ID = "bh-member-dashboard-v10-6-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -74,9 +74,10 @@
       "#" + ROOT_ID + " .bh-card-media-grid a{display:block;min-height:48px;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
       "#" + ROOT_ID + " .bh-card-media-grid img{display:block;width:100%;height:58px;object-fit:cover}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media{margin-top:14px;padding-top:0;border-top:0}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:340px;overflow-y:auto;align-content:start}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{min-height:150px}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{height:150px;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{display:flex;grid-template-columns:none;gap:0;max-height:none;overflow-x:hidden;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory;align-content:stretch;scrollbar-width:none}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid::-webkit-scrollbar{display:none}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{display:block;flex:0 0 100%;width:100%;min-height:220px;height:220px;scroll-snap-align:start;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{display:block;width:100%;height:220px;object-fit:cover}",
       "#" + ROOT_ID + " .bh-media-loading{padding:18px 0;color:#615f58;font:700 11px/1.4 monospace}",
       "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-cr-card{min-height:420px}",
@@ -547,9 +548,25 @@
         target.innerHTML = '<div class="bh-card-media-empty">Aucune image publique trouvée dans la galerie ou les sujets.</div>';
         return;
       }
-      target.innerHTML = '<div class="bh-card-media-grid">' + items.slice(0, 24).map(function (item) {
+      target.innerHTML = '<div class="bh-card-media-grid" aria-label="Galerie des images partagées">' + items.slice(0, 24).map(function (item) {
         return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
       }).join("") + '</div>';
+      var track = target.querySelector(".bh-card-media-grid");
+      if (!track || track.children.length < 2) return;
+      var index = 0;
+      var paused = false;
+      var advance = function () {
+        if (paused) return;
+        index = (index + 1) % track.children.length;
+        track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
+      };
+      var pause = function () { paused = true; };
+      var resume = function () { paused = false; };
+      track.addEventListener("mouseenter", pause);
+      track.addEventListener("mouseleave", resume);
+      track.addEventListener("focusin", pause);
+      track.addEventListener("focusout", resume);
+      root._bhActivityMediaTimer = window.setInterval(advance, 4800);
     }
     function legacyRecentImages() {
       var candidates = Array.prototype.slice.call(document.querySelectorAll(".module,.widget,.panel,[id*='recent'],[class*='recent'],[id*='image'],[class*='image']"));
