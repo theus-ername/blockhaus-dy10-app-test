@@ -7,6 +7,7 @@
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
   var ORG_STORAGE_KEY = "bh_dashboard_finder_org_v1";
+  var WIDE_STORAGE_KEY = "bh_dashboard_finder_wide_v1";
   var AGENDA_PATH = "/h1-google-agenda";
   var AGENDA_EMBED = "https://calendar.google.com/calendar/embed?src=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com&ctz=Europe%2FParis&mode=AGENDA&showTitle=0&showNav=1&showTabs=0&showCalendars=0&wkst=2";
 
@@ -69,18 +70,19 @@
       "#" + ROOT_ID + " .bh-archive-group h3{margin:0 0 10px!important;padding:0!important;color:var(--bh-ink)!important;font-size:14px!important;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-chip-list{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-chip{display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;background:#d6d1c8;border:1px solid #8d887e;font-size:12px;font-weight:700}",
-      "#" + ROOT_ID + " .bh-forum-browser{display:grid;grid-template-columns:190px 230px minmax(250px,1fr) minmax(290px,.9fr);height:520px;background:var(--bh-concrete);border:2px solid var(--bh-ink);border-top:0}",
+      "#" + ROOT_ID + " .bh-forum-browser{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(280px,1.05fr) minmax(360px,1.35fr) minmax(340px,1.1fr);height:560px;background:var(--bh-concrete);border:2px solid var(--bh-ink);border-top:0}",
+      "#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:1420px;grid-template-columns:minmax(270px,1fr) minmax(340px,1.2fr) minmax(470px,1.55fr) minmax(430px,1.25fr)}",
       "#" + ROOT_ID + " .bh-col{min-width:0;overflow:hidden;border-right:1px solid var(--bh-ink);background:rgba(244,242,236,.28)}",
       "#" + ROOT_ID + " .bh-col:last-child{border-right:0}",
       "#" + ROOT_ID + " .bh-col-title{display:flex;align-items:center;min-height:40px;padding:10px 12px;border-bottom:1px solid var(--bh-ink);background:rgba(20,21,19,.88);color:var(--bh-paper);font:900 12px/1 monospace;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-list{display:flex;flex-direction:column;height:calc(100% - 40px);overflow-y:auto;padding:8px 7px;gap:4px;scrollbar-color:var(--bh-ink) var(--bh-concrete)}",
-      "#" + ROOT_ID + " .bh-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:40px;padding:8px 9px;border:1px solid transparent;color:var(--bh-ink);font-weight:800}",
+      "#" + ROOT_ID + " .bh-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:8px;min-height:44px;padding:9px;border:1px solid transparent;color:var(--bh-ink);font-weight:800}",
       "#" + ROOT_ID + " .bh-row:hover,#" + ROOT_ID + " .bh-row:focus{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
       "#" + ROOT_ID + " .bh-row.active{background:var(--bh-ink);color:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-row[data-bh-folder]{cursor:pointer}",
       "#" + ROOT_ID + " .bh-row .bh-chevron{justify-self:end;font:900 14px/1 monospace}",
       "#" + ROOT_ID + " .bh-row-icon{width:20px;text-align:center;font:900 15px/1 monospace}",
-      "#" + ROOT_ID + " .bh-row-main{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}",
+      "#" + ROOT_ID + " .bh-row-main{min-width:0;overflow-wrap:anywhere;white-space:normal;font-size:13px;line-height:1.22}",
       "#" + ROOT_ID + " .bh-status{justify-self:end;padding:3px 5px;border:1px solid currentColor;font:900 9px/1 monospace;text-transform:uppercase;white-space:nowrap}",
       "#" + ROOT_ID + " .bh-preview{height:calc(100% - 40px);overflow-y:auto;padding:18px;background:rgba(244,242,236,.42)}",
       "#" + ROOT_ID + " .bh-preview h2{margin:0 0 8px!important;padding:0!important;color:var(--bh-ink)!important;font-size:21px!important;line-height:1.15!important}",
@@ -90,6 +92,7 @@
       "#" + ROOT_ID + " .bh-column-toolbar{display:flex;align-items:center;gap:6px;padding:7px;border-bottom:1px solid var(--bh-ink);background:#d8d2c7}",
       "#" + ROOT_ID + " .bh-column-brand{font:900 10px/1 monospace;letter-spacing:.08em;color:#3f3e39;margin-right:5px;white-space:nowrap}",
       "#" + ROOT_ID + " .bh-column-toolbar button{border:1px solid var(--bh-ink);background:var(--bh-paper);color:var(--bh-ink);font:900 12px/1 monospace;padding:6px 8px;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-column-toolbar button[data-bh-wide-toggle].active{background:var(--bh-ink);color:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-column-toolbar button:disabled{opacity:.4;cursor:default}",
       "#" + ROOT_ID + " .bh-column-path{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 11px/1 monospace;color:#3f3e39}",
       "#" + ROOT_ID + " .bh-column-info{font:700 10px/1 monospace;color:#5d5a53;white-space:nowrap}",
@@ -101,11 +104,13 @@
       "#" + ROOT_ID + " .bh-column-scroll .bh-col{scroll-snap-align:start}",
       "#" + ROOT_ID + " .bh-finder-bottom{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 12px;border:2px solid var(--bh-ink);border-top:0;background:#d8d2c7;font:800 10px/1 monospace;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-finder-bottom input{width:100%;accent-color:var(--bh-ink);cursor:pointer}",
-      "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;min-height:40px;padding:8px 9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font-weight:800;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:start;gap:8px;min-height:44px;padding:9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font-weight:800;cursor:pointer}",
       "#" + ROOT_ID + " .bh-node:hover,#" + ROOT_ID + " .bh-node:focus,#" + ROOT_ID + " .bh-node.active{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
       "#" + ROOT_ID + " .bh-node.active .bh-node-meta{color:var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-bandcamp-note{margin-top:10px;color:#5d5a53;font-size:11px;line-height:1.35}",
-      "#" + ROOT_ID + " .bh-node-meta{justify-self:end;color:#5d5a53;font:700 10px/1 monospace;white-space:nowrap}",
+      "#" + ROOT_ID + " .bh-status-left{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid currentColor;font:900 12px/1 monospace}",
+      "#" + ROOT_ID + " .bh-node-meta{justify-self:end;color:#5d5a53;font:700 10px/1.15 monospace;white-space:normal;text-align:right}",
+      "#" + ROOT_ID + " .bh-node .bh-status{display:none}",
       "#" + ROOT_ID + " .bh-topic-stats{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}",
       "#" + ROOT_ID + " .bh-topic-stat{display:inline-flex;padding:5px 7px;border:1px solid #817d74;background:#d8d2c7;font:800 10px/1 monospace;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-topic-preview{margin:14px 0;padding:12px;border-left:4px solid var(--bh-ink);background:rgba(244,242,236,.62)}",
@@ -419,9 +424,23 @@
     });
   }
 
+  function statusIcon(status) {
+    var key = normalize(status).toLowerCase();
+    if (/actif|nouveau/.test(key)) return "●";
+    if (/prio|important/.test(key)) return "★";
+    if (/date|google/.test(key)) return "◷";
+    if (/son|musique/.test(key)) return "♫";
+    if (/index/.test(key)) return "⌘";
+    if (/direct|chat/.test(key)) return "◉";
+    if (/rubrique|dossier|archive/.test(key)) return "▦";
+    if (/sujet|cr|odj|forum/.test(key)) return "▹";
+    if (/à suivre|suivre/.test(key)) return "○";
+    return "·";
+  }
+
   function row(label, href, icon, status, active) {
     if (!href || href === "#") href = "/";
-    return '<a class="bh-row" data-bh-folder="true" href="' + href + '"><span class="bh-row-icon" aria-hidden="true">' + icon + '</span><span class="bh-row-main">' + label + '</span>' + (status ? '<span class="bh-status">' + status + "</span>" : "") + '<span class="bh-chevron" aria-hidden="true">›</span></a>';
+    return '<a class="bh-row' + (active ? ' active' : '') + '" data-bh-folder="true" href="' + href + '"><span class="bh-status-left" title="' + escapeHtml(status || "dossier") + '" aria-label="' + escapeHtml(status || "dossier") + '">' + statusIcon(status || "dossier") + '</span><span class="bh-row-main">' + label + '</span><span class="bh-chevron" aria-hidden="true">›</span></a>';
   }
 
   function fixAgendaNavigation() {
@@ -530,7 +549,7 @@
       "</div>" +
       '<section class="bh-latest"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span><h2>Dernières publications</h2><p>Les sujets récents, séparés de la ChatBox. Défilement manuel, sans animation automatique.</p></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>' +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section>' +
-      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
+      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><button type="button" data-bh-wide-toggle aria-pressed="false">Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
           row("À lire", "/search?search_id=newposts", "!", "actif", true) +
@@ -566,14 +585,23 @@
 
     main.insertBefore(root, main.firstChild);
     var scroll = root.querySelector("[data-bh-col-scroll]");
+    var browser = root.querySelector(".bh-forum-browser");
     var back = root.querySelector("[data-bh-col-back]");
     var forward = root.querySelector("[data-bh-col-forward]");
+    var wideToggle = root.querySelector("[data-bh-wide-toggle]");
     var path = root.querySelector("[data-bh-col-path]");
     var bottomPath = root.querySelector("[data-bh-bottom-path]");
     var slider = root.querySelector("[data-bh-level-slider]");
     var bottomLevel = root.querySelector("[data-bh-bottom-level]");
     var columns = root.querySelectorAll(".bh-col");
     var level = 0;
+    var wide = false;
+    try { wide = window.localStorage.getItem(WIDE_STORAGE_KEY) === "1"; } catch (error) { wide = false; }
+    if (wide) {
+      browser.classList.add("bh-wide");
+      wideToggle.classList.add("active");
+      wideToggle.setAttribute("aria-pressed", "true");
+    }
     var soundArtists = [
       ["Aalpes", "/t153-aalpes"],
       ["Aneth Penny", "/t170-aneth-penny"],
@@ -674,7 +702,8 @@
     tree = organizeList(originalTree);
     var selection = [];
     function nodeButton(node, index, active) {
-      return '<button type="button" class="bh-node' + (active ? ' active' : '') + '" data-bh-node-index="' + index + '"><span class="bh-row-icon">' + escapeHtml(node.icon) + '</span><span class="bh-row-main">' + escapeHtml(node.title) + '</span>' + (node.meta ? '<span class="bh-node-meta">' + escapeHtml(node.meta) + '</span>' : '<span class="bh-node-meta"></span>') + '<span class="bh-status">' + escapeHtml(node.status || (node.children ? 'dossier' : 'ouvrir')) + '</span></button>';
+      var status = node.status || (node.children ? "dossier" : "sujet");
+      return '<button type="button" class="bh-node' + (active ? ' active' : '') + '" data-bh-node-index="' + index + '"><span class="bh-status-left" title="' + escapeHtml(status) + '" aria-label="' + escapeHtml(status) + '">' + statusIcon(status) + '</span><span class="bh-row-main">' + escapeHtml(node.title) + '</span>' + (node.meta ? '<span class="bh-node-meta">' + escapeHtml(node.meta) + '</span>' : '<span class="bh-node-meta"></span>') + '<span class="bh-status">' + escapeHtml(status) + '</span></button>';
     }
     function selectedNode(depth) {
       var list = tree;
@@ -789,6 +818,14 @@
     }
     back.addEventListener("click", function () { setLevel(level - 1); });
     forward.addEventListener("click", function () { setLevel(level + 1); });
+    wideToggle.addEventListener("click", function () {
+      wide = !wide;
+      browser.classList.toggle("bh-wide", wide);
+      wideToggle.classList.toggle("active", wide);
+      wideToggle.setAttribute("aria-pressed", wide ? "true" : "false");
+      try { window.localStorage.setItem(WIDE_STORAGE_KEY, wide ? "1" : "0"); } catch (error) { /* optional preference */ }
+      renderFinder();
+    });
     slider.addEventListener("input", function () { setLevel(Number(slider.value)); });
     renderFinder();
     hideClassicHome(root, main);
