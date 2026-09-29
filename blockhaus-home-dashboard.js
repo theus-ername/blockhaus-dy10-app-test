@@ -44,7 +44,7 @@
       "#" + ROOT_ID + " .bh-top-menu-panel a:hover,#" + ROOT_ID + " .bh-top-menu-panel a:focus{background:var(--bh-ink);color:var(--bh-paper);outline:0}",
       "body[data-bh-beta-layout='true'] #page-header{position:relative}",
       "body[data-bh-beta-layout='true'] #page-header #logo-desc #site-title,body[data-bh-beta-layout='true'] #page-header #logo-desc p{display:none!important}",
-      "#" + SITE_MENU_ID + "{display:block;position:relative;z-index:40;margin:0;padding:4px 12px;background:#928e85;border-bottom:1px solid #141513;font-family:Arial,sans-serif}",
+      "#" + SITE_MENU_ID + "{display:block;position:relative;z-index:40;margin:0;padding:4px 12px;background:#928e85;border-bottom:1px solid #141513;font-family:Arial,sans-serif;text-align:right}",
       "#" + SITE_MENU_ID + " summary{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:7px 12px;border:2px solid #141513;background:#141513;color:#f4f2ec;cursor:pointer;list-style:none;font:900 12px/1.1 Arial,sans-serif}",
       "#" + SITE_MENU_ID + " summary::-webkit-details-marker{display:none}",
       "#" + SITE_MENU_ID + " summary:before{content:'☰';font-size:17px;line-height:1}",
@@ -52,7 +52,7 @@
       "#" + SITE_MENU_ID + " .bh-site-menu-title{display:flex;flex-direction:column;gap:2px;text-align:left}",
       "#" + SITE_MENU_ID + " .bh-site-menu-title strong{font-size:12px;letter-spacing:.02em}",
       "#" + SITE_MENU_ID + " .bh-site-menu-title small{font:700 10px/1.1 Arial,sans-serif;opacity:.8}",
-      "#" + SITE_MENU_ID + " .bh-site-menu-panel{position:absolute;top:calc(100% + 5px);left:12px;width:min(300px,calc(100vw - 24px));padding:8px;background:#f4f2ec;border:2px solid #141513;box-shadow:5px 5px 0 #141513;color:#141513}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-panel{position:absolute;top:calc(100% + 5px);right:12px;width:min(300px,calc(100vw - 24px));padding:8px;background:#f4f2ec;border:2px solid #141513;box-shadow:5px 5px 0 #141513;color:#141513;text-align:left}",
       "#" + SITE_MENU_ID + " .bh-site-menu-panel a{display:block;padding:9px 8px;border-bottom:1px solid #c8c3ba;color:#141513;text-decoration:none;font-size:12px;font-weight:800}",
       "#" + SITE_MENU_ID + " .bh-site-menu-panel a:last-child{border-bottom:0}",
       "#" + SITE_MENU_ID + " .bh-site-menu-panel a:hover,#" + SITE_MENU_ID + " .bh-site-menu-panel a:focus{background:#141513;color:#f4f2ec;outline:0}",
@@ -75,9 +75,9 @@
       "#" + ROOT_ID + " .bh-card-media-grid img{display:block;width:100%;height:58px;object-fit:cover}",
       "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-cr-card{min-height:420px}",
-      "#" + ROOT_ID + " .bh-cr-card h2{font-size:24px!important;line-height:1.08!important}",
-      "#" + ROOT_ID + " .bh-cr-summary{max-height:none;margin:12px 0 12px;padding-left:22px;overflow:visible;color:#3f3e39;font-size:14px;line-height:1.45}",
-      "#" + ROOT_ID + " .bh-cr-summary li{margin:0 0 9px}",
+      "#" + ROOT_ID + " .bh-cr-card h2{font-size:28px!important;line-height:1.08!important}",
+      "#" + ROOT_ID + " .bh-cr-summary{max-height:none;margin:14px 0 12px;padding-left:24px;overflow:visible;color:#3f3e39;font-size:17px;line-height:1.5}",
+      "#" + ROOT_ID + " .bh-cr-summary li{margin:0 0 11px}",
       "#" + ROOT_ID + " .bh-actions{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-action{display:inline-flex;align-items:center;min-height:38px;padding:8px 10px;border:1px solid var(--bh-ink);background:transparent;font-weight:800;font-size:12px}",
       "#" + ROOT_ID + " .bh-action.primary{background:var(--bh-ink);color:var(--bh-paper)}",
@@ -732,7 +732,7 @@
     root.dataset.version = VERSION;
     root.setAttribute("aria-label", "Accueil des membres du Blockhaus");
     var crCardMarkup = '<article class="bh-card bh-cr-card"><span class="bh-card-number">02 / DERNIER CR</span><h2>Compte rendu de réunion</h2><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul></article>';
-    var latestSectionMarkup = '<section class="bh-latest bh-latest-priority"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span><h2>Dernières publications</h2><p>Les sujets récents, séparés de la ChatBox. Défilement automatique doux, pause au survol.</p></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>';
+    var latestSectionMarkup = '<section class="bh-latest bh-latest-priority"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>';
     root.innerHTML =
       '<header class="bh-dash-head"><div class="bh-brand"><div><h1>BLOCKHAUS DY10</h1></div></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
       '<div class="bh-priority-grid">' +
