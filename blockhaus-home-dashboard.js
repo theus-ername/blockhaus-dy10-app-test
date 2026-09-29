@@ -425,7 +425,7 @@
       }).then(function (html) {
         var doc = new DOMParser().parseFromString(html, "text/html");
         var seen = {};
-        var liveArtists = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle, h2 a[href*='/t'], a[href*='/t']")).map(function (anchor) {
+        var liveArtists = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle")).map(function (anchor) {
           var href = anchor.getAttribute("href") || "";
           var title = normalize(anchor.textContent);
           var topic = href.match(/(?:^|\/)(t\d+)(?:-|$)/i);
