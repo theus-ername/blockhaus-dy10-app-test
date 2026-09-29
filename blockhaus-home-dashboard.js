@@ -213,7 +213,7 @@
     return allLinks().map(function (anchor) {
       var href = anchor.getAttribute("href") || "";
       var match = href.match(/^\/f\d+(?:-|$)/i);
-      var title = normalize(anchor.textContent);
+      var title = cleanForumTitle(anchor.textContent);
       if (!match || !title) return null;
       var key = absoluteHref(href).split("?")[0];
       if (seen[key]) return null;
@@ -238,6 +238,15 @@
         detail: rowText ? rowText.slice(0, 220) : "Rubrique du forum Blockhaus-DY10."
       };
     }).filter(Boolean);
+  }
+
+  function cleanForumTitle(text) {
+    var title = normalize(text).replace(/[›»]\s*$/g, "").trim();
+    title = title.replace(/^(?:[!RSEAFIC*?])(?=[A-ZÀ-ÖØ-Ý])/u, "");
+    title = title.replace(/^D(?=\d)/, "");
+    title = title.replace(/(Archives)son$/i, "$1");
+    title = title.replace(/(Événements?)date$/i, "$1");
+    return title.trim();
   }
 
   function topicPreview(node, preview) {
