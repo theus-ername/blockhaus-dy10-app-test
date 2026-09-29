@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "8";
+  var VERSION = "8.1";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v8-style";
+  var STYLE_ID = "bh-member-dashboard-v81-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
   var AGENDA_PATH = "/h1-google-agenda";
@@ -88,9 +88,17 @@
       "#" + ROOT_ID + " .bh-column-scroll .bh-col{scroll-snap-align:start}",
       "#" + ROOT_ID + " .bh-finder-bottom{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 12px;border:2px solid var(--bh-ink);border-top:0;background:#d8d2c7;font:800 10px/1 monospace;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-finder-bottom input{width:100%;accent-color:var(--bh-ink);cursor:pointer}",
-      "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:40px;padding:8px 9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font-weight:800;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;min-height:40px;padding:8px 9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font-weight:800;cursor:pointer}",
       "#" + ROOT_ID + " .bh-node:hover,#" + ROOT_ID + " .bh-node:focus,#" + ROOT_ID + " .bh-node.active{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
+      "#" + ROOT_ID + " .bh-node.active .bh-node-meta{color:var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-bandcamp-note{margin-top:10px;color:#5d5a53;font-size:11px;line-height:1.35}",
+      "#" + ROOT_ID + " .bh-node-meta{justify-self:end;color:#5d5a53;font:700 10px/1 monospace;white-space:nowrap}",
+      "#" + ROOT_ID + " .bh-topic-stats{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}",
+      "#" + ROOT_ID + " .bh-topic-stat{display:inline-flex;padding:5px 7px;border:1px solid #817d74;background:#d8d2c7;font:800 10px/1 monospace;text-transform:uppercase}",
+      "#" + ROOT_ID + " .bh-topic-preview{margin:14px 0;padding:12px;border-left:4px solid var(--bh-ink);background:rgba(244,242,236,.62)}",
+      "#" + ROOT_ID + " .bh-topic-preview-label{display:block;margin-bottom:7px;font:900 10px/1 monospace;text-transform:uppercase;color:#5d5a53}",
+      "#" + ROOT_ID + " .bh-topic-excerpt{font-size:13px;line-height:1.45;color:#30312d;white-space:pre-line}",
+      "#" + ROOT_ID + " .bh-topic-author{display:block;margin-top:9px;font:700 10px/1 monospace;color:#5d5a53}",
       "a.mainmenu[data-bh-agenda-link='true']{display:inline-flex!important;align-items:center;gap:5px;font-weight:800!important}",
       "a.mainmenu[data-bh-agenda-link='true']:before{content:'▦';font:900 14px/1 monospace}",
       "#" + BETA_NAV_ID + " .bh-beta-toggle{display:inline-flex!important;align-items:center;gap:5px;padding:4px 7px!important;border:1px solid currentColor;font-weight:900!important}",
@@ -115,6 +123,116 @@
 
   function normalize(text) {
     return (text || "").replace(/\s+/g, " ").trim();
+  }
+
+  function escapeHtml(text) {
+    return String(text == null ? "" : text).replace(/[&<>\"']/g, function (character) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+    });
+  }
+
+  function absoluteHref(href) {
+    try {
+      return new URL(href, window.location.origin).pathname + new URL(href, window.location.origin).search + new URL(href, window.location.origin).hash;
+    } catch (error) {
+      return href || "#";
+    }
+  }
+
+  function numberFrom(text) {
+    var match = normalize(text).replace(/\u00a0/g, " ").match(/\d[\d .,'\u00a0]*/);
+    return match ? match[0].replace(/[^\d]/g, "") : "";
+  }
+
+  function topicRow(anchor) {
+    return anchor.closest("dl") || anchor.closest("tr") || anchor.closest("li") || anchor.parentElement;
+  }
+
+  function topicNodeFromAnchor(anchor) {
+    var row = topicRow(anchor);
+    var href = absoluteHref(anchor.getAttribute("href") || "#");
+    var title = normalize(anchor.textContent);
+    if (!title || href === "#") return null;
+    var repliesEl = row && row.querySelector(".posts, .topic-replies, [class*='posts']");
+    var viewsEl = row && row.querySelector(".views, .topic-views, [class*='views']");
+    var lastEl = row && row.querySelector(".lastpost, .last-post, [class*='lastpost']");
+    var replies = numberFrom(repliesEl && repliesEl.textContent);
+    var views = numberFrom(viewsEl && viewsEl.textContent);
+    var lastText = normalize(lastEl && lastEl.textContent);
+    var lastAnchor = lastEl && Array.prototype.slice.call(lastEl.querySelectorAll("a[href]")).find(function (candidate) {
+      return /dernier message|last post/i.test(normalize(candidate.textContent) + " " + (candidate.getAttribute("title") || ""));
+    });
+    var node = {
+      title: title,
+      icon: "D",
+      status: "sujet",
+      href: href,
+      topic: true,
+      detail: "Sujet final du forum.",
+      replies: replies,
+      views: views,
+      lastText: lastText,
+      lastHref: lastAnchor ? absoluteHref(lastAnchor.getAttribute("href")) : ""
+    };
+    var meta = [];
+    if (replies) meta.push(replies + " rép.");
+    if (views) meta.push(views + " vues");
+    node.meta = meta.join(" · ");
+    if (lastText) node.detail = "Dernier message : " + lastText;
+    return node;
+  }
+
+  function forumTopicNodes(sourceHref) {
+    var firstUrl = absoluteHref(sourceHref);
+    var pageSize = 50;
+    var maxPages = 20;
+    var all = [];
+    var seen = {};
+    function readPage(page) {
+      var url = firstUrl;
+      if (page > 0) url += (url.indexOf("?") === -1 ? "?" : "&") + "start=" + (page * pageSize);
+      return fetch(url, { credentials: "same-origin" }).then(function (response) {
+        if (!response.ok) throw new Error("forum unavailable");
+        return response.text();
+      }).then(function (html) {
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        var nodes = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle")).map(topicNodeFromAnchor).filter(Boolean);
+        nodes.forEach(function (node) {
+          var key = node.href;
+          if (!seen[key]) { seen[key] = true; all.push(node); }
+        });
+        if (nodes.length < pageSize || page + 1 >= maxPages) return all;
+        return readPage(page + 1);
+      });
+    }
+    return readPage(0);
+  }
+
+  function topicPreview(node, preview) {
+    var box = preview.querySelector("[data-bh-topic-preview]");
+    if (!box || !node || !node.topic || node.previewLoading || node.previewLoaded) return;
+    node.previewLoading = true;
+    fetch(node.href, { credentials: "same-origin" }).then(function (response) {
+      if (!response.ok) throw new Error("topic unavailable");
+      return response.text();
+    }).then(function (html) {
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var posts = Array.prototype.slice.call(doc.querySelectorAll(".postbody, .post-content, article.message .content"));
+      var body = posts.length ? posts[posts.length - 1] : null;
+      if (!body) throw new Error("post body unavailable");
+      var container = body.closest(".post, .postbody, article.message") || body;
+      var text = normalize(body.textContent).slice(0, 900);
+      var authorEl = container.querySelector(".username, .author a, .post-author a");
+      var author = normalize(authorEl && authorEl.textContent);
+      var authorLine = container.querySelector(".author, .post-author");
+      var dateText = normalize(authorLine && authorLine.textContent).replace(author, "").replace(/^par\s*/i, "").trim();
+      box.innerHTML = '<span class="bh-topic-preview-label">Aperçu du dernier post</span><div class="bh-topic-excerpt">' + escapeHtml(text || "Le dernier post ne contient pas de texte lisible.") + '</div>' + (author || dateText ? '<span class="bh-topic-author">' + escapeHtml([author, dateText].filter(Boolean).join(" · ")) + "</span>" : "");
+      node.previewLoaded = true;
+    }).catch(function () {
+      box.innerHTML = '<span class="bh-topic-preview-label">Aperçu du dernier post</span><div class="bh-topic-excerpt">Le sujet est bien identifié. Ouvre-le pour lire le message complet.</div>';
+    }).finally(function () {
+      node.previewLoading = false;
+    });
   }
 
   function allLinks() {
@@ -340,7 +458,7 @@
       ["Undertakeaway", "/t152-undertakeaway"],
       ["Urticaria records", "/t710-urticaria-records"]
     ].map(function (artist) {
-      return { title: artist[0], icon: "♪", status: "artiste", href: artist[1], detail: "Sujet, morceaux et liens de " + artist[0] + "." };
+      return { title: artist[0], icon: "♪", status: "sujet", href: artist[1], topic: true, detail: "Sujet, morceaux et liens de " + artist[0] + "." };
     });
     var tree = [
       { title: "À lire", icon: "!", status: "actif", children: [
@@ -348,25 +466,25 @@
         { title: "Sans réponse", icon: "?", status: "à suivre", href: "/search?search_id=unanswered", detail: "Sujets ouverts qui n’ont pas encore reçu de réponse." }
       ] },
       { title: "Réunions & décisions", icon: "R", status: "prio", children: [
-        { title: "Dernières réunions", icon: "D", status: "dossier", children: [
+        { title: "Dernières réunions", icon: "D", status: "dossier", forumHref: meetingHref, children: [
           { title: "Dernier ODJ", icon: "O", status: "à lire", href: odjHref || meetingHref, detail: "Ordre du jour le plus récent." },
           { title: "Dernier CR", icon: "C", status: "cr", href: reportHref || meetingHref, detail: "Compte rendu le plus récent." }
         ] },
-        { title: "Toutes les réunions", icon: "R", status: "archive", href: meetingHref, detail: "Historique complet des réunions, décisions et comptes rendus." }
+        { title: "Toutes les réunions", icon: "R", status: "archive", forumHref: meetingHref, children: [], detail: "Historique complet des réunions, décisions et comptes rendus." }
       ] },
       { title: "Événements", icon: "E", status: "date", children: [
         { title: "Agenda partagé", icon: "A", status: "google", href: agendaHref, detail: "Agenda Google du Blockhaus." },
         { title: "Événements du forum", icon: "E", status: "forum", href: eventsHref, detail: "Propositions et événements publiés sur le forum." }
       ] },
       { title: "Archives son", icon: "S", status: "son", children: [
-        { title: "The Sounds", icon: "S", status: "son", href: soundHref, detail: "Archives et liens sonores du Blockhaus.", children: soundArtists },
-        { title: "52 x Set/30'", icon: "S", status: "archive", href: setHref, detail: "Archives des sessions Set/30'." }
+        { title: "The Sounds", icon: "S", status: "son", forumHref: soundHref, href: soundHref, detail: "Archives et liens sonores du Blockhaus.", children: soundArtists },
+        { title: "52 x Set/30'", icon: "S", status: "archive", forumHref: setHref, href: setHref, detail: "Archives des sessions Set/30'.", children: [] }
       ] },
       { title: "ChatBox", icon: "C", status: "direct", href: "/chatbox/", detail: "Ouvrir le chat du Blockhaus dans sa page dédiée." }
     ];
     var selection = [];
     function nodeButton(node, index, active) {
-      return '<button type="button" class="bh-node' + (active ? ' active' : '') + '" data-bh-node-index="' + index + '"><span class="bh-row-icon">' + node.icon + '</span><span class="bh-row-main">' + node.title + '</span><span class="bh-status">' + (node.status || (node.children ? 'dossier' : 'ouvrir')) + '</span></button>';
+      return '<button type="button" class="bh-node' + (active ? ' active' : '') + '" data-bh-node-index="' + index + '"><span class="bh-row-icon">' + escapeHtml(node.icon) + '</span><span class="bh-row-main">' + escapeHtml(node.title) + '</span>' + (node.meta ? '<span class="bh-node-meta">' + escapeHtml(node.meta) + '</span>' : '<span class="bh-node-meta"></span>') + '<span class="bh-status">' + escapeHtml(node.status || (node.children ? 'dossier' : 'ouvrir')) + '</span></button>';
     }
     function selectedNode(depth) {
       var list = tree;
@@ -383,15 +501,35 @@
       if (depth === 3) {
         var item = selectedNode(2) || selectedNode(1) || selectedNode(0);
         var crumb = selection.map(function (_, i) { var n = selectedNode(i); return n ? n.title : ""; }).filter(Boolean);
-        columns[depth].innerHTML = '<div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>' + (item ? item.title : "Choisir un dossier") + '</h2><p>' + (item && item.detail ? item.detail : "Sélectionne une zone, puis une rubrique et enfin un sujet.") + '</p><p><strong>Chemin :</strong><br>' + (crumb.length ? "Accueil › " + crumb.join(" › ") : "Accueil") + '</p><div class="bh-preview-actions">' + (item && item.href ? link("Ouvrir dans le forum", item.href, true) : "") + '</div></div>';
+        var stats = item && item.topic ? '<div class="bh-topic-stats">' + (item.replies ? '<span class="bh-topic-stat">' + escapeHtml(item.replies) + ' réponses</span>' : '') + (item.views ? '<span class="bh-topic-stat">' + escapeHtml(item.views) + ' vues</span>' : '') + (item.lastText ? '<span class="bh-topic-stat">dernier message repéré</span>' : '') + '</div>' : '';
+        var topicBox = item && item.topic ? '<div class="bh-topic-preview" data-bh-topic-preview><span class="bh-topic-preview-label">Aperçu du dernier post</span><div class="bh-topic-excerpt">Lecture du sujet…</div></div>' : '';
+        columns[depth].innerHTML = '<div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>' + (item ? escapeHtml(item.title) : "Choisir un dossier") + '</h2><p>' + escapeHtml(item && item.detail ? item.detail : "Sélectionne une zone, puis une rubrique et enfin un sujet.") + '</p>' + stats + topicBox + '<p><strong>Chemin :</strong><br>' + (crumb.length ? "Accueil › " + crumb.map(escapeHtml).join(" › ") : "Accueil") + '</p><div class="bh-preview-actions">' + (item && item.href ? link("Ouvrir le sujet complet", item.href, true) : "") + (item && item.lastHref ? link("Aller au dernier post", item.lastHref, false) : "") + '</div></div>';
+        if (item && item.topic) topicPreview(item, columns[depth]);
         return;
       }
-      columns[depth].innerHTML = '<div class="bh-col-title">' + title + '</div><div class="bh-list">' + (list && list.length ? list.map(function (node, index) { return nodeButton(node, index, selection[depth] === index); }).join("") : '<p class="bh-preview">Aucun sous-dossier ici.</p>') + '</div>';
+      var parent = depth > 0 ? selectedNode(depth - 1) : null;
+      var emptyMessage = parent && parent.forumLoading ? "Lecture des sujets du forum…" : "Aucun sous-dossier ici.";
+      columns[depth].innerHTML = '<div class="bh-col-title">' + title + '</div><div class="bh-list">' + (list && list.length ? list.map(function (node, index) { return nodeButton(node, index, selection[depth] === index); }).join("") : '<p class="bh-preview">' + emptyMessage + '</p>') + '</div>';
       columns[depth].querySelectorAll("[data-bh-node-index]").forEach(function (button) {
         button.addEventListener("click", function () {
+          var node = list && list[Number(button.getAttribute("data-bh-node-index"))];
           selection = selection.slice(0, depth);
           selection[depth] = Number(button.getAttribute("data-bh-node-index"));
           renderFinder();
+          if (node && node.forumHref && !node.forumLoaded && !node.forumLoading) {
+            node.forumLoading = true;
+            if (node.children && node.children.length) renderFinder();
+            forumTopicNodes(node.forumHref).then(function (topics) {
+              if (topics.length) node.children = topics;
+              node.forumLoaded = true;
+              node.forumLoading = false;
+              renderFinder();
+            }).catch(function () {
+              node.forumLoaded = true;
+              node.forumLoading = false;
+              renderFinder();
+            });
+          }
         });
       });
     }
@@ -416,29 +554,6 @@
     forward.addEventListener("click", function () { setLevel(level + 1); });
     slider.addEventListener("input", function () { setLevel(Number(slider.value)); });
     renderFinder();
-    // Refresh the artist list from the live forum so future topics are added
-    // automatically. The seeded list keeps the navigation usable offline.
-    if (window.fetch && soundHref && soundHref !== "#") {
-      fetch(soundHref, { credentials: "same-origin" }).then(function (response) {
-        if (!response.ok) throw new Error("sound archive unavailable");
-        return response.text();
-      }).then(function (html) {
-        var doc = new DOMParser().parseFromString(html, "text/html");
-        var seen = {};
-        var liveArtists = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle")).map(function (anchor) {
-          var href = anchor.getAttribute("href") || "";
-          var title = normalize(anchor.textContent);
-          var topic = href.match(/(?:^|\/)(t\d+)(?:-|$)/i);
-          if (!topic || !title || seen[topic[1]]) return null;
-          seen[topic[1]] = true;
-          return { title: title, icon: "♪", status: "artiste", href: href, detail: "Sujet, morceaux et liens de " + title + "." };
-        }).filter(Boolean);
-        if (liveArtists.length) {
-          tree[3].children[0].children = liveArtists;
-          if (selection[0] === 3) renderFinder();
-        }
-      }).catch(function () {});
-    }
     hideClassicHome(root, main);
     hideOldCalendar();
   }
