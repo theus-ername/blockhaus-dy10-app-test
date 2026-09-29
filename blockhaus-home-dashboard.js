@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.9";
+  var VERSION = "10.10";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-9-style";
+  var STYLE_ID = "bh-member-dashboard-v10-10-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -28,7 +28,7 @@
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = [
-      "#" + ROOT_ID + "{--bh-concrete:#928e85;--bh-deep:#66645c;--bh-ink:#141513;--bh-paper:#f4f2ec;--bh-white:#fff;--bh-line:#817d74;margin:0 0 22px;font-family:Arial,sans-serif;color:var(--bh-ink)}",
+      "#" + ROOT_ID + "{--bh-concrete:#98948b;--bh-deep:#66645c;--bh-ink:#141513;--bh-paper:#f4f2ec;--bh-white:#fff;--bh-line:#817d74;margin:0 0 22px;font-family:Arial,sans-serif;color:var(--bh-ink)}",
       "#" + ROOT_ID + " *{box-sizing:border-box}",
       "#" + ROOT_ID + " a{color:inherit;text-decoration:none}",
       "#" + ROOT_ID + " .bh-dash-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 18px;background:var(--bh-ink);color:var(--bh-paper);border-bottom:5px solid var(--bh-concrete)}",
@@ -86,7 +86,8 @@
       "#" + ROOT_ID + " .bh-cr-card h2{font-size:28px!important;line-height:1.08!important}",
       "#" + ROOT_ID + " .bh-cr-summary{max-height:none;margin:10px 0 14px;padding-left:20px;overflow:visible;color:#1c1d1a;font-size:13px;line-height:1.35}",
       "#" + ROOT_ID + " .bh-cr-summary li{margin:0 0 7px}",
-      "#" + ROOT_ID + " .bh-priority-card{display:flex;flex-direction:column;min-height:360px}",
+      "#" + ROOT_ID + " .bh-priority-card{display:flex;flex-direction:column;min-height:440px;height:100%}",
+      "#" + ROOT_ID + " .bh-priority-card .bh-cr-summary{flex:1;font-size:14px;line-height:1.45}",
       "#" + ROOT_ID + " .bh-priority-card .bh-actions{margin-top:auto}",
       "#" + ROOT_ID + " .bh-actions{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-action{display:inline-flex;align-items:center;min-height:38px;padding:8px 10px;border:1px solid var(--bh-ink);background:transparent;font-weight:800;font-size:12px}",
@@ -103,9 +104,9 @@
       "#" + ROOT_ID + " .bh-latest-item small{display:block;color:#5d5a53;font:700 10px/1.3 monospace}",
       "#" + ROOT_ID + " .bh-latest-empty{padding:18px;color:#514f49;font-size:12px}",
       "#" + ROOT_ID + " .bh-utility-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:stretch;border-top:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
-      "#" + ROOT_ID + " .bh-latest{display:flex;flex-direction:column;min-width:0;border-top:0;border-bottom:0}",
+      "#" + ROOT_ID + " .bh-latest{display:flex;flex-direction:column;min-width:0;height:100%;border-top:0;border-bottom:0}",
       "#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}",
-      "#" + ROOT_ID + " .bh-latest-list{display:flex;flex-direction:column;gap:1px;flex:1;min-height:260px;max-height:380px;overflow-y:auto;overflow-x:hidden}",
+      "#" + ROOT_ID + " .bh-latest-list{display:flex;flex-direction:column;gap:1px;flex:1;height:100%;min-height:360px;max-height:none;overflow-y:auto;overflow-x:hidden}",
       "#" + ROOT_ID + " .bh-latest-item{flex:0 0 auto;min-height:62px;border-bottom:1px solid #c1bcb2}",
       "#" + ROOT_ID + " .bh-latest-priority{background:var(--bh-concrete);border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-latest-priority .bh-latest-head{padding:12px 18px 8px;border-bottom:0}",
@@ -211,7 +212,7 @@
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-list,body#mpage-body-modern #" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(2),body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(4){display:none}",
-      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start;flex-wrap:wrap}#" + ROOT_ID + " .bh-top-menu{order:0}#" + ROOT_ID + " .bh-brand{order:1;flex:1 1 180px}#" + ROOT_ID + " .bh-dash-head>div:last-child{order:2}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-priority-card{min-height:0}#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{flex-basis:100%;width:100%}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-utility-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-topic-embed{height:520px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
+      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start;flex-wrap:wrap}#" + ROOT_ID + " .bh-top-menu{order:0}#" + ROOT_ID + " .bh-brand{order:1;flex:1 1 180px}#" + ROOT_ID + " .bh-dash-head>div:last-child{order:2}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-priority-card{min-height:0;height:auto}#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{flex-basis:100%;width:100%}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-utility-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest{height:auto}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{height:auto;min-height:0;max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-topic-embed{height:520px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -864,7 +865,7 @@
     root.id = ROOT_ID;
     root.dataset.version = VERSION;
     root.setAttribute("aria-label", "Accueil des membres du Blockhaus");
-    var priorityCardMarkup = '<article class="bh-card bh-priority-card"><span class="bh-card-number">01 / PRIORITÉ</span><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("ODJ", odjSectionHref, false) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + '</div></article>';
+    var priorityCardMarkup = '<article class="bh-card bh-priority-card"><span class="bh-card-number">01 / RÉSUMÉ DU DERNIER CR</span><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("ODJ", odjSectionHref, false) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + '</div></article>';
     var latestSectionMarkup = '<section class="bh-latest bh-latest-priority"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>';
     root.innerHTML =
       '<header class="bh-dash-head"><div class="bh-brand"><div><h1>BLOCKHAUS DY10</h1></div></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
