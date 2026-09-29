@@ -369,15 +369,8 @@
     if (!betaEnabled) return;
     fixAgendaNavigation();
     buildDashboard();
-    // Keep the beta view authoritative when an older Forumactif loader is
-    // still cached and executes after this script. This is intentionally
-    // lightweight and stops once the page leaves the beta mode.
-    window.setInterval(function () {
-      if (!isBetaEnabled()) return;
-      addStyle();
-      buildVisitorArchive();
-      fixAgendaNavigation();
-      buildDashboard();
-    }, 1200);
+    // Build once only. Rebuilding on an interval reset the Finder-style
+    // horizontal scroll position and made the columns look like an
+    // automatically moving slider. Navigation is now fully manual.
   });
 })();
