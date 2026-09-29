@@ -1,19 +1,18 @@
 (function () {
   "use strict";
 
-  var VERSION = "7";
+  var VERSION = "8";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v2-style";
+  var STYLE_ID = "bh-member-dashboard-v8-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
   var AGENDA_PATH = "/h1-google-agenda";
   var AGENDA_EMBED = "https://calendar.google.com/calendar/embed?src=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com&ctz=Europe%2FParis&mode=AGENDA&showTitle=0&showNav=1&showTabs=0&showCalendars=0&wkst=2";
 
-  if (window.BLOCKHAUS_HOME_DASHBOARD_DISABLED === true) return;
-  // Only the newest loader is allowed to own the beta root. This prevents
-  // cached Forumactif copies from rebuilding the interface underneath V6.
-  if (window.BlockhausHomeDashboard && Number(window.BlockhausHomeDashboard.version || 0) >= 6) return;
-  // Lock out older async Forumactif loaders as soon as V6 arrives.
+  // A fresh V8 may replace an older cached loader, while later V7 copies are
+  // still locked out. This makes Forumactif's async script order harmless.
+  if (window.BLOCKHAUS_HOME_DASHBOARD_DISABLED === true && window.BlockhausHomeDashboard && Number(window.BlockhausHomeDashboard.version || 0) >= Number(VERSION)) return;
+  if (window.BlockhausHomeDashboard && Number(window.BlockhausHomeDashboard.version || 0) >= Number(VERSION)) return;
   window.BLOCKHAUS_HOME_DASHBOARD_DISABLED = true;
 
   function ready(callback) {
@@ -57,11 +56,11 @@
       "#" + ROOT_ID + " .bh-archive-group h3{margin:0 0 10px!important;padding:0!important;color:var(--bh-ink)!important;font-size:14px!important;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-chip-list{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-chip{display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;background:#d6d1c8;border:1px solid #8d887e;font-size:12px;font-weight:700}",
-      "#" + ROOT_ID + " .bh-forum-browser{display:grid;grid-template-columns:190px 230px minmax(250px,1fr) minmax(290px,.9fr);min-height:430px;background:var(--bh-concrete);border:2px solid var(--bh-ink);border-top:0}",
-      "#" + ROOT_ID + " .bh-col{min-width:0;border-right:1px solid var(--bh-ink);background:rgba(244,242,236,.28)}",
+      "#" + ROOT_ID + " .bh-forum-browser{display:grid;grid-template-columns:190px 230px minmax(250px,1fr) minmax(290px,.9fr);height:520px;background:var(--bh-concrete);border:2px solid var(--bh-ink);border-top:0}",
+      "#" + ROOT_ID + " .bh-col{min-width:0;overflow:hidden;border-right:1px solid var(--bh-ink);background:rgba(244,242,236,.28)}",
       "#" + ROOT_ID + " .bh-col:last-child{border-right:0}",
       "#" + ROOT_ID + " .bh-col-title{display:flex;align-items:center;min-height:40px;padding:10px 12px;border-bottom:1px solid var(--bh-ink);background:rgba(20,21,19,.88);color:var(--bh-paper);font:900 12px/1 monospace;text-transform:uppercase}",
-      "#" + ROOT_ID + " .bh-list{display:flex;flex-direction:column;padding:8px 7px;gap:4px}",
+      "#" + ROOT_ID + " .bh-list{display:flex;flex-direction:column;height:calc(100% - 40px);overflow-y:auto;padding:8px 7px;gap:4px;scrollbar-color:var(--bh-ink) var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:40px;padding:8px 9px;border:1px solid transparent;color:var(--bh-ink);font-weight:800}",
       "#" + ROOT_ID + " .bh-row:hover,#" + ROOT_ID + " .bh-row:focus{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
       "#" + ROOT_ID + " .bh-row.active{background:var(--bh-ink);color:var(--bh-paper)}",
@@ -70,7 +69,7 @@
       "#" + ROOT_ID + " .bh-row-icon{width:20px;text-align:center;font:900 15px/1 monospace}",
       "#" + ROOT_ID + " .bh-row-main{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}",
       "#" + ROOT_ID + " .bh-status{justify-self:end;padding:3px 5px;border:1px solid currentColor;font:900 9px/1 monospace;text-transform:uppercase;white-space:nowrap}",
-      "#" + ROOT_ID + " .bh-preview{padding:18px;background:rgba(244,242,236,.42)}",
+      "#" + ROOT_ID + " .bh-preview{height:calc(100% - 40px);overflow-y:auto;padding:18px;background:rgba(244,242,236,.42)}",
       "#" + ROOT_ID + " .bh-preview h2{margin:0 0 8px!important;padding:0!important;color:var(--bh-ink)!important;font-size:21px!important;line-height:1.15!important}",
       "#" + ROOT_ID + " .bh-preview p{margin:0 0 14px;color:#30312d;line-height:1.42}",
       "#" + ROOT_ID + " .bh-preview-meta{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 18px}",
@@ -105,10 +104,11 @@
       "body#mpage-body-modern #" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-agenda-frame{height:430px}",
-      "body#mpage-body-modern #" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0;border-left:0;border-right:0}",
+      "body#mpage-body-modern #" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0;border-left:0;border-right:0}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}",
+      "body#mpage-body-modern #" + ROOT_ID + " .bh-list,body#mpage-body-modern #" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(2),body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(4){display:none}",
-      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
+      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -182,7 +182,9 @@
   function hideClassicHome(root, main) {
     var siblings = Array.prototype.slice.call(main.children);
     siblings.forEach(function (element) {
-      if (element === root || element.id === BETA_NAV_ID || element.id === "tab-bar" || element.id === "to-top") return;
+      var identity = ((element.id || "") + " " + (typeof element.className === "string" ? element.className : "")).toLowerCase();
+      var containsChat = /chat/.test(identity) || !!element.querySelector('[id*="chat" i],[class*="chat" i],[href*="chatbox"]');
+      if (element === root || element.id === BETA_NAV_ID || element.id === "tab-bar" || element.id === "to-top" || containsChat) return;
       if (element.tagName === "SCRIPT" || element.tagName === "STYLE") return;
       element.setAttribute("data-bh-classic-home-hidden", "true");
       element.style.setProperty("display", "none", "important");
@@ -303,6 +305,43 @@
     var bottomLevel = root.querySelector("[data-bh-bottom-level]");
     var columns = root.querySelectorAll(".bh-col");
     var level = 0;
+    var soundArtists = [
+      ["Aalpes", "/t153-aalpes"],
+      ["Aneth Penny", "/t170-aneth-penny"],
+      ["Crimesex", "/t709-crimesex"],
+      ["DCIM", "/t145-dcim"],
+      ["Divx", "/t148-divx"],
+      ["DY10 ORCHESTRA", "/t346-dy10-orchestra"],
+      ["Elastic Systems", "/t682-elastic-systems"],
+      ["Eva Durand", "/t146-eva-durand"],
+      ["Extreme Shoegaze", "/t159-extreme-shoegaze"],
+      ["France Reverb", "/t144-france-reverb"],
+      ["Ground", "/t157-ground"],
+      ["Jencks", "/t225-jencks"],
+      ["Justine et Kyoko", "/t162-justine-et-kyoko"],
+      ["Kosmos Natur Furor", "/t167-kosmos-natur-furor"],
+      ["Nerfs", "/t226-nerfs"],
+      ["OBC", "/t165-obc"],
+      ["Omnisphynx", "/t154-omnisphynx"],
+      ["Peninsula", "/t171-peninsula"],
+      ["Phil Tremble", "/t156-phil-tremble"],
+      ["Photo ratée", "/t164-photo-ratee"],
+      ["Ravadiscs", "/t166-ravadiscs"],
+      ["Righton Rodgers", "/t168-righton-rodgers"],
+      ["Robonom", "/t143-robonom"],
+      ["Rocade", "/t158-rocade"],
+      ["Set/30'", "/t169-set-30"],
+      ["Spacemec", "/t161-spacemec"],
+      ["Struwwelpetra", "/t163-struwwelpetra"],
+      ["Subutex Social Club", "/t160-subutex-social-club"],
+      ["The Shy Accident", "/t147-the-shy-accident"],
+      ["Tutoriel", "/t149-tutoriel"],
+      ["TX", "/t155-tx"],
+      ["Undertakeaway", "/t152-undertakeaway"],
+      ["Urticaria records", "/t710-urticaria-records"]
+    ].map(function (artist) {
+      return { title: artist[0], icon: "♪", status: "artiste", href: artist[1], detail: "Sujet, morceaux et liens de " + artist[0] + "." };
+    });
     var tree = [
       { title: "À lire", icon: "!", status: "actif", children: [
         { title: "Derniers posts", icon: ">", status: "nouveau", href: "/search?search_id=newposts", detail: "Les discussions qui attendent une lecture." },
@@ -320,9 +359,10 @@
         { title: "Événements du forum", icon: "E", status: "forum", href: eventsHref, detail: "Propositions et événements publiés sur le forum." }
       ] },
       { title: "Archives son", icon: "S", status: "son", children: [
-        { title: "The Sounds", icon: "S", status: "son", href: soundHref, detail: "Archives et liens sonores du Blockhaus." },
+        { title: "The Sounds", icon: "S", status: "son", href: soundHref, detail: "Archives et liens sonores du Blockhaus.", children: soundArtists },
         { title: "52 x Set/30'", icon: "S", status: "archive", href: setHref, detail: "Archives des sessions Set/30'." }
-      ] }
+      ] },
+      { title: "ChatBox", icon: "C", status: "direct", href: "/chatbox/", detail: "Ouvrir le chat du Blockhaus dans sa page dédiée." }
     ];
     var selection = [];
     function nodeButton(node, index, active) {
@@ -376,6 +416,29 @@
     forward.addEventListener("click", function () { setLevel(level + 1); });
     slider.addEventListener("input", function () { setLevel(Number(slider.value)); });
     renderFinder();
+    // Refresh the artist list from the live forum so future topics are added
+    // automatically. The seeded list keeps the navigation usable offline.
+    if (window.fetch && soundHref && soundHref !== "#") {
+      fetch(soundHref, { credentials: "same-origin" }).then(function (response) {
+        if (!response.ok) throw new Error("sound archive unavailable");
+        return response.text();
+      }).then(function (html) {
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        var seen = {};
+        var liveArtists = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle, h2 a[href*='/t'], a[href*='/t']")).map(function (anchor) {
+          var href = anchor.getAttribute("href") || "";
+          var title = normalize(anchor.textContent);
+          var topic = href.match(/(?:^|\/)(t\d+)(?:-|$)/i);
+          if (!topic || !title || seen[topic[1]]) return null;
+          seen[topic[1]] = true;
+          return { title: title, icon: "♪", status: "artiste", href: href, detail: "Sujet, morceaux et liens de " + title + "." };
+        }).filter(Boolean);
+        if (liveArtists.length) {
+          tree[3].children[0].children = liveArtists;
+          if (selection[0] === 3) renderFinder();
+        }
+      }).catch(function () {});
+    }
     hideClassicHome(root, main);
     hideOldCalendar();
   }
