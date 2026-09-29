@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "9";
+  var VERSION = "10";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v9-style";
+  var STYLE_ID = "bh-member-dashboard-v10-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
   var ORG_STORAGE_KEY = "bh_dashboard_finder_org_v1";
@@ -31,6 +31,17 @@
       "#" + ROOT_ID + " *{box-sizing:border-box}",
       "#" + ROOT_ID + " a{color:inherit;text-decoration:none}",
       "#" + ROOT_ID + " .bh-dash-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 18px;background:var(--bh-ink);color:var(--bh-paper);border-bottom:5px solid var(--bh-concrete)}",
+      "#" + ROOT_ID + " .bh-top-menu{position:relative;flex:0 0 auto;order:-1}",
+      "#" + ROOT_ID + " .bh-top-menu summary{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:8px 10px;border:1px solid #d8d2c7;color:var(--bh-paper);cursor:pointer;font:900 11px/1 monospace;list-style:none;text-transform:uppercase}",
+      "#" + ROOT_ID + " .bh-top-menu summary::-webkit-details-marker{display:none}",
+      "#" + ROOT_ID + " .bh-top-menu summary:before{content:'☰';font-size:15px}",
+      "#" + ROOT_ID + " .bh-top-menu[open] summary{background:var(--bh-paper);color:var(--bh-ink)}",
+      "#" + ROOT_ID + " .bh-top-menu-panel{position:absolute;z-index:20;top:calc(100% + 6px);left:0;width:min(290px,calc(100vw - 28px));padding:8px;background:var(--bh-paper);border:2px solid var(--bh-ink);box-shadow:5px 5px 0 var(--bh-ink);color:var(--bh-ink)}",
+      "#" + ROOT_ID + " .bh-top-menu-title{display:block;padding:7px 8px 9px;border-bottom:1px solid var(--bh-line);font:900 12px/1.2 Arial,sans-serif;text-transform:none}",
+      "#" + ROOT_ID + " .bh-top-menu-panel a{display:block;padding:9px 8px;border-bottom:1px solid #d0cbc1;font-size:12px;font-weight:800}",
+      "#" + ROOT_ID + " .bh-top-menu-panel a:last-child{border-bottom:0}",
+      "#" + ROOT_ID + " .bh-top-menu-panel a:hover,#" + ROOT_ID + " .bh-top-menu-panel a:focus{background:var(--bh-ink);color:var(--bh-paper);outline:0}",
+      "body[data-bh-beta-layout='true'] .navbar{display:none!important}",
       "#" + ROOT_ID + " .bh-brand{display:flex;align-items:center;gap:12px;min-width:0}",
       "#" + ROOT_ID + " .bh-brand-logo{width:48px;height:48px;object-fit:cover;border:1px solid #d8d2c7;background:#000;flex:0 0 auto}",
       "#" + ROOT_ID + " .bh-dash-kicker{display:block;margin-bottom:5px;font:800 11px/1 monospace;letter-spacing:.12em;text-transform:uppercase;color:#d8d2c7}",
@@ -41,6 +52,12 @@
       "#" + ROOT_ID + " .bh-card-number{display:block;margin-bottom:15px;font:900 12px/1 monospace;color:#615f58}",
       "#" + ROOT_ID + " .bh-card h2{margin:0 0 8px!important;padding:0!important;font-size:18px!important;line-height:1.1!important;color:var(--bh-ink)!important}",
       "#" + ROOT_ID + " .bh-card p{min-height:34px;margin:0 0 12px;color:#514f49;font-size:13px;line-height:1.35}",
+      "#" + ROOT_ID + " .bh-card-media{margin:10px 0 12px;padding-top:9px;border-top:1px solid #b3aea4}",
+      "#" + ROOT_ID + " .bh-card-media-label{display:block;margin-bottom:7px;font:900 10px/1 monospace;text-transform:uppercase;color:#615f58}",
+      "#" + ROOT_ID + " .bh-card-media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}",
+      "#" + ROOT_ID + " .bh-card-media-grid a{display:block;min-height:48px;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
+      "#" + ROOT_ID + " .bh-card-media-grid img{display:block;width:100%;height:58px;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-actions{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-action{display:inline-flex;align-items:center;min-height:38px;padding:8px 10px;border:1px solid var(--bh-ink);background:transparent;font-weight:800;font-size:12px}",
       "#" + ROOT_ID + " .bh-action.primary{background:var(--bh-ink);color:var(--bh-paper)}",
@@ -126,7 +143,8 @@
       "#" + ROOT_ID + " .bh-topic-media-label{font:900 10px/1 monospace;text-transform:uppercase;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-topic-bandcamp{display:flex;align-items:center;gap:8px;padding:9px 10px;background:#d8d2c7;border:1px solid #817d74;font-size:12px;font-weight:800}",
       "#" + ROOT_ID + " .bh-topic-bandcamp:before{content:'♫';font-size:18px}",
-      "#" + ROOT_ID + " .bh-topic-embed{width:100%;height:120px;border:1px solid var(--bh-ink);background:#000}",
+      "#" + ROOT_ID + " .bh-topic-player{width:100%;max-width:100%;overflow:auto;border:1px solid var(--bh-ink);background:#000}",
+      "#" + ROOT_ID + " .bh-topic-embed{display:block;width:100%;min-width:300px;height:430px;border:0;background:#000}",
       "#" + ROOT_ID + " .bh-topic-images{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-topic-image{width:92px;height:70px;object-fit:cover;border:1px solid #817d74;background:#d8d2c7}",
       "#" + ROOT_ID + " .bh-admin-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0;padding:10px;border:1px dashed #817d74;background:#e1ddd5}",
@@ -159,7 +177,7 @@
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-list,body#mpage-body-modern #" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(2),body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(4){display:none}",
-      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-utility-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
+      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start;flex-wrap:wrap}#" + ROOT_ID + " .bh-top-menu{order:0}#" + ROOT_ID + " .bh-brand{order:1;flex:1 1 180px}#" + ROOT_ID + " .bh-dash-head>div:last-child{order:2}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-utility-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-topic-embed{height:520px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -301,6 +319,16 @@
     }
   }
 
+  function isUsefulImage(image, url) {
+    if (image && image.closest && image.closest("#logo,#logo-desc,.bh-brand,.bh-top-menu")) return false;
+    var source = (url || "") + " " + (image && (image.getAttribute("alt") || "")) + " " + (image && (image.className || ""));
+    if (/2img\.net|forumactif|smil|emoji|emot|avatar|icon|icone|spacer|blank|pixel|quote|delete|trash|info|thumb/i.test(source)) return false;
+    var width = image && Number(image.getAttribute("width") || 0);
+    var height = image && Number(image.getAttribute("height") || 0);
+    if (width && height && width < 120 && height < 120) return false;
+    return !!url;
+  }
+
   function topicMediaMarkup(body) {
     if (!body) return "";
     var bands = [];
@@ -313,14 +341,14 @@
     });
     Array.prototype.forEach.call(body.querySelectorAll("img[src]"), function (image) {
       var url = safeMediaUrl(image.getAttribute("src") || "");
-      if (url && images.indexOf(url) === -1 && !/empty|spacer|blank/i.test(url)) images.push(url);
+      if (isUsefulImage(image, url) && images.indexOf(url) === -1) images.push(url);
     });
     var html = "";
     if (bands.length) {
       html += '<div class="bh-topic-media"><span class="bh-topic-media-label">Bandcamp</span>';
       bands.slice(0, 3).forEach(function (url) {
         if (/\/EmbeddedPlayer\//i.test(url)) {
-          html += '<iframe class="bh-topic-embed" loading="lazy" title="Lecteur Bandcamp" src="' + escapeHtml(url) + '"></iframe>';
+          html += '<div class="bh-topic-player"><iframe class="bh-topic-embed" loading="lazy" title="Lecteur Bandcamp" src="' + escapeHtml(url) + '"></iframe></div>';
         } else {
           html += '<a class="bh-topic-bandcamp" target="_blank" rel="noopener" href="' + escapeHtml(url) + '">Ouvrir le lien Bandcamp</a>';
         }
@@ -328,7 +356,7 @@
       html += "</div>";
     }
     if (images.length) {
-      html += '<div class="bh-topic-media"><span class="bh-topic-media-label">Images du post</span><div class="bh-topic-images">';
+      html += '<div class="bh-topic-media"><span class="bh-topic-media-label">Images du sujet</span><div class="bh-topic-images">';
       images.slice(0, 8).forEach(function (url) {
         html += '<a target="_blank" rel="noopener" href="' + escapeHtml(url) + '"><img class="bh-topic-image" loading="lazy" src="' + escapeHtml(url) + '" alt="Image du sujet"></a>';
       });
@@ -396,6 +424,48 @@
     return items.slice(0, 12).map(function (item) {
       return '<a class="bh-latest-item" href="' + escapeHtml(item.href) + '"><strong>' + escapeHtml(item.title) + '</strong><small>' + escapeHtml(item.detail || "Publication du forum") + '</small></a>';
     }).join("");
+  }
+
+  function recentSharedMediaMarkup(imagesHref) {
+    var seen = {};
+    var items = [];
+    Array.prototype.forEach.call(document.querySelectorAll("img[src]"), function (image) {
+      var url = safeMediaUrl(image.getAttribute("src") || "");
+      if (!isUsefulImage(image, url) || seen[url]) return;
+      seen[url] = true;
+      var link = image.closest("a[href]");
+      items.push({ url: url, href: link ? absoluteHref(link.getAttribute("href") || url) : url, alt: normalize(image.getAttribute("alt") || "Image partagée") });
+    });
+    var content = !items.length ? '<span class="bh-card-media-empty">Chargement des images partagées…</span>' : '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
+      return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
+    }).join("") + '</div>';
+    return '<div data-bh-shared-media>' + content + '</div>';
+  }
+
+  function loadRecentSharedMedia(root, imagesHref) {
+    var target = root.querySelector("[data-bh-shared-media]");
+    if (!target || target.querySelector("img")) return;
+    fetch(imagesHref, { credentials: "same-origin" }).then(function (response) {
+      if (!response.ok) throw new Error("gallery unavailable");
+      return response.text();
+    }).then(function (html) {
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var seen = {};
+      var items = [];
+      Array.prototype.forEach.call(doc.querySelectorAll("img[src]"), function (image) {
+        var url = safeMediaUrl(image.getAttribute("src") || "");
+        if (!isUsefulImage(image, url) || seen[url]) return;
+        seen[url] = true;
+        var anchor = image.closest("a[href]");
+        items.push({ url: url, href: anchor ? absoluteHref(anchor.getAttribute("href") || url) : imagesHref, alt: normalize(image.getAttribute("alt") || "Image partagée") });
+      });
+      if (!items.length) throw new Error("gallery empty");
+      target.innerHTML = '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
+        return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
+      }).join("") + '</div>';
+    }).catch(function () {
+      target.innerHTML = '<span class="bh-card-media-empty">Aucune image récente détectée. <a href="' + escapeHtml(imagesHref) + '">Ouvrir la galerie</a></span>';
+    });
   }
 
   function hideLegacyRecentPosts() {
@@ -569,17 +639,22 @@
     if (!musicChips) musicChips = '<span class="bh-bandcamp-note">Les liens Bandcamp ajoutés dans les sujets du forum apparaîtront ici automatiquement.</span>';
     var logoImg = document.querySelector("#logo img");
     var logoSrc = logoImg ? (logoImg.getAttribute("src") || "") : "";
+    var topMenuMarkup = '<details class="bh-top-menu"><summary>Blockos</summary><div class="bh-top-menu-panel"><span class="bh-top-menu-title">Blockos, le forum des Grey 10</span>' +
+      link("Accueil", "/", false) + link("Calendrier", agendaHref, false) + link("Événements", eventsHref, false) +
+      link("Membres", "/memberlist", false) + link("Mon profil", "/profile?mode=editprofile", false) +
+      link("Messages privés", "/privmsg?folder=inbox", false) + link("Se déconnecter", "/login?logout=1", false) +
+      '</div></details>';
 
     var root = document.createElement("section");
     root.id = ROOT_ID;
     root.dataset.version = VERSION;
     root.setAttribute("aria-label", "Accueil des membres du Blockhaus");
     root.innerHTML =
-      '<header class="bh-dash-head"><div class="bh-brand">' + (logoSrc ? '<img class="bh-brand-logo" src="' + escapeHtml(logoSrc) + '" alt="Logo Blockhaus DY10">' : '') + '<div><span class="bh-dash-kicker">Blockhaus / DY10</span><h1>BLOCKHAUS DY10</h1></div></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
+      '<header class="bh-dash-head">' + topMenuMarkup + '<div class="bh-brand"><div><h1>BLOCKHAUS DY10</h1></div></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
       '<div class="bh-priority-grid">' +
         '<article class="bh-card"><span class="bh-card-number">01 / PRIORITÉ</span><h2>Réunions & décisions</h2><p>Ordres du jour, comptes rendus et décisions collectives.</p><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + "</div></article>" +
         '<article class="bh-card"><span class="bh-card-number">02 / À VENIR</span><h2>Agenda & événements</h2><p>Les soirées et rendez-vous à venir dans l’agenda partagé.</p><div class="bh-actions">' + link("Ouvrir l’agenda", agendaHref, true) + link("Événements du forum", "/events", false) + "</div></article>" +
-        '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Retrouver rapidement les nouveaux messages et discussions.</p><div class="bh-actions">' + link("Nouveaux messages", "/search?search_id=newposts", true) + link("Sans réponse", "/search?search_id=unanswered", false) + link("Général", generalHref, false) + "</div></article>" +
+        '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Retrouver rapidement les nouveaux messages et discussions.</p><div class="bh-card-media"><span class="bh-card-media-label">Images partagées récemment</span>' + recentSharedMediaMarkup(imagesHref) + '</div><div class="bh-actions">' + link("Nouveaux messages", "/search?search_id=newposts", true) + link("Sans réponse", "/search?search_id=unanswered", false) + link("Général", generalHref, false) + "</div></article>" +
       "</div>" +
       '<div class="bh-utility-grid"><section class="bh-latest"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span><h2>Dernières publications</h2><p>Les sujets récents, séparés de la ChatBox. Défilement automatique doux, pause au survol.</p></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>' +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
@@ -618,6 +693,7 @@
       '<div class="bh-finder-bottom" aria-label="Chemin Finder"><span data-bh-bottom-path>Accueil</span><input data-bh-level-slider type="range" min="0" max="3" value="0" step="1" aria-label="Niveau de navigation"><span data-bh-bottom-level>1 / 4</span></div>';
 
     main.insertBefore(root, main.firstChild);
+    loadRecentSharedMedia(root, imagesHref);
     var scroll = root.querySelector("[data-bh-col-scroll]");
     var browser = root.querySelector(".bh-forum-browser");
     var back = root.querySelector("[data-bh-col-back]");
