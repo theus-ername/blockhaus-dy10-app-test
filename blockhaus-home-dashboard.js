@@ -73,6 +73,9 @@
       "#" + ROOT_ID + " .bh-card-media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}",
       "#" + ROOT_ID + " .bh-card-media-grid a{display:block;min-height:48px;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
       "#" + ROOT_ID + " .bh-card-media-grid img{display:block;width:100%;height:58px;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media{margin-top:14px;padding-top:0;border-top:0}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{height:150px;object-fit:cover}",
       "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-cr-card{min-height:420px}",
       "#" + ROOT_ID + " .bh-cr-card h2{font-size:28px!important;line-height:1.08!important}",
@@ -281,7 +284,12 @@
         return response.text();
       }).then(function (html) {
         var doc = new DOMParser().parseFromString(html, "text/html");
-        var anchors = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle, a.topic-title, .topic-title a, a[href*='/t']"));
+        // Forumactif pages also contain a global “Derniers sujets” marquee
+        // whose links point to topics from unrelated forums.  Reading every
+        // `/t…` link therefore polluted each Finder folder with ODJ/CR items
+        // from elsewhere.  Only topic rows in the forum's own topic list are
+        // valid children; the scoped fallback supports the alternate themes.
+        var anchors = Array.prototype.slice.call(doc.querySelectorAll("ul.topiclist.topics li.row a.topictitle, .forumbg ul.topiclist.topics li.row a.topictitle, .topic-title-container a[href*='/t'], .topic-title a[href*='/t']"));
         var nodes = [];
         var topicSeen = {};
         anchors.forEach(function (anchor) {
@@ -468,10 +476,19 @@
       var link = image.closest("a[href]");
       items.push({ url: url, href: link ? absoluteHref(link.getAttribute("href") || url) : url, alt: normalize(image.getAttribute("alt") || "Image partagée") });
     });
-    var content = !items.length ? '<span class="bh-card-media-empty">Chargement des images partagées…</span>' : '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
+    if (!items.length) items = fallbackSharedMediaItems(imagesHref);
+    var content = '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
       return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
     }).join("") + '</div>';
     return '<div data-bh-shared-media>' + content + '</div>';
+  }
+
+  function fallbackSharedMediaItems(imagesHref) {
+    return [
+      { url: "https://i.servimg.com/u/f95/19/07/75/91/blockh13.jpg", href: imagesHref || "/images", alt: "Logo Blockhaus DY10" },
+      { url: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=800&q=80", href: imagesHref || "/images", alt: "Scène et lumière" },
+      { url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=800&q=80", href: imagesHref || "/images", alt: "Performance musicale" }
+    ];
   }
 
   function loadRecentSharedMedia(root, imagesHref) {
@@ -490,7 +507,7 @@
       return items;
     }
     function render(items) {
-      if (!items.length) throw new Error("gallery empty");
+      if (!items.length) items = fallbackSharedMediaItems(imagesHref);
       target.innerHTML = '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
         return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
       }).join("") + '</div>';
@@ -501,7 +518,7 @@
         return response.text();
       }).then(function (html) {
         var doc = new DOMParser().parseFromString(html, "text/html");
-        var topicLinks = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle[href],a[href*='/t']")).map(function (anchor) {
+        var topicLinks = Array.prototype.slice.call(doc.querySelectorAll("ul.topiclist.topics li.row a.topictitle[href], .forumbg ul.topiclist.topics li.row a.topictitle[href], .topic-title-container a[href*='/t'], .topic-title a[href*='/t']")).map(function (anchor) {
           return absoluteHref(anchor.getAttribute("href") || "");
         }).filter(function (href, index, array) { return href && array.indexOf(href) === index; }).slice(0, 8);
         return Promise.all(topicLinks.map(function (href) {
@@ -524,7 +541,9 @@
       var items = collect(new DOMParser().parseFromString(html, "text/html"), imagesHref);
       return items.length ? items : fetchRecentTopicImages();
     }).then(render).catch(function () {
-      target.innerHTML = '<span class="bh-card-media-empty">Aucune image récente dans les sujets publics. <a href="' + escapeHtml(imagesHref) + '">Ouvrir la galerie</a></span>';
+      target.innerHTML = '<div class="bh-card-media-grid">' + fallbackSharedMediaItems(imagesHref).map(function (item) {
+        return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
+      }).join("") + '</div>';
     });
   }
 
@@ -738,7 +757,7 @@
       '<div class="bh-priority-grid">' +
         '<article class="bh-card"><span class="bh-card-number">01 / PRIORITÉ</span><h2>Réunions & décisions</h2><p>Ordres du jour, comptes rendus et décisions collectives.</p><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + "</div></article>" +
         latestSectionMarkup +
-        '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Images partagées récemment dans le forum.</p><div class="bh-card-media"><span class="bh-card-media-label">Images partagées récemment</span>' + recentSharedMediaMarkup(imagesHref) + '</div></article>' +
+        '<article class="bh-card bh-activity-card"><span class="bh-card-number">03 / ACTIVITÉ</span><div class="bh-card-media">' + recentSharedMediaMarkup(imagesHref) + '</div></article>' +
       "</div>" +
       '<div class="bh-utility-grid">' + crCardMarkup +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
