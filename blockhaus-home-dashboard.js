@@ -14,8 +14,13 @@
 
   // A fresh V8 may replace an older cached loader, while later V7 copies are
   // still locked out. This makes Forumactif's async script order harmless.
-  if (window.BLOCKHAUS_HOME_DASHBOARD_DISABLED === true && window.BlockhausHomeDashboard && Number(window.BlockhausHomeDashboard.version || 0) >= Number(VERSION)) return;
-  if (window.BlockhausHomeDashboard && Number(window.BlockhausHomeDashboard.version || 0) >= Number(VERSION)) return;
+  function versionRank(value) {
+    return String(value || "0").split(".").reduce(function (rank, part, index) {
+      return rank + (Number(part) || 0) * Math.pow(1000, 2 - index);
+    }, 0);
+  }
+  if (window.BLOCKHAUS_HOME_DASHBOARD_DISABLED === true && window.BlockhausHomeDashboard && versionRank(window.BlockhausHomeDashboard.version) >= versionRank(VERSION)) return;
+  if (window.BlockhausHomeDashboard && versionRank(window.BlockhausHomeDashboard.version) >= versionRank(VERSION)) return;
   window.BLOCKHAUS_HOME_DASHBOARD_DISABLED = true;
 
   function ready(callback) {
