@@ -872,6 +872,24 @@
     if (document.getElementById("bh-public-archive") || !/^\/(?:index\.htm)?$/.test(window.location.pathname)) return;
     var main = document.getElementById("main-content") || document.getElementById("main") || document.body;
     var links = externalMusicLinks();
+    var soundArchiveLinks = [
+      ["The Sounds", "/f27-the-sounds-of-the-blockhaus-dy10"],
+      ["52 x Set/30'", "/f37-52-x-set-30-archives"],
+      ["Wave Drone Orchestra", "/f19-wave-drone-orchestra"],
+      ["DY DISQ", "/f21-blockhaus-dy-disq"],
+      ["Aalpes", "/t153-aalpes"], ["Aneth Penny", "/t170-aneth-penny"], ["Crimesex", "/t709-crimesex"],
+      ["DCIM", "/t145-dcim"], ["Divx", "/t148-divx"], ["DY10 ORCHESTRA", "/t346-dy10-orchestra"],
+      ["Elastic Systems", "/t682-elastic-systems"], ["Eva Durand", "/t146-eva-durand"], ["Extreme Shoegaze", "/t159-extreme-shoegaze"],
+      ["France Reverb", "/t144-france-reverb"], ["Ground", "/t157-ground"], ["Jencks", "/t225-jencks"],
+      ["Justine et Kyoko", "/t162-justine-et-kyoko"], ["Kosmos Natur Furor", "/t167-kosmos-natur-furor"], ["Nerfs", "/t226-nerfs"],
+      ["OBC", "/t165-obc"], ["Omnisphynx", "/t154-omnisphynx"], ["Peninsula", "/t171-peninsula"],
+      ["Phil Tremble", "/t156-phil-tremble"], ["Photo ratée", "/t164-photo-ratee"], ["Ravadiscs", "/t166-ravadiscs"],
+      ["Righton Rodgers", "/t168-righton-rodgers"], ["Robonom", "/t143-robonom"], ["Rocade", "/t158-rocade"],
+      ["Set/30'", "/t169-set-30"], ["Spacemec", "/t161-spacemec"], ["Struwwelpetra", "/t163-struwwelpetra"],
+      ["Subutex Social Club", "/t160-subutex-social-club"], ["The Shy Accident", "/t147-the-shy-accident"],
+      ["Tutoriel", "/t149-tutoriel"], ["TX", "/t155-tx"], ["Undertakeaway", "/t152-undertakeaway"], ["Urticaria records", "/t710-urticaria-records"]
+    ].map(function (item) { return { label: item[0], href: item[1] }; });
+    var archiveChips = soundArchiveLinks.map(function (item) { return chip(item.label, item.href); }).join("");
     if (!links.length) {
       links = [
         { label: "The Sounds of the Blockhaus", href: "/f27-the-sounds-of-the-blockhaus-dy10" },
@@ -883,7 +901,7 @@
     var section = document.createElement("details");
     section.id = "bh-public-archive";
     section.className = "bh-archives";
-    section.innerHTML = '<summary>Archives audio & liens <small>accès visiteur</small></summary><div class="bh-archive-groups"><section class="bh-archive-group"><h3>Bandcamp / sons du lieu</h3><div class="bh-chip-list">' + links.map(function (item) { return chip(item.label, item.href); }).join("") + '</div><p class="bh-bandcamp-note">Les archives restent en retrait de l’accueil et s’ouvrent seulement à la demande.</p></section></div>';
+    section.innerHTML = '<summary>Archives audio & liens <small>accès visiteur</small></summary><div class="bh-archive-groups"><section class="bh-archive-group"><h3>Musique & artistes</h3><div class="bh-chip-list">' + archiveChips + '</div><p class="bh-bandcamp-note">Les sujets sonores publics restent accessibles aux invités. Les liens Bandcamp détectés apparaissent aussi ici.</p></section><section class="bh-archive-group"><h3>Bandcamp / liens externes</h3><div class="bh-chip-list">' + links.map(function (item) { return chip(item.label, item.href); }).join("") + '</div></section></div>';
     main.appendChild(section);
   }
 
