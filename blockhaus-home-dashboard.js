@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.8";
+  var VERSION = "10.9";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-8-style";
+  var STYLE_ID = "bh-member-dashboard-v10-9-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -62,10 +62,9 @@
       "#" + ROOT_ID + " .bh-dash-kicker{display:block;margin-bottom:5px;font:800 11px/1 monospace;letter-spacing:.12em;text-transform:uppercase;color:#d8d2c7}",
       "#" + ROOT_ID + " h1{margin:0!important;padding:0!important;font-size:clamp(24px,4vw,42px)!important;line-height:.98!important;color:var(--bh-paper)!important;text-transform:uppercase;letter-spacing:.01em}",
       "#" + ROOT_ID + " .bh-version{font:700 10px/1 monospace;color:#d8d2c7}",
-      "#" + ROOT_ID + " .bh-priority-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--bh-line);background:var(--bh-concrete)}",
-      "#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:minmax(0,1fr) minmax(270px,1.15fr) minmax(0,1fr)}",
+      "#" + ROOT_ID + " .bh-priority-grid{display:grid;grid-template-columns:minmax(340px,.9fr) minmax(0,1.6fr);border-left:1px solid var(--bh-line);background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-card{min-width:0;padding:18px;border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line);background:var(--bh-concrete)}",
-      "#" + ROOT_ID + " .bh-card-number{display:block;margin-bottom:15px;font:900 12px/1 monospace;color:#615f58}",
+      "#" + ROOT_ID + " .bh-card-number{display:block;margin-bottom:15px;font:900 12px/1 monospace;color:#2e2d29}",
       "#" + ROOT_ID + " .bh-card h2{margin:0 0 8px!important;padding:0!important;font-size:18px!important;line-height:1.1!important;color:var(--bh-ink)!important}",
       "#" + ROOT_ID + " .bh-card p{min-height:34px;margin:0 0 12px;color:#514f49;font-size:13px;line-height:1.35}",
       "#" + ROOT_ID + " .bh-card-media{margin:10px 0 12px;padding-top:9px;border-top:1px solid #b3aea4}",
@@ -76,7 +75,7 @@
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media{margin-top:14px;padding-top:0;border-top:0}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{display:flex;grid-template-columns:none;gap:0;max-height:none;overflow-x:hidden;overflow-y:hidden;scroll-behavior:auto;scroll-snap-type:none;align-content:stretch;scrollbar-width:none;overscroll-behavior-x:none;will-change:scroll-position}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid::-webkit-scrollbar{display:none}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{display:block;flex:0 0 100%;width:100%;min-height:220px;height:clamp(220px,24vw,360px);background:var(--bh-concrete);border:1px solid #817d74;overflow:hidden}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{display:block;flex:0 0 50%;width:50%;min-height:220px;height:clamp(220px,24vw,360px);background:var(--bh-concrete);border:1px solid #817d74;overflow:hidden}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a[aria-hidden='true']{pointer-events:none}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-media-controls{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin-top:8px;color:#514f49;font:800 10px/1 monospace;text-transform:uppercase}",
@@ -85,8 +84,10 @@
       "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-cr-card{min-height:420px}",
       "#" + ROOT_ID + " .bh-cr-card h2{font-size:28px!important;line-height:1.08!important}",
-      "#" + ROOT_ID + " .bh-cr-summary{max-height:none;margin:14px 0 12px;padding-left:24px;overflow:visible;color:#3f3e39;font-size:17px;line-height:1.5}",
-      "#" + ROOT_ID + " .bh-cr-summary li{margin:0 0 11px}",
+      "#" + ROOT_ID + " .bh-cr-summary{max-height:none;margin:10px 0 14px;padding-left:20px;overflow:visible;color:#1c1d1a;font-size:13px;line-height:1.35}",
+      "#" + ROOT_ID + " .bh-cr-summary li{margin:0 0 7px}",
+      "#" + ROOT_ID + " .bh-priority-card{display:flex;flex-direction:column;min-height:360px}",
+      "#" + ROOT_ID + " .bh-priority-card .bh-actions{margin-top:auto}",
       "#" + ROOT_ID + " .bh-actions{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-action{display:inline-flex;align-items:center;min-height:38px;padding:8px 10px;border:1px solid var(--bh-ink);background:transparent;font-weight:800;font-size:12px}",
       "#" + ROOT_ID + " .bh-action.primary{background:var(--bh-ink);color:var(--bh-paper)}",
@@ -210,7 +211,7 @@
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-list,body#mpage-body-modern #" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(2),body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(4){display:none}",
-      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start;flex-wrap:wrap}#" + ROOT_ID + " .bh-top-menu{order:0}#" + ROOT_ID + " .bh-brand{order:1;flex:1 1 180px}#" + ROOT_ID + " .bh-dash-head>div:last-child{order:2}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-utility-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-topic-embed{height:520px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
+      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start;flex-wrap:wrap}#" + ROOT_ID + " .bh-top-menu{order:0}#" + ROOT_ID + " .bh-brand{order:1;flex:1 1 180px}#" + ROOT_ID + " .bh-dash-head>div:last-child{order:2}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-priority-card{min-height:0}#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{flex-basis:100%;width:100%}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-utility-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-topic-embed{height:520px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -568,15 +569,17 @@
       var lastTime = 0;
       var speed = 66;
       var loopWidth = 0;
+      var itemWidth = 0;
       function metrics() {
         loopWidth = Math.max(1, track.scrollWidth / 2);
+        itemWidth = track.children[0] ? track.children[0].getBoundingClientRect().width : track.clientWidth;
         return Math.max(1, loopWidth - track.clientWidth);
       }
       function syncSlider() {
         var max = metrics();
         var current = ((track.scrollLeft % loopWidth) + loopWidth) % loopWidth;
         slider.value = String(Math.round(Math.min(1, current / max) * 1000));
-        var index = Math.min(carouselItems.length, Math.floor((current + track.clientWidth / 2) / Math.max(1, track.clientWidth)) + 1);
+        var index = Math.min(carouselItems.length, Math.floor((current + track.clientWidth / 2) / Math.max(1, itemWidth)) + 1);
         position.textContent = index + " / " + carouselItems.length;
       }
       var advance = function (timestamp) {
@@ -828,6 +831,7 @@
     var meetingHref = findLink([/^REUNIONS$/i, /réunions/i], "/f39-reunions");
     var agendaHref = AGENDA_PATH;
     var oldAgendaHref = findLink([/^Calendrier$/i, /calendrier Forumactif/i], "/calendar");
+    var odjSectionHref = findLink([/^Ordres du jour$/i, /ordres du jour/i], "/f17-ordres-du-jour");
     var odjHref = findLink([/^ODJ\b/i, /ordre(?:s)? du jour/i]);
     var reportHref = findLink([/compte(?:s)? rendu(?:s)?/i, /^CR\b/i]);
     var generalHref = findLink([/^Discussion générale$/i, /^Général$/i]);
@@ -860,16 +864,15 @@
     root.id = ROOT_ID;
     root.dataset.version = VERSION;
     root.setAttribute("aria-label", "Accueil des membres du Blockhaus");
-    var crCardMarkup = '<article class="bh-card bh-cr-card"><span class="bh-card-number">02 / DERNIER CR</span><h2>Compte rendu de réunion</h2><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul></article>';
+    var priorityCardMarkup = '<article class="bh-card bh-priority-card"><span class="bh-card-number">01 / PRIORITÉ</span><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("ODJ", odjSectionHref, false) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + '</div></article>';
     var latestSectionMarkup = '<section class="bh-latest bh-latest-priority"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>';
     root.innerHTML =
       '<header class="bh-dash-head"><div class="bh-brand"><div><h1>BLOCKHAUS DY10</h1></div></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
       '<div class="bh-priority-grid">' +
-        '<article class="bh-card"><span class="bh-card-number">01 / PRIORITÉ</span><h2>Réunions & décisions</h2><p>Ordres du jour, comptes rendus et décisions collectives.</p><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + "</div></article>" +
-        latestSectionMarkup +
+        priorityCardMarkup +
         '<article class="bh-card bh-activity-card"><span class="bh-card-number">03 / ACTIVITÉ</span><div class="bh-card-media">' + recentSharedMediaMarkup(imagesHref) + '</div></article>' +
       "</div>" +
-      '<div class="bh-utility-grid">' + crCardMarkup +
+      '<div class="bh-utility-grid">' + latestSectionMarkup +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
       '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><button type="button" data-bh-wide-toggle aria-pressed="false">Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
