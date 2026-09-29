@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.4";
+  var VERSION = "10.5";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-4-style";
+  var STYLE_ID = "bh-member-dashboard-v10-5-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -558,6 +558,23 @@
       });
       return source ? collect(source, imagesHref) : [];
     }
+    function fetchForumGallery() {
+      // Forumactif's "Images partagées récemment" module is hydrated client-side.
+      // The HTML page is intentionally empty; its JSON endpoint is the canonical
+      // source and includes the original topic URL/title for each uploaded image.
+      return fetch(imagesHref + "?json=1&page=0", { credentials: "same-origin" }).then(function (response) {
+        if (!response.ok) throw new Error("gallery json unavailable");
+        return response.json();
+      }).then(function (payload) {
+        var rows = Array.isArray(payload) && Array.isArray(payload[0]) ? payload[0] : [];
+        return rows.map(function (item) {
+          var url = safeMediaUrl(item && item.url);
+          var href = absoluteHref(item && item.topic_url || imagesHref);
+          if (!url) return null;
+          return { url: url, href: href, alt: normalize(item && item.topic_title || "Image partagée") };
+        }).filter(Boolean);
+      });
+    }
     function fetchRecentTopicImages() {
       return fetch("/search?search_id=newposts", { credentials: "same-origin" }).then(function (response) {
         if (!response.ok) throw new Error("recent topics unavailable");
@@ -581,13 +598,12 @@
       });
     }
     var legacyItems = legacyRecentImages();
-    fetch(imagesHref, { credentials: "same-origin" }).then(function (response) {
-      if (!response.ok) throw new Error("gallery unavailable");
-      return response.text();
-    }).then(function (html) {
-      var items = collect(new DOMParser().parseFromString(html, "text/html"), imagesHref);
+    fetchForumGallery().then(function (items) {
       return items.length ? items : fetchRecentTopicImages();
-    }).then(function (items) { return items.length ? items : legacyItems; }).then(render).catch(function () { render(legacyItems); });
+    }).then(function (items) { return items.length ? items : legacyItems; }).then(render).catch(function () {
+      // Keep the older module/topic fallbacks for forums with the gallery disabled.
+      render(legacyItems);
+    });
   }
 
   function hideLegacyRecentPosts() {
