@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "5";
+  var VERSION = "6";
   var ROOT_ID = "bh-member-dashboard";
   var STYLE_ID = "bh-member-dashboard-v2-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
@@ -10,6 +10,9 @@
   var AGENDA_EMBED = "https://calendar.google.com/calendar/embed?src=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com&ctz=Europe%2FParis&mode=AGENDA&showTitle=0&showNav=1&showTabs=0&showCalendars=0&wkst=2";
 
   if (window.BLOCKHAUS_HOME_DASHBOARD_DISABLED === true) return;
+  // Only the newest loader is allowed to own the beta root. This prevents
+  // cached Forumactif copies from rebuilding the interface underneath V6.
+  if (window.BlockhausHomeDashboard && Number(window.BlockhausHomeDashboard.version || 0) >= 6) return;
 
   function ready(callback) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", callback, { once: true });
@@ -76,7 +79,7 @@
       "#" + ROOT_ID + " .bh-column-toolbar button:disabled{opacity:.4;cursor:default}",
       "#" + ROOT_ID + " .bh-column-path{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 11px/1 monospace;color:#3f3e39}",
       "#" + ROOT_ID + " .bh-column-info{font:700 10px/1 monospace;color:#5d5a53;white-space:nowrap}",
-      "#" + ROOT_ID + " .bh-column-scroll{overflow-x:scroll;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:auto;scrollbar-color:var(--bh-ink) var(--bh-concrete);padding-bottom:4px}",
+      "#" + ROOT_ID + " .bh-column-scroll{overflow-x:auto;overflow-y:hidden;scroll-behavior:auto;scroll-snap-type:none;scrollbar-width:auto;scrollbar-color:var(--bh-ink) var(--bh-concrete);padding-bottom:4px}",
       "#" + ROOT_ID + " .bh-column-scroll::-webkit-scrollbar{height:14px}",
       "#" + ROOT_ID + " .bh-column-scroll::-webkit-scrollbar-track{background:var(--bh-concrete);border-top:1px solid var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-column-scroll::-webkit-scrollbar-thumb{background:var(--bh-ink);border:3px solid var(--bh-concrete)}",
@@ -292,7 +295,7 @@
     function setLevel(next) {
       level = Math.max(0, Math.min(3, next));
       var width = scroll.scrollWidth / 4;
-      scroll.scrollTo({ left: width * level, behavior: "smooth" });
+      scroll.scrollLeft = width * level;
       back.disabled = level === 0;
       forward.disabled = level === 3;
       path.textContent = ["Accueil › Zones › À lire", "Accueil › Zones › Réunions", "Accueil › Rubriques › Sujets utiles", "Accueil › Aperçu › Archive"][level];
