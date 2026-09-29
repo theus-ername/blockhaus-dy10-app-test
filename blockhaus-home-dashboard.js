@@ -202,7 +202,11 @@
   }
 
   function buildDashboard() {
-    if (document.getElementById(ROOT_ID) || !isMember()) return;
+    if (!isMember()) return;
+    // Replace an older beta container left in the DOM after its Forumactif
+    // script was disabled; the classic forum markup remains untouched.
+    var previousRoot = document.getElementById(ROOT_ID);
+    if (previousRoot) previousRoot.remove();
     if (!/^\/(?:index\.htm)?$/.test(window.location.pathname) && window.BLOCKHAUS_HOME_DASHBOARD_PREVIEW !== true) return;
 
     var main = document.getElementById("main-content") || document.getElementById("main") || document.body;
