@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.10";
+  var VERSION = "10.11";
   var ROOT_ID = "bh-member-dashboard";
   var STYLE_ID = "bh-member-dashboard-v10-10-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
@@ -115,7 +115,7 @@
       "#" + ROOT_ID + " .bh-latest-item{flex:0 0 auto;min-height:62px;border-bottom:1px solid #c1bcb2}",
       "#" + ROOT_ID + " .bh-latest-priority{background:var(--bh-concrete);border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-latest-priority .bh-latest-head{padding:12px 18px 8px;border-bottom:0}",
-      "#" + ROOT_ID + " .bh-latest-priority .bh-latest-list{min-height:0;max-height:205px}",
+      "#" + ROOT_ID + " .bh-latest-priority .bh-latest-list{min-height:0;max-height:none;height:100%}",
       "#" + ROOT_ID + " .bh-cr-card{background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-agenda{display:grid;grid-template-columns:1fr;min-width:0;background:var(--bh-deep);color:var(--bh-paper);border:0}",
       "#" + ROOT_ID + " .bh-agenda-copy{padding:16px 18px;border-right:0;border-bottom:1px solid var(--bh-line)}",
