@@ -296,7 +296,7 @@
     back.addEventListener("click", function () { setLevel(level - 1); });
     forward.addEventListener("click", function () { setLevel(level + 1); });
     root.querySelectorAll(".bh-row[data-bh-folder]").forEach(function (entry) {
-      entry.addEventListener("click", function () {
+      entry.addEventListener("click", function (event) {
         var column = Array.prototype.indexOf.call(root.querySelectorAll(".bh-col"), entry.closest(".bh-col"));
         if (column < 0) return;
         if (!(event && (event.metaKey || event.ctrlKey || event.shiftKey))) event.preventDefault();
