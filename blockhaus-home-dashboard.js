@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.2";
+  var VERSION = "10.3";
   var ROOT_ID = "bh-member-dashboard";
   var STYLE_ID = "bh-member-dashboard-v10-1-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
@@ -270,48 +270,87 @@
     return node;
   }
 
-  function forumTopicNodes(sourceHref) {
+  function forumChildNodes(sourceHref) {
     var firstUrl = absoluteHref(sourceHref);
     var pageSize = 50;
     var maxPages = 10;
-    var all = [];
-    var seen = {};
+    var forums = [];
+    var topics = [];
+    var forumSeen = {};
+    var topicSeen = {};
+    function addForum(anchor) {
+      var href = absoluteHref(anchor.getAttribute("href") || "#").split("?")[0];
+      var title = cleanForumTitle(anchor.textContent);
+      if (!title || !/^\/(?:c|f)\d+(?:-|$)/i.test(href) || forumSeen[href]) return;
+      forumSeen[href] = true;
+      var row = anchor.closest("dl") || anchor.closest("tr") || anchor.closest("li") || anchor.parentElement;
+      var topicsEl = row && row.querySelector(".topics, [class*='topics']");
+      var postsEl = row && row.querySelector(".posts, [class*='posts']");
+      var meta = [];
+      var countTopics = numberFrom(topicsEl && topicsEl.textContent);
+      var countPosts = numberFrom(postsEl && postsEl.textContent);
+      if (countTopics) meta.push(countTopics + " sujets");
+      if (countPosts) meta.push(countPosts + " rép.");
+      forums.push({
+        title: title,
+        icon: /^\/c\d+/i.test(href) ? "C" : "F",
+        status: /^\/c\d+/i.test(href) ? "catégorie" : "rubrique",
+        href: href,
+        forumHref: href,
+        children: [],
+        meta: meta.join(" · "),
+        detail: "Arborescence réelle du forum Blockhaus-DY10."
+      });
+    }
+    function addTopic(anchor) {
+      var node = topicNodeFromAnchor(anchor);
+      if (!node || topicSeen[node.href]) return;
+      topicSeen[node.href] = true;
+      topics.push(node);
+    }
     function readPage(page) {
       var url = firstUrl;
       if (page > 0) url += (url.indexOf("?") === -1 ? "?" : "&") + "start=" + (page * pageSize);
-      return fetch(url, { credentials: "same-origin" }).then(function (response) {
+      return fetch(url, { credentials: "same-origin", redirect: "follow" }).then(function (response) {
         if (!response.ok) throw new Error("forum unavailable");
+        if (/\/login(?:\?|$)/i.test(response.url || "")) {
+          var protectedError = new Error("forum protected");
+          protectedError.code = "protected";
+          throw protectedError;
+        }
         return response.text();
       }).then(function (html) {
         var doc = new DOMParser().parseFromString(html, "text/html");
-        // Forumactif pages also contain a global “Derniers sujets” marquee
-        // whose links point to topics from unrelated forums.  Reading every
-        // `/t…` link therefore polluted each Finder folder with ODJ/CR items
-        // from elsewhere.  Only topic rows in the forum's own topic list are
-        // valid children; the scoped fallback supports the alternate themes.
-        var anchors = Array.prototype.slice.call(doc.querySelectorAll("ul.topiclist.topics li.row a.topictitle, .forumbg ul.topiclist.topics li.row a.topictitle, .topic-title-container a[href*='/t'], .topic-title a[href*='/t']"));
-        var nodes = [];
-        var topicSeen = {};
-        anchors.forEach(function (anchor) {
-          var node = topicNodeFromAnchor(anchor);
-          if (!node || topicSeen[node.href]) return;
-          topicSeen[node.href] = true;
-          nodes.push(node);
-        });
-        nodes.forEach(function (node) {
-          var key = node.href;
-          if (!seen[key]) { seen[key] = true; all.push(node); }
-        });
-        if (nodes.length < pageSize || page + 1 >= maxPages) return all;
+        // Never read every /f or /t link in the document: Forumactif themes
+        // repeat global navigation and the “Derniers sujets” marquee. These
+        // selectors stay inside the forum/category lists only.
+        var forumAnchors = Array.prototype.slice.call(doc.querySelectorAll(
+          ".forabg a.forumtitle, .forumbg a.forumtitle, .forumlist a.forumtitle, dl.icon a.forumtitle"
+        ));
+        var topicAnchors = Array.prototype.slice.call(doc.querySelectorAll(
+          "ul.topiclist.topics li.row a.topictitle, .forumbg ul.topiclist.topics li.row a.topictitle, .topic-title-container a[href*='/t'], .topic-title a[href*='/t']"
+        ));
+        forumAnchors.forEach(addForum);
+        topicAnchors.forEach(addTopic);
+        var pageTopics = topicAnchors.map(function (anchor) { return topicNodeFromAnchor(anchor); }).filter(Boolean);
+        if (pageTopics.length < pageSize || page + 1 >= maxPages) {
+          return { forums: forums, topics: topics, children: forums.concat(topics) };
+        }
         return readPage(page + 1);
       });
     }
     return readPage(0);
   }
 
+  // Kept as a compatibility alias for older cached calls. New Finder code
+  // must use forumChildNodes so child forums are never mistaken for topics.
+  function forumTopicNodes(sourceHref) {
+    return forumChildNodes(sourceHref).then(function (result) { return result.topics; });
+  }
+
   function forumIndexNodes() {
     var seen = {};
-    return allLinks().map(function (anchor) {
+    var nodes = allLinks().map(function (anchor) {
       var href = anchor.getAttribute("href") || "";
       var match = href.match(/^\/f\d+(?:-|$)/i);
       var title = cleanForumTitle(anchor.textContent);
@@ -339,6 +378,22 @@
         detail: rowText ? rowText.slice(0, 220) : "Rubrique du forum Blockhaus-DY10."
       };
     }).filter(Boolean);
+    // The homepage does not expose protected branches to guests. Keep the
+    // canonical roots in the index so the Finder can request them lazily with
+    // the current session instead of silently losing them.
+    [
+      ["DY10", "/c1-dy10", "catégorie"],
+      ["REUNIONS", "/f39-reunions", "rubrique"],
+      ["The Sounds", "/f27-the-sounds-of-the-blockhaus-dy10", "rubrique"],
+      ["52 x Set/30' Archives", "/f37-52-x-set-30-archives", "rubrique"],
+      ["Collège son", "/f4-college-son", "rubrique"]
+    ].forEach(function (item) {
+      var key = item[1];
+      if (seen[key]) return;
+      seen[key] = true;
+      nodes.push({ title: item[0], icon: item[2] === "catégorie" ? "C" : "F", status: item[2], href: key, forumHref: key, children: [], detail: "Branche canonique du forum Blockhaus-DY10." });
+    });
+    return nodes;
   }
 
   function cleanForumTitle(text) {
@@ -770,7 +825,6 @@
           row("Agenda", agendaHref, "A", "google", false) +
           row("Archives son", soundHref, "S", "", false) +
           row("Archives image", imagesHref, "I", "", false) +
-          row("ChatBox", "/chatbox/", "C", "direct", false) +
         "</div></div>" +
         '<div class="bh-col"><div class="bh-col-title">2. Rubriques</div><div class="bh-list">' +
           row("Derniers posts", "/search?search_id=newposts", ">", "nouveau", true) +
@@ -858,24 +912,17 @@
         { title: "Derniers posts", icon: ">", status: "nouveau", href: "/search?search_id=newposts", detail: "Les discussions qui attendent une lecture." },
         { title: "Sans réponse", icon: "?", status: "à suivre", href: "/search?search_id=unanswered", detail: "Sujets ouverts qui n’ont pas encore reçu de réponse." }
       ] },
-      { title: "Réunions & décisions", icon: "R", status: "prio", children: [
-        { title: "Dernières réunions", icon: "D", status: "dossier", forumHref: meetingHref, children: [
-          { title: "Dernier ODJ", icon: "O", status: "à lire", href: odjHref || meetingHref, detail: "Ordre du jour le plus récent." },
-          { title: "Dernier CR", icon: "C", status: "cr", href: reportHref || meetingHref, detail: "Compte rendu le plus récent." }
-        ] },
-        { title: "Toutes les réunions", icon: "R", status: "archive", forumHref: meetingHref, children: [], detail: "Historique complet des réunions, décisions et comptes rendus." }
-      ] },
+      { title: "Réunions & décisions", icon: "R", status: "prio", forumHref: meetingHref, children: [], detail: "Blockhaus-DY10 › DY10 › REUNIONS. Sous-forums et sujets réels chargés depuis le forum." },
       { title: "Événements", icon: "E", status: "date", children: [
         { title: "Agenda partagé", icon: "A", status: "google", href: agendaHref, detail: "Agenda Google du Blockhaus." },
         { title: "Ancien agenda", icon: "A", status: "archive", href: oldAgendaHref, detail: "Calendrier historique Forumactif conservé comme archive technique." },
         { title: "Événements du forum", icon: "E", status: "forum", href: eventsHref, detail: "Propositions et événements publiés sur le forum." }
       ] },
       { title: "Archives son", icon: "S", status: "son", children: [
-        { title: "The Sounds", icon: "S", status: "son", forumHref: soundHref, href: soundHref, detail: "Archives et liens sonores du Blockhaus.", children: soundArtists },
+        { title: "The Sounds", icon: "S", status: "son", forumHref: soundHref, href: soundHref, detail: "Archives et liens sonores du Blockhaus.", children: [] },
         { title: "52 x Set/30'", icon: "S", status: "archive", forumHref: setHref, href: setHref, detail: "Archives des sessions Set/30'.", children: [] }
       ] },
-      { title: "Forum complet", icon: "F", status: "index", detail: "Toutes les rubriques visibles depuis Accueil / DY10.", children: forumIndex },
-      { title: "ChatBox", icon: "C", status: "direct", href: "/chatbox/", detail: "Ouvrir le chat du Blockhaus dans sa page dédiée." }
+      { title: "Forum complet", icon: "F", status: "index", detail: "Arborescence complète : catégories, forums, sous-forums et sujets.", children: forumIndex }
     ];
     function nodeKey(node) {
       return String(node && (node.forumHref || node.href || node.title) || "").split("?")[0].toLowerCase();
@@ -984,7 +1031,7 @@
         return;
       }
       var parent = depth > 0 ? selectedNode(depth - 1) : null;
-      var emptyMessage = parent && parent.forumLoading ? "Lecture des sujets du forum…" : "Aucun sous-dossier ici.";
+      var emptyMessage = parent && parent.forumLoading ? "Lecture des forums et sujets…" : (parent && parent.forumError ? (parent.forumError === "protected" ? "Cette branche est réservée aux membres connectés." : "Branche indisponible pour le moment.") : "Aucun sous-dossier ici.");
       columns[depth].innerHTML = '<div class="bh-col-title">' + title + '</div><div class="bh-list">' + (list && list.length ? list.map(function (node, index) { return nodeButton(node, index, selection[depth] === index); }).join("") : '<p class="bh-preview">' + emptyMessage + '</p>') + '</div>';
       columns[depth].querySelectorAll("[data-bh-node-index]").forEach(function (button) {
         button.addEventListener("click", function () {
@@ -995,15 +1042,16 @@
           if (node && node.forumHref && !node.forumLoaded && !node.forumLoading) {
             node.forumLoading = true;
             if (node.children && node.children.length) renderFinder();
-            forumTopicNodes(node.forumHref).then(function (topics) {
-              if (topics.length) {
-                node._bhAllChildren = topics;
-                node.children = organizeList(topics);
-              }
+            forumChildNodes(node.forumHref).then(function (result) {
+              var children = result.children || [];
+              node._bhAllChildren = children;
+              node.children = organizeList(children);
+              node.forumError = "";
               node.forumLoaded = true;
               node.forumLoading = false;
               renderFinder();
-            }).catch(function () {
+            }).catch(function (error) {
+              node.forumError = error && error.code ? error.code : "unavailable";
               node.forumLoaded = true;
               node.forumLoading = false;
               renderFinder();
