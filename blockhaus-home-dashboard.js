@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "3";
+  var VERSION = "4";
   var ROOT_ID = "bh-member-dashboard";
   var STYLE_ID = "bh-member-dashboard-v2-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
@@ -71,9 +71,11 @@
       "#" + ROOT_ID + " .bh-preview-meta{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 18px}",
       "#" + ROOT_ID + " .bh-preview-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}",
       "#" + ROOT_ID + " .bh-column-toolbar{display:flex;align-items:center;gap:6px;padding:7px;border-bottom:1px solid var(--bh-ink);background:#d8d2c7}",
+      "#" + ROOT_ID + " .bh-column-brand{font:900 10px/1 monospace;letter-spacing:.08em;color:#3f3e39;margin-right:5px;white-space:nowrap}",
       "#" + ROOT_ID + " .bh-column-toolbar button{border:1px solid var(--bh-ink);background:var(--bh-paper);color:var(--bh-ink);font:900 12px/1 monospace;padding:6px 8px;cursor:pointer}",
       "#" + ROOT_ID + " .bh-column-toolbar button:disabled{opacity:.4;cursor:default}",
       "#" + ROOT_ID + " .bh-column-path{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 11px/1 monospace;color:#3f3e39}",
+      "#" + ROOT_ID + " .bh-column-info{font:700 10px/1 monospace;color:#5d5a53;white-space:nowrap}",
       "#" + ROOT_ID + " .bh-column-scroll{overflow-x:auto;scroll-behavior:smooth}",
       "#" + ROOT_ID + " .bh-column-scroll .bh-forum-browser{min-width:980px}",
       "#" + ROOT_ID + " .bh-bandcamp-note{margin-top:10px;color:#5d5a53;font-size:11px;line-height:1.35}",
@@ -93,7 +95,7 @@
       "body#mpage-body-modern #" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0;border-left:0;border-right:0}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(2),body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(4){display:none}",
-      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-col:nth-child(4){display:none}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-version{padding-top:4px}}"
+      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-col:nth-child(4){display:none}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -244,7 +246,7 @@
         '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Retrouver rapidement les nouveaux messages et discussions.</p><div class="bh-actions">' + link("Nouveaux messages", "/search?search_id=newposts", true) + link("Sans réponse", "/search?search_id=unanswered", false) + link("Général", generalHref, false) + "</div></article>" +
       "</div>" +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier Forumactif reste conservé comme archive technique.</p>' + link("Voir en grand", agendaHref, true) + '</div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section>' +
-      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><span class="bh-column-path" data-bh-col-path>Accueil / À lire</span><input data-bh-col-slider type="range" min="0" max="3" value="0" aria-label="Niveau de navigation"></div>' +
+      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><input data-bh-col-slider type="range" min="0" max="3" value="0" aria-label="Niveau de navigation"><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
           row("À lire", "/search?search_id=newposts", "!", "actif", true) +
@@ -291,7 +293,7 @@
       slider.value = String(level);
       back.disabled = level === 0;
       forward.disabled = level === 3;
-      path.textContent = ["Accueil / À lire", "Zones / Réunions", "Rubriques / Sujets utiles", "Aperçu / Archive"][level];
+      path.textContent = ["Accueil › Zones › À lire", "Accueil › Zones › Réunions", "Accueil › Rubriques › Sujets utiles", "Accueil › Aperçu › Archive"][level];
     }
     back.addEventListener("click", function () { setLevel(level - 1); });
     forward.addEventListener("click", function () { setLevel(level + 1); });
@@ -310,7 +312,14 @@
     if (document.getElementById("bh-public-archive") || !/^\/(?:index\.htm)?$/.test(window.location.pathname)) return;
     var main = document.getElementById("main-content") || document.getElementById("main") || document.body;
     var links = externalMusicLinks();
-    if (!links.length) return;
+    if (!links.length) {
+      links = [
+        { label: "The Sounds of the Blockhaus", href: "/f27-the-sounds-of-the-blockhaus-dy10" },
+        { label: "52 x Set/30' Archives", href: "/f37-52-x-set-30-archives" },
+        { label: "Collège son", href: "/f4-college-son" },
+        { label: "Galerie images", href: "/images" }
+      ];
+    }
     var section = document.createElement("details");
     section.id = "bh-public-archive";
     section.className = "bh-archives";
