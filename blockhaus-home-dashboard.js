@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "6";
+  var VERSION = "7";
   var ROOT_ID = "bh-member-dashboard";
   var STYLE_ID = "bh-member-dashboard-v2-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
@@ -87,6 +87,10 @@
       "#" + ROOT_ID + " .bh-column-scroll::-webkit-scrollbar-thumb{background:var(--bh-ink);border:3px solid var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-column-scroll .bh-forum-browser{min-width:980px}",
       "#" + ROOT_ID + " .bh-column-scroll .bh-col{scroll-snap-align:start}",
+      "#" + ROOT_ID + " .bh-finder-bottom{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 12px;border:2px solid var(--bh-ink);border-top:0;background:#d8d2c7;font:800 10px/1 monospace;text-transform:uppercase}",
+      "#" + ROOT_ID + " .bh-finder-bottom input{width:100%;accent-color:var(--bh-ink);cursor:pointer}",
+      "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:40px;padding:8px 9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font-weight:800;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-node:hover,#" + ROOT_ID + " .bh-node:focus,#" + ROOT_ID + " .bh-node.active{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
       "#" + ROOT_ID + " .bh-bandcamp-note{margin-top:10px;color:#5d5a53;font-size:11px;line-height:1.35}",
       "a.mainmenu[data-bh-agenda-link='true']{display:inline-flex!important;align-items:center;gap:5px;font-weight:800!important}",
       "a.mainmenu[data-bh-agenda-link='true']:before{content:'▦';font:900 14px/1 monospace}",
@@ -104,7 +108,7 @@
       "body#mpage-body-modern #" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0;border-left:0;border-right:0}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(2),body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(4){display:none}",
-      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-col:nth-child(4){display:none}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}}"
+      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;min-height:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -286,37 +290,92 @@
       '<details class="bh-archives"><summary>Archives musicales & visuelles <small>niveau secondaire</small></summary><div class="bh-archive-groups">' +
         '<section class="bh-archive-group"><h3>Musique & son</h3><div class="bh-chip-list">' + chip("The Sounds", soundHref) + chip("Set/30'", setHref) + chip("Wave Drone Orchestra", waveHref) + chip("DY DISQ", disqHref) + musicChips + "</div></section>" +
         '<section class="bh-archive-group"><h3>Images & vidéo</h3><div class="bh-chip-list">' + chip("Dernières images", imagesHref) + chip("Atelier vidéo", videoHref) + chip("Documentaires", documentaryHref) + "</div></section>" +
-      "</div></details>";
+      "</div></details>" +
+      '<div class="bh-finder-bottom" aria-label="Chemin Finder"><span data-bh-bottom-path>Accueil</span><input data-bh-level-slider type="range" min="0" max="3" value="0" step="1" aria-label="Niveau de navigation"><span data-bh-bottom-level>1 / 4</span></div>';
 
     main.insertBefore(root, main.firstChild);
     var scroll = root.querySelector("[data-bh-col-scroll]");
     var back = root.querySelector("[data-bh-col-back]");
     var forward = root.querySelector("[data-bh-col-forward]");
     var path = root.querySelector("[data-bh-col-path]");
+    var bottomPath = root.querySelector("[data-bh-bottom-path]");
+    var slider = root.querySelector("[data-bh-level-slider]");
+    var bottomLevel = root.querySelector("[data-bh-bottom-level]");
+    var columns = root.querySelectorAll(".bh-col");
     var level = 0;
-    function setLevel(next) {
-      level = Math.max(0, Math.min(3, next));
-      var width = scroll.scrollWidth / 4;
-      scroll.scrollLeft = width * level;
+    var tree = [
+      { title: "À lire", icon: "!", status: "actif", children: [
+        { title: "Derniers posts", icon: ">", status: "nouveau", href: "/search?search_id=newposts", detail: "Les discussions qui attendent une lecture." },
+        { title: "Sans réponse", icon: "?", status: "à suivre", href: "/search?search_id=unanswered", detail: "Sujets ouverts qui n’ont pas encore reçu de réponse." }
+      ] },
+      { title: "Réunions & décisions", icon: "R", status: "prio", children: [
+        { title: "Dernières réunions", icon: "D", status: "dossier", children: [
+          { title: "Dernier ODJ", icon: "O", status: "à lire", href: odjHref || meetingHref, detail: "Ordre du jour le plus récent." },
+          { title: "Dernier CR", icon: "C", status: "cr", href: reportHref || meetingHref, detail: "Compte rendu le plus récent." }
+        ] },
+        { title: "Toutes les réunions", icon: "R", status: "archive", href: meetingHref, detail: "Historique complet des réunions, décisions et comptes rendus." }
+      ] },
+      { title: "Événements", icon: "E", status: "date", children: [
+        { title: "Agenda partagé", icon: "A", status: "google", href: agendaHref, detail: "Agenda Google du Blockhaus." },
+        { title: "Événements du forum", icon: "E", status: "forum", href: eventsHref, detail: "Propositions et événements publiés sur le forum." }
+      ] },
+      { title: "Archives son", icon: "S", status: "son", children: [
+        { title: "The Sounds", icon: "S", status: "son", href: soundHref, detail: "Archives et liens sonores du Blockhaus." },
+        { title: "52 x Set/30'", icon: "S", status: "archive", href: setHref, detail: "Archives des sessions Set/30'." }
+      ] }
+    ];
+    var selection = [];
+    function nodeButton(node, index, active) {
+      return '<button type="button" class="bh-node' + (active ? ' active' : '') + '" data-bh-node-index="' + index + '"><span class="bh-row-icon">' + node.icon + '</span><span class="bh-row-main">' + node.title + '</span><span class="bh-status">' + (node.status || (node.children ? 'dossier' : 'ouvrir')) + '</span></button>';
+    }
+    function selectedNode(depth) {
+      var list = tree;
+      var node = null;
+      for (var i = 0; i <= depth; i += 1) {
+        node = list && list[selection[i]];
+        list = node && node.children;
+      }
+      return node;
+    }
+    function renderColumn(depth) {
+      var list = depth === 0 ? tree : (selectedNode(depth - 1) || {}).children;
+      var title = ["1. Zones", "2. Rubriques", "3. Sujets utiles"][depth] || "4. Aperçu";
+      if (depth === 3) {
+        var item = selectedNode(2) || selectedNode(1) || selectedNode(0);
+        var crumb = selection.map(function (_, i) { var n = selectedNode(i); return n ? n.title : ""; }).filter(Boolean);
+        columns[depth].innerHTML = '<div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>' + (item ? item.title : "Choisir un dossier") + '</h2><p>' + (item && item.detail ? item.detail : "Sélectionne une zone, puis une rubrique et enfin un sujet.") + '</p><p><strong>Chemin :</strong><br>' + (crumb.length ? "Accueil › " + crumb.join(" › ") : "Accueil") + '</p><div class="bh-preview-actions">' + (item && item.href ? link("Ouvrir dans le forum", item.href, true) : "") + '</div></div>';
+        return;
+      }
+      columns[depth].innerHTML = '<div class="bh-col-title">' + title + '</div><div class="bh-list">' + (list && list.length ? list.map(function (node, index) { return nodeButton(node, index, selection[depth] === index); }).join("") : '<p class="bh-preview">Aucun sous-dossier ici.</p>') + '</div>';
+      columns[depth].querySelectorAll("[data-bh-node-index]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          selection = selection.slice(0, depth);
+          selection[depth] = Number(button.getAttribute("data-bh-node-index"));
+          renderFinder();
+        });
+      });
+    }
+    function renderFinder() {
+      renderColumn(0); renderColumn(1); renderColumn(2); renderColumn(3);
+      var crumb = selection.map(function (_, i) { var n = selectedNode(i); return n ? n.title : ""; }).filter(Boolean);
+      path.textContent = crumb.length ? "Accueil › " + crumb.join(" › ") : "Accueil › Zones";
+      bottomPath.textContent = path.textContent;
+      level = Math.min(3, selection.length);
+      slider.value = String(level);
+      bottomLevel.textContent = (level + 1) + " / 4";
       back.disabled = level === 0;
       forward.disabled = level === 3;
-      path.textContent = ["Accueil › Zones › À lire", "Accueil › Zones › Réunions", "Accueil › Rubriques › Sujets utiles", "Accueil › Aperçu › Archive"][level];
+      scroll.scrollLeft = (scroll.scrollWidth / 4) * level;
+    }
+    function setLevel(next) {
+      level = Math.max(0, Math.min(3, next));
+      selection = selection.slice(0, level);
+      renderFinder();
     }
     back.addEventListener("click", function () { setLevel(level - 1); });
     forward.addEventListener("click", function () { setLevel(level + 1); });
-    root.querySelectorAll(".bh-row[data-bh-folder]").forEach(function (entry) {
-      entry.addEventListener("click", function (event) {
-        var column = Array.prototype.indexOf.call(root.querySelectorAll(".bh-col"), entry.closest(".bh-col"));
-        if (column < 0) return;
-        // Keep the real Forumactif link usable. The previous handler cancelled
-        // navigation, which made every folder appear dead. Column movement is
-        // handled only by the explicit back/forward controls.
-        root.querySelectorAll(".bh-row.active").forEach(function (item) { item.classList.remove("active"); });
-        entry.classList.add("active");
-        if (column < 3) setLevel(column + 1);
-        path.textContent = "Accueil › " + entry.querySelector(".bh-row-main").textContent.trim();
-      });
-    });
+    slider.addEventListener("input", function () { setLevel(Number(slider.value)); });
+    renderFinder();
     hideClassicHome(root, main);
     hideOldCalendar();
   }
