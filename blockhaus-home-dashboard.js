@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.6";
+  var VERSION = "10.7";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-6-style";
+  var STYLE_ID = "bh-member-dashboard-v10-7-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -74,10 +74,11 @@
       "#" + ROOT_ID + " .bh-card-media-grid a{display:block;min-height:48px;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
       "#" + ROOT_ID + " .bh-card-media-grid img{display:block;width:100%;height:58px;object-fit:cover}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media{margin-top:14px;padding-top:0;border-top:0}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{display:flex;grid-template-columns:none;gap:0;max-height:none;overflow-x:hidden;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x mandatory;align-content:stretch;scrollbar-width:none}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{display:flex;grid-template-columns:none;gap:0;max-height:none;overflow-x:hidden;overflow-y:hidden;scroll-behavior:auto;scroll-snap-type:none;align-content:stretch;scrollbar-width:none;overscroll-behavior-x:none;will-change:scroll-position}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid::-webkit-scrollbar{display:none}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{display:block;flex:0 0 100%;width:100%;min-height:220px;height:220px;scroll-snap-align:start;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{display:block;width:100%;height:220px;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{display:block;flex:0 0 100%;width:100%;min-height:220px;height:clamp(220px,24vw,360px);background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a[aria-hidden='true']{pointer-events:none}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#d8d2c7}",
       "#" + ROOT_ID + " .bh-media-loading{padding:18px 0;color:#615f58;font:700 11px/1.4 monospace}",
       "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-cr-card{min-height:420px}",
@@ -548,25 +549,41 @@
         target.innerHTML = '<div class="bh-card-media-empty">Aucune image publique trouvée dans la galerie ou les sujets.</div>';
         return;
       }
-      target.innerHTML = '<div class="bh-card-media-grid" aria-label="Galerie des images partagées">' + items.slice(0, 24).map(function (item) {
-        return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
-      }).join("") + '</div>';
+      var carouselItems = items.slice(0, 24);
+      var itemMarkup = function (item, clone) {
+        var cloneAttrs = clone ? ' aria-hidden="true" tabindex="-1"' : '';
+        var alt = clone ? '' : escapeHtml(item.alt);
+        return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"' + cloneAttrs + '><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + alt + '"></a>';
+      };
+      var originalMarkup = carouselItems.map(function (item) { return itemMarkup(item, false); }).join("");
+      var cloneMarkup = carouselItems.map(function (item) { return itemMarkup(item, true); }).join("");
+      target.innerHTML = '<div class="bh-card-media-grid" aria-label="Galerie des images partagées">' + originalMarkup + cloneMarkup + '</div>';
       var track = target.querySelector(".bh-card-media-grid");
       if (!track || track.children.length < 2) return;
-      var index = 0;
+      if (root._bhActivityMediaRaf) window.cancelAnimationFrame(root._bhActivityMediaRaf);
       var paused = false;
-      var advance = function () {
-        if (paused) return;
-        index = (index + 1) % track.children.length;
-        track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
+      var lastTime = 0;
+      var speed = 24;
+      var advance = function (timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        var elapsed = Math.min(64, timestamp - lastTime);
+        lastTime = timestamp;
+        if (!paused && document.visibilityState !== "hidden") {
+          track.scrollLeft += speed * elapsed / 1000;
+          var loopWidth = track.scrollWidth / 2;
+          if (loopWidth > 0 && track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
+        }
+        root._bhActivityMediaRaf = window.requestAnimationFrame(advance);
       };
       var pause = function () { paused = true; };
       var resume = function () { paused = false; };
       track.addEventListener("mouseenter", pause);
       track.addEventListener("mouseleave", resume);
       track.addEventListener("focusin", pause);
-      track.addEventListener("focusout", resume);
-      root._bhActivityMediaTimer = window.setInterval(advance, 4800);
+      track.addEventListener("focusout", function (event) {
+        if (!event.relatedTarget || !track.contains(event.relatedTarget)) resume();
+      });
+      root._bhActivityMediaRaf = window.requestAnimationFrame(advance);
     }
     function legacyRecentImages() {
       var candidates = Array.prototype.slice.call(document.querySelectorAll(".module,.widget,.panel,[id*='recent'],[class*='recent'],[id*='image'],[class*='image']"));
