@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.7";
+  var VERSION = "10.8";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-7-style";
+  var STYLE_ID = "bh-member-dashboard-v10-8-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -62,23 +62,25 @@
       "#" + ROOT_ID + " .bh-dash-kicker{display:block;margin-bottom:5px;font:800 11px/1 monospace;letter-spacing:.12em;text-transform:uppercase;color:#d8d2c7}",
       "#" + ROOT_ID + " h1{margin:0!important;padding:0!important;font-size:clamp(24px,4vw,42px)!important;line-height:.98!important;color:var(--bh-paper)!important;text-transform:uppercase;letter-spacing:.01em}",
       "#" + ROOT_ID + " .bh-version{font:700 10px/1 monospace;color:#d8d2c7}",
-      "#" + ROOT_ID + " .bh-priority-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--bh-line);background:var(--bh-paper)}",
+      "#" + ROOT_ID + " .bh-priority-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--bh-line);background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:minmax(0,1fr) minmax(270px,1.15fr) minmax(0,1fr)}",
-      "#" + ROOT_ID + " .bh-card{min-width:0;padding:18px;border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-card{min-width:0;padding:18px;border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line);background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-card-number{display:block;margin-bottom:15px;font:900 12px/1 monospace;color:#615f58}",
       "#" + ROOT_ID + " .bh-card h2{margin:0 0 8px!important;padding:0!important;font-size:18px!important;line-height:1.1!important;color:var(--bh-ink)!important}",
       "#" + ROOT_ID + " .bh-card p{min-height:34px;margin:0 0 12px;color:#514f49;font-size:13px;line-height:1.35}",
       "#" + ROOT_ID + " .bh-card-media{margin:10px 0 12px;padding-top:9px;border-top:1px solid #b3aea4}",
       "#" + ROOT_ID + " .bh-card-media-label{display:block;margin-bottom:7px;font:900 10px/1 monospace;text-transform:uppercase;color:#615f58}",
       "#" + ROOT_ID + " .bh-card-media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-height:340px;overflow:auto;scrollbar-color:var(--bh-ink) #d8d2c7}",
-      "#" + ROOT_ID + " .bh-card-media-grid a{display:block;min-height:48px;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
+      "#" + ROOT_ID + " .bh-card-media-grid a{display:block;min-height:48px;background:var(--bh-concrete);border:1px solid #817d74;overflow:hidden}",
       "#" + ROOT_ID + " .bh-card-media-grid img{display:block;width:100%;height:58px;object-fit:cover}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media{margin-top:14px;padding-top:0;border-top:0}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{display:flex;grid-template-columns:none;gap:0;max-height:none;overflow-x:hidden;overflow-y:hidden;scroll-behavior:auto;scroll-snap-type:none;align-content:stretch;scrollbar-width:none;overscroll-behavior-x:none;will-change:scroll-position}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid::-webkit-scrollbar{display:none}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{display:block;flex:0 0 100%;width:100%;min-height:220px;height:clamp(220px,24vw,360px);background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{display:block;flex:0 0 100%;width:100%;min-height:220px;height:clamp(220px,24vw,360px);background:var(--bh-concrete);border:1px solid #817d74;overflow:hidden}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a[aria-hidden='true']{pointer-events:none}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#d8d2c7}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:var(--bh-concrete)}",
+      "#" + ROOT_ID + " .bh-media-controls{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin-top:8px;color:#514f49;font:800 10px/1 monospace;text-transform:uppercase}",
+      "#" + ROOT_ID + " .bh-media-controls input{width:100%;accent-color:var(--bh-ink);cursor:pointer}",
       "#" + ROOT_ID + " .bh-media-loading{padding:18px 0;color:#615f58;font:700 11px/1.4 monospace}",
       "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-cr-card{min-height:420px}",
@@ -89,12 +91,12 @@
       "#" + ROOT_ID + " .bh-action{display:inline-flex;align-items:center;min-height:38px;padding:8px 10px;border:1px solid var(--bh-ink);background:transparent;font-weight:800;font-size:12px}",
       "#" + ROOT_ID + " .bh-action.primary{background:var(--bh-ink);color:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-action:hover,#" + ROOT_ID + " .bh-action:focus{background:var(--bh-concrete);color:var(--bh-ink);outline:2px solid var(--bh-ink);outline-offset:1px}",
-      "#" + ROOT_ID + " .bh-latest{display:grid;grid-template-columns:190px minmax(0,1fr);border-top:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line);background:var(--bh-paper)}",
+      "#" + ROOT_ID + " .bh-latest{display:grid;grid-template-columns:190px minmax(0,1fr);border-top:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line);background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-latest-head{padding:12px 18px 8px;border-right:0;background:transparent}",
       "#" + ROOT_ID + " .bh-latest-head h2{margin:0 0 7px!important;padding:0!important;font-size:18px!important;line-height:1.05!important;color:var(--bh-ink)!important}",
       "#" + ROOT_ID + " .bh-latest-head p{margin:0;color:#514f49;font-size:12px;line-height:1.35}",
       "#" + ROOT_ID + " .bh-latest-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;max-height:170px;overflow:auto;background:transparent;scrollbar-color:var(--bh-ink) #d8d2c7}",
-      "#" + ROOT_ID + " .bh-latest-item{display:block;min-height:76px;padding:11px 13px;background:var(--bh-paper);border-bottom:1px solid #c1bcb2;color:var(--bh-ink)}",
+      "#" + ROOT_ID + " .bh-latest-item{display:block;min-height:76px;padding:11px 13px;background:var(--bh-concrete);border-bottom:1px solid #c1bcb2;color:var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-latest-item:hover,#" + ROOT_ID + " .bh-latest-item:focus{background:#fff;outline:2px solid var(--bh-ink);outline-offset:-2px}",
       "#" + ROOT_ID + " .bh-latest-item strong{display:block;margin-bottom:5px;font-size:13px;line-height:1.15}",
       "#" + ROOT_ID + " .bh-latest-item small{display:block;color:#5d5a53;font:700 10px/1.3 monospace}",
@@ -104,10 +106,10 @@
       "#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-latest-list{display:flex;flex-direction:column;gap:1px;flex:1;min-height:260px;max-height:380px;overflow-y:auto;overflow-x:hidden}",
       "#" + ROOT_ID + " .bh-latest-item{flex:0 0 auto;min-height:62px;border-bottom:1px solid #c1bcb2}",
-      "#" + ROOT_ID + " .bh-latest-priority{background:var(--bh-paper);border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-latest-priority{background:var(--bh-concrete);border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-latest-priority .bh-latest-head{padding:12px 18px 8px;border-bottom:0}",
       "#" + ROOT_ID + " .bh-latest-priority .bh-latest-list{min-height:0;max-height:205px}",
-      "#" + ROOT_ID + " .bh-cr-card{background:var(--bh-paper)}",
+      "#" + ROOT_ID + " .bh-cr-card{background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-agenda{display:grid;grid-template-columns:1fr;min-width:0;background:var(--bh-deep);color:var(--bh-paper);border:0}",
       "#" + ROOT_ID + " .bh-agenda-copy{padding:16px 18px;border-right:0;border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-agenda-copy h2{margin:0 0 8px!important;padding:0!important;color:var(--bh-paper)!important;font-size:18px!important}",
@@ -119,7 +121,7 @@
       "#" + ROOT_ID + " .bh-archives summary:after{content:'+';font:900 22px/1 monospace}",
       "#" + ROOT_ID + " .bh-archives[open] summary:after{content:'−'}",
       "#" + ROOT_ID + " .bh-archive-groups{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bh-line);border-top:1px solid var(--bh-line)}",
-      "#" + ROOT_ID + " .bh-archive-group{padding:16px;background:var(--bh-paper)}",
+      "#" + ROOT_ID + " .bh-archive-group{padding:16px;background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-archive-group h3{margin:0 0 10px!important;padding:0!important;color:var(--bh-ink)!important;font-size:14px!important;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-chip-list{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-chip{display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;background:#d6d1c8;border:1px solid #8d887e;font-size:12px;font-weight:700}",
@@ -142,7 +144,7 @@
       "#" + ROOT_ID + " .bh-preview p{margin:0 0 14px;color:#30312d;line-height:1.42}",
       "#" + ROOT_ID + " .bh-preview-meta{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 18px}",
       "#" + ROOT_ID + " .bh-preview-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}",
-      "#" + ROOT_ID + " .bh-column-toolbar{display:flex;align-items:center;gap:6px;padding:7px;border-bottom:1px solid var(--bh-ink);background:#d8d2c7}",
+      "#" + ROOT_ID + " .bh-column-toolbar{display:flex;align-items:center;gap:6px;padding:7px;border-bottom:1px solid var(--bh-ink);background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-column-brand{font:900 10px/1 monospace;letter-spacing:.08em;color:#3f3e39;margin-right:5px;white-space:nowrap}",
       "#" + ROOT_ID + " .bh-column-toolbar button{border:1px solid var(--bh-ink);background:var(--bh-paper);color:var(--bh-ink);font:900 12px/1 monospace;padding:6px 8px;cursor:pointer}",
       "#" + ROOT_ID + " .bh-column-toolbar button[data-bh-wide-toggle].active{background:var(--bh-ink);color:var(--bh-paper)}",
@@ -155,7 +157,7 @@
       "#" + ROOT_ID + " .bh-column-scroll::-webkit-scrollbar-thumb{background:var(--bh-ink);border:3px solid var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-column-scroll .bh-forum-browser{min-width:980px}",
       "#" + ROOT_ID + " .bh-column-scroll .bh-col{scroll-snap-align:start}",
-      "#" + ROOT_ID + " .bh-finder-bottom{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 12px;border:2px solid var(--bh-ink);border-top:0;background:#d8d2c7;font:800 10px/1 monospace;text-transform:uppercase}",
+      "#" + ROOT_ID + " .bh-finder-bottom{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 12px;border:2px solid var(--bh-ink);border-top:0;background:var(--bh-concrete);font:800 10px/1 monospace;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-finder-bottom input{width:100%;accent-color:var(--bh-ink);cursor:pointer}",
       "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:start;gap:8px;min-height:44px;padding:9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font-weight:800;cursor:pointer}",
       "#" + ROOT_ID + " .bh-node:hover,#" + ROOT_ID + " .bh-node:focus,#" + ROOT_ID + " .bh-node.active{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
@@ -329,10 +331,10 @@
         // repeat global navigation and the “Derniers sujets” marquee. These
         // selectors stay inside the forum/category lists only.
         var forumAnchors = Array.prototype.slice.call(doc.querySelectorAll(
-          ".forabg a.forumtitle, .forumbg a.forumtitle, .forumlist a.forumtitle, dl.icon a.forumtitle"
+          ".forabg a.forumtitle, .forumbg a.forumtitle, .forumlist a.forumtitle, dl.icon a.forumtitle, #main-content a.forumtitle, #main a.forumtitle"
         ));
         var topicAnchors = Array.prototype.slice.call(doc.querySelectorAll(
-          "ul.topiclist.topics li.row a.topictitle, .forumbg ul.topiclist.topics li.row a.topictitle, .topic-title-container a[href*='/t'], .topic-title a[href*='/t']"
+          "ul.topiclist.topics li.row a.topictitle, ul.topiclist.topics li.row a[href*='/t'], .forumbg ul.topiclist.topics li.row a.topictitle, .forumbg ul.topiclist.topics li.row a[href*='/t'], .topic-title-container a[href*='/t'], .topic-title a[href*='/t'], #main-content ul.topiclist a[href*='/t'], #main ul.topiclist a[href*='/t']"
         ));
         forumAnchors.forEach(addForum);
         topicAnchors.forEach(addTopic);
@@ -557,32 +559,45 @@
       };
       var originalMarkup = carouselItems.map(function (item) { return itemMarkup(item, false); }).join("");
       var cloneMarkup = carouselItems.map(function (item) { return itemMarkup(item, true); }).join("");
-      target.innerHTML = '<div class="bh-card-media-grid" aria-label="Galerie des images partagées">' + originalMarkup + cloneMarkup + '</div>';
+      target.innerHTML = '<div class="bh-card-media-grid" aria-label="Galerie des images partagées">' + originalMarkup + cloneMarkup + '</div><div class="bh-media-controls"><span>Défilement</span><input data-bh-media-slider type="range" min="0" max="1000" value="0" step="1" aria-label="Défiler les images"><span data-bh-media-position>1 / ' + carouselItems.length + '</span></div>';
       var track = target.querySelector(".bh-card-media-grid");
       if (!track || track.children.length < 2) return;
       if (root._bhActivityMediaRaf) window.cancelAnimationFrame(root._bhActivityMediaRaf);
-      var paused = false;
+      var slider = target.querySelector("[data-bh-media-slider]");
+      var position = target.querySelector("[data-bh-media-position]");
       var lastTime = 0;
-      var speed = 24;
+      var speed = 66;
+      var loopWidth = 0;
+      function metrics() {
+        loopWidth = Math.max(1, track.scrollWidth / 2);
+        return Math.max(1, loopWidth - track.clientWidth);
+      }
+      function syncSlider() {
+        var max = metrics();
+        var current = ((track.scrollLeft % loopWidth) + loopWidth) % loopWidth;
+        slider.value = String(Math.round(Math.min(1, current / max) * 1000));
+        var index = Math.min(carouselItems.length, Math.floor((current + track.clientWidth / 2) / Math.max(1, track.clientWidth)) + 1);
+        position.textContent = index + " / " + carouselItems.length;
+      }
       var advance = function (timestamp) {
         if (!lastTime) lastTime = timestamp;
         var elapsed = Math.min(64, timestamp - lastTime);
         lastTime = timestamp;
-        if (!paused && document.visibilityState !== "hidden") {
-          track.scrollLeft += speed * elapsed / 1000;
-          var loopWidth = track.scrollWidth / 2;
-          if (loopWidth > 0 && track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
-        }
+        track.scrollLeft += speed * elapsed / 1000;
+        if (!loopWidth) metrics();
+        if (loopWidth > 0 && track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
+        syncSlider();
         root._bhActivityMediaRaf = window.requestAnimationFrame(advance);
       };
-      var pause = function () { paused = true; };
-      var resume = function () { paused = false; };
-      track.addEventListener("mouseenter", pause);
-      track.addEventListener("mouseleave", resume);
-      track.addEventListener("focusin", pause);
-      track.addEventListener("focusout", function (event) {
-        if (!event.relatedTarget || !track.contains(event.relatedTarget)) resume();
+      slider.addEventListener("input", function () {
+        var max = metrics();
+        track.scrollLeft = (Number(slider.value) / 1000) * max;
+        lastTime = performance.now();
+        syncSlider();
       });
+      track.addEventListener("scroll", syncSlider, { passive: true });
+      window.addEventListener("resize", syncSlider, { passive: true });
+      syncSlider();
       root._bhActivityMediaRaf = window.requestAnimationFrame(advance);
     }
     function legacyRecentImages() {
@@ -698,6 +713,7 @@
 
   function statusIcon(status) {
     var key = normalize(status).toLowerCase();
+    if (/favori/.test(key)) return "★";
     if (/actif|nouveau/.test(key)) return "●";
     if (/prio|important/.test(key)) return "★";
     if (/date|google/.test(key)) return "◷";
@@ -803,6 +819,7 @@
     var previousRoot = document.getElementById(ROOT_ID);
     if (previousRoot) {
       if (previousRoot._bhLatestTicker) window.clearInterval(previousRoot._bhLatestTicker);
+      if (previousRoot._bhActivityMediaRaf) window.cancelAnimationFrame(previousRoot._bhActivityMediaRaf);
       previousRoot.remove();
     }
     if (!/^\/(?:index\.htm)?$/.test(window.location.pathname) && window.BLOCKHAUS_HOME_DASHBOARD_PREVIEW !== true) return;
@@ -945,7 +962,7 @@
       return { title: artist[0], icon: "♪", status: "sujet", href: artist[1], topic: true, detail: "Sujet, morceaux et liens de " + artist[0] + "." };
     });
     var forumIndex = forumIndexNodes();
-    var tree = [
+    var baseTree = [
       { title: "À lire", icon: "!", status: "actif", children: [
         { title: "Derniers posts", icon: ">", status: "nouveau", href: "/search?search_id=newposts", detail: "Les discussions qui attendent une lecture." },
         { title: "Sans réponse", icon: "?", status: "à suivre", href: "/search?search_id=unanswered", detail: "Sujets ouverts qui n’ont pas encore reçu de réponse." }
@@ -962,15 +979,36 @@
       ] },
       { title: "Forum complet", icon: "F", status: "index", detail: "Arborescence complète : catégories, forums, sous-forums et sujets.", children: forumIndex }
     ];
+    var favoritesRoot = { title: "Favoris", icon: "★", status: "favori", children: [], detail: "Raccourcis choisis par les administrateurs de la bêta." };
+    var tree = [favoritesRoot].concat(baseTree);
     function nodeKey(node) {
       return String(node && (node.forumHref || node.href || node.title) || "").split("?")[0].toLowerCase();
+    }
+    function findNodeByKey(list, key, seen) {
+      if (!Array.isArray(list)) return null;
+      seen = seen || [];
+      for (var i = 0; i < list.length; i += 1) {
+        var node = list[i];
+        if (!node || seen.indexOf(node) !== -1) continue;
+        seen.push(node);
+        if (nodeKey(node) === key) return node;
+        var found = findNodeByKey(node.children, key, seen);
+        if (found) return found;
+      }
+      return null;
+    }
+    function refreshFavorites() {
+      favoritesRoot.children = (organization && Array.isArray(organization.favorites) ? organization.favorites : []).map(function (key) {
+        return findNodeByKey(baseTree, key);
+      }).filter(Boolean);
+      favoritesRoot._bhAllChildren = favoritesRoot.children.slice();
     }
     function readOrganization() {
       try {
         var saved = JSON.parse(window.localStorage.getItem(ORG_STORAGE_KEY) || "{}");
-        return { order: Array.isArray(saved.order) ? saved.order : [], hidden: saved.hidden && typeof saved.hidden === "object" ? saved.hidden : {} };
+        return { order: Array.isArray(saved.order) ? saved.order : [], hidden: saved.hidden && typeof saved.hidden === "object" ? saved.hidden : {}, favorites: Array.isArray(saved.favorites) ? saved.favorites : [] };
       } catch (error) {
-        return { order: [], hidden: {} };
+        return { order: [], hidden: {}, favorites: [] };
       }
     }
     function saveOrganization() {
@@ -986,6 +1024,8 @@
         }
       });
       visible.sort(function (a, b) {
+        if (a === favoritesRoot) return -1;
+        if (b === favoritesRoot) return 1;
         var ai = organization.order.indexOf(nodeKey(a));
         var bi = organization.order.indexOf(nodeKey(b));
         if (ai === -1 && bi === -1) return 0;
@@ -996,6 +1036,7 @@
       return visible;
     }
     var organization = readOrganization();
+    refreshFavorites();
     var originalTree = tree;
     tree = organizeList(originalTree);
     var selection = [];
@@ -1015,9 +1056,10 @@
     function organizeCurrent(action) {
       if (!isAdmin()) return;
       if (action === "reset") {
-        organization = { order: [], hidden: {} };
+        organization = { order: [], hidden: {}, favorites: [] };
         saveOrganization();
         selection = [];
+        refreshFavorites();
         tree = organizeList(originalTree);
         renderFinder();
         return;
@@ -1031,6 +1073,11 @@
       if (!item) return;
       if (action === "hide") {
         organization.hidden[nodeKey(item)] = true;
+      } else if (action === "favorite" || action === "unfavorite") {
+        var favoriteKey = nodeKey(item);
+        var favoriteIndex = organization.favorites.indexOf(favoriteKey);
+        if (action === "favorite" && favoriteIndex === -1) organization.favorites.push(favoriteKey);
+        if (action === "unfavorite" && favoriteIndex !== -1) organization.favorites.splice(favoriteIndex, 1);
       } else if (action === "up" || action === "down") {
         var key = nodeKey(item);
         var orderIndex = organization.order.indexOf(key);
@@ -1046,6 +1093,7 @@
         }
       }
       saveOrganization();
+      refreshFavorites();
       tree = organizeList(originalTree);
       selection = [];
       renderFinder();
@@ -1058,7 +1106,8 @@
         var crumb = selection.map(function (_, i) { var n = selectedNode(i); return n ? n.title : ""; }).filter(Boolean);
         var stats = item && item.topic ? '<div class="bh-topic-stats">' + (item.replies ? '<span class="bh-topic-stat">' + escapeHtml(item.replies) + ' réponses</span>' : '') + (item.views ? '<span class="bh-topic-stat">' + escapeHtml(item.views) + ' vues</span>' : '') + (item.lastText ? '<span class="bh-topic-stat">dernier message repéré</span>' : '') + '</div>' : '';
         var topicBox = item && item.topic ? '<div class="bh-topic-preview" data-bh-topic-preview><span class="bh-topic-preview-label">Aperçu du dernier post</span><div class="bh-topic-excerpt">Lecture du sujet…</div></div>' : '';
-        var adminTools = isAdmin() && item ? '<div class="bh-admin-tools"><small>Organisation locale de la bêta — visible par les admins de ce compte</small><button type="button" data-bh-org-action="up">↑ Monter</button><button type="button" data-bh-org-action="down">↓ Descendre</button><button type="button" data-bh-org-action="hide">Masquer</button><button type="button" data-bh-org-action="reset">Réinitialiser</button></div>' : '';
+        var isFavorite = item && organization.favorites.indexOf(nodeKey(item)) !== -1;
+        var adminTools = isAdmin() && item && item !== favoritesRoot ? '<div class="bh-admin-tools"><small>Organisation locale de la bêta — favoris visibles dans la première zone de ce navigateur</small><button type="button" data-bh-org-action="up">↑ Monter</button><button type="button" data-bh-org-action="down">↓ Descendre</button><button type="button" data-bh-org-action="' + (isFavorite ? 'unfavorite' : 'favorite') + '">' + (isFavorite ? '☆ Retirer des favoris' : '★ Ajouter aux favoris') + '</button><button type="button" data-bh-org-action="hide">Masquer</button><button type="button" data-bh-org-action="reset">Réinitialiser</button></div>' : '';
         columns[depth].innerHTML = '<div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>' + (item ? escapeHtml(item.title) : "Choisir un dossier") + '</h2><p>' + escapeHtml(item && item.detail ? item.detail : "Sélectionne une zone, puis une rubrique et enfin un sujet.") + '</p>' + stats + topicBox + '<p><strong>Chemin :</strong><br>' + (crumb.length ? "Accueil › " + crumb.map(escapeHtml).join(" › ") : "Accueil") + '</p>' + adminTools + '<div class="bh-preview-actions">' + (item && item.href ? link("Ouvrir le sujet complet", item.href, true) : "") + (item && item.lastHref ? link("Aller au dernier post", item.lastHref, false) : "") + '</div></div>';
         if (item && item.topic) topicPreview(item, columns[depth]);
         columns[depth].querySelectorAll("[data-bh-org-action]").forEach(function (button) {
@@ -1175,8 +1224,9 @@
     var style = document.getElementById(STYLE_ID);
     var betaNav = document.getElementById(BETA_NAV_ID);
     var siteMenu = document.getElementById(SITE_MENU_ID);
-    if (root) root.remove();
     if (root && root._bhLatestTicker) window.clearInterval(root._bhLatestTicker);
+    if (root && root._bhActivityMediaRaf) window.cancelAnimationFrame(root._bhActivityMediaRaf);
+    if (root) root.remove();
     if (style) style.remove();
     if (betaNav) betaNav.remove();
     if (siteMenu) siteMenu.remove();
