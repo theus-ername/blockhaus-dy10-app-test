@@ -13,6 +13,8 @@
   // Only the newest loader is allowed to own the beta root. This prevents
   // cached Forumactif copies from rebuilding the interface underneath V6.
   if (window.BlockhausHomeDashboard && Number(window.BlockhausHomeDashboard.version || 0) >= 6) return;
+  // Lock out older async Forumactif loaders as soon as V6 arrives.
+  window.BLOCKHAUS_HOME_DASHBOARD_DISABLED = true;
 
   function ready(callback) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", callback, { once: true });
