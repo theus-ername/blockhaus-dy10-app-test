@@ -55,8 +55,13 @@
       "#" + ROOT_ID + " .bh-latest-item strong{display:block;margin-bottom:5px;font-size:13px;line-height:1.15}",
       "#" + ROOT_ID + " .bh-latest-item small{display:block;color:#5d5a53;font:700 10px/1.3 monospace}",
       "#" + ROOT_ID + " .bh-latest-empty{padding:18px;color:#514f49;font-size:12px}",
-      "#" + ROOT_ID + " .bh-agenda{display:grid;grid-template-columns:220px minmax(0,1fr);background:var(--bh-deep);color:var(--bh-paper);border-bottom:1px solid var(--bh-line)}",
-      "#" + ROOT_ID + " .bh-agenda-copy{padding:18px;border-right:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-utility-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:stretch;border-top:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-latest{display:flex;flex-direction:column;min-width:0;border-top:0;border-bottom:0}",
+      "#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-latest-list{display:flex;flex-direction:column;gap:1px;flex:1;min-height:260px;max-height:380px;overflow-y:auto;overflow-x:hidden}",
+      "#" + ROOT_ID + " .bh-latest-item{flex:0 0 auto;min-height:62px;border-bottom:1px solid #c1bcb2}",
+      "#" + ROOT_ID + " .bh-agenda{display:grid;grid-template-columns:1fr;min-width:0;background:var(--bh-deep);color:var(--bh-paper);border:0}",
+      "#" + ROOT_ID + " .bh-agenda-copy{padding:16px 18px;border-right:0;border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-agenda-copy h2{margin:0 0 8px!important;padding:0!important;color:var(--bh-paper)!important;font-size:18px!important}",
       "#" + ROOT_ID + " .bh-agenda-copy p{margin:0 0 14px;color:#ebe5da;font-size:13px;line-height:1.4}",
       "#" + ROOT_ID + " .bh-agenda-frame{width:100%;height:360px;border:0;background:var(--bh-paper)}",
@@ -135,6 +140,14 @@
       "#" + ROOT_ID + " .bh-beta-exit{display:inline-flex;align-items:center;min-height:32px;padding:6px 9px;border:1px solid #d8d2c7;color:var(--bh-paper);font:800 10px/1 monospace;text-transform:uppercase}",
       "[data-bh-old-calendar-hidden='true']{display:none!important}",
       "[data-bh-old-recent-hidden='true']{display:none!important}",
+      "body[data-bh-beta-layout='true'] #content-container div#left{display:none!important}",
+      "body[data-bh-beta-layout='true'] #content-container div#main{margin-left:0!important}",
+      "body[data-bh-beta-layout='true'] #content-container div#content{margin-right:0!important}",
+      "body[data-bh-beta-layout='true'] #main-content{margin:0!important;padding:0!important}",
+      "body[data-bh-beta-layout='true'] #logo-desc{display:flex;align-items:center;justify-content:space-between;gap:20px}",
+      "body[data-bh-beta-layout='true'] #logo{float:none;order:2;padding:5px}",
+      "body[data-bh-beta-layout='true'] #site-title,body[data-bh-beta-layout='true'] #logo-desc p{order:1}",
+      "body[data-bh-beta-layout='true'] .navbar{padding-left:8px;padding-right:8px}",
       "body#mpage-body-modern #" + ROOT_ID + "{margin:10px 8px 16px;border:1px solid var(--bh-ink);overflow:hidden}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-dash-head{padding:12px 14px}",
       "body#mpage-body-modern #" + ROOT_ID + " h1{font-size:22px!important}",
@@ -146,7 +159,7 @@
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-list,body#mpage-body-modern #" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}",
       "body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(2),body#mpage-body-modern #" + ROOT_ID + " .bh-col:nth-child(4){display:none}",
-      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-latest{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{grid-template-columns:1fr;max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
+      "@media(max-width:800px){#" + ROOT_ID + "{margin:0 0 14px}#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-card p{min-height:0}#" + ROOT_ID + " .bh-utility-grid{grid-template-columns:1fr}#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-latest-list{max-height:260px}#" + ROOT_ID + " .bh-agenda{grid-template-columns:1fr}#" + ROOT_ID + " .bh-agenda-copy{border-right:0;border-bottom:1px solid var(--bh-line)}#" + ROOT_ID + " .bh-agenda-frame{height:430px}#" + ROOT_ID + " .bh-forum-browser{display:block;height:auto;min-height:0}#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:0}#" + ROOT_ID + " .bh-col{border-right:0;border-bottom:1px solid var(--bh-ink)}#" + ROOT_ID + " .bh-list,#" + ROOT_ID + " .bh-preview{height:auto;max-height:none;overflow:visible}#" + ROOT_ID + " .bh-col:nth-child(4){display:block}#" + ROOT_ID + " .bh-archive-groups{grid-template-columns:1fr}#" + ROOT_ID + " .bh-dash-head{align-items:flex-start}#" + ROOT_ID + " .bh-brand-logo{width:40px;height:40px}#" + ROOT_ID + " .bh-version{padding-top:4px}#" + ROOT_ID + " .bh-column-brand,#" + ROOT_ID + " .bh-column-info{display:none}#" + ROOT_ID + " .bh-finder-bottom{grid-template-columns:auto minmax(0,1fr)}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -391,6 +404,23 @@
     if (module) module.setAttribute("data-bh-old-recent-hidden", "true");
   }
 
+  function startLatestTicker(root) {
+    var list = root.querySelector(".bh-latest-list");
+    if (!list || list.children.length < 2) return;
+    var paused = false;
+    var pause = function () { paused = true; };
+    var resume = function () { paused = false; };
+    list.addEventListener("mouseenter", pause);
+    list.addEventListener("mouseleave", resume);
+    list.addEventListener("focusin", pause);
+    list.addEventListener("focusout", resume);
+    root._bhLatestTicker = window.setInterval(function () {
+      if (paused || list.scrollHeight <= list.clientHeight) return;
+      if (list.scrollTop + list.clientHeight >= list.scrollHeight - 1) list.scrollTop = 0;
+      else list.scrollTop += 1;
+    }, 85);
+  }
+
   function findLink(patterns, fallback) {
     var links = allLinks();
     for (var i = 0; i < patterns.length; i += 1) {
@@ -504,10 +534,14 @@
 
   function buildDashboard() {
     if (!isMember()) return;
+    document.body.setAttribute("data-bh-beta-layout", "true");
     // Replace an older beta container left in the DOM after its Forumactif
     // script was disabled; the classic forum markup remains untouched.
     var previousRoot = document.getElementById(ROOT_ID);
-    if (previousRoot) previousRoot.remove();
+    if (previousRoot) {
+      if (previousRoot._bhLatestTicker) window.clearInterval(previousRoot._bhLatestTicker);
+      previousRoot.remove();
+    }
     if (!/^\/(?:index\.htm)?$/.test(window.location.pathname) && window.BLOCKHAUS_HOME_DASHBOARD_PREVIEW !== true) return;
 
     var main = document.getElementById("main-content") || document.getElementById("main") || document.body;
@@ -547,8 +581,8 @@
         '<article class="bh-card"><span class="bh-card-number">02 / À VENIR</span><h2>Agenda & événements</h2><p>Les soirées et rendez-vous à venir dans l’agenda partagé.</p><div class="bh-actions">' + link("Ouvrir l’agenda", agendaHref, true) + link("Événements du forum", "/events", false) + "</div></article>" +
         '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Retrouver rapidement les nouveaux messages et discussions.</p><div class="bh-actions">' + link("Nouveaux messages", "/search?search_id=newposts", true) + link("Sans réponse", "/search?search_id=unanswered", false) + link("Général", generalHref, false) + "</div></article>" +
       "</div>" +
-      '<section class="bh-latest"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span><h2>Dernières publications</h2><p>Les sujets récents, séparés de la ChatBox. Défilement manuel, sans animation automatique.</p></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>' +
-      '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section>' +
+      '<div class="bh-utility-grid"><section class="bh-latest"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span><h2>Dernières publications</h2><p>Les sujets récents, séparés de la ChatBox. Défilement automatique doux, pause au survol.</p></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>' +
+      '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
       '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><button type="button" data-bh-wide-toggle aria-pressed="false">Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
@@ -828,6 +862,7 @@
     });
     slider.addEventListener("input", function () { setLevel(Number(slider.value)); });
     renderFinder();
+    startLatestTicker(root);
     hideClassicHome(root, main);
     hideOldCalendar();
     hideLegacyRecentPosts();
@@ -857,6 +892,7 @@
     var style = document.getElementById(STYLE_ID);
     var betaNav = document.getElementById(BETA_NAV_ID);
     if (root) root.remove();
+    if (root && root._bhLatestTicker) window.clearInterval(root._bhLatestTicker);
     if (style) style.remove();
     if (betaNav) betaNav.remove();
     Array.prototype.forEach.call(document.querySelectorAll('[data-bh-old-calendar-hidden="true"]'), function (element) {
@@ -876,6 +912,7 @@
       agendaLink.removeAttribute("aria-label");
       agendaLink.removeAttribute("data-bh-agenda-link");
     });
+    document.body.removeAttribute("data-bh-beta-layout");
   }
 
   window.BlockhausHomeDashboard = {
