@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.13";
+  var VERSION = "10.14";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-13-style";
+  var STYLE_ID = "bh-member-dashboard-v10-14-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -13,6 +13,7 @@
   var AGENDA_EMBED_BASE = "https://calendar.google.com/calendar/embed?src=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com&ctz=Europe%2FParis&showTitle=0&showNav=1&showTabs=0&showCalendars=0&wkst=2";
   var AGENDA_EMBED = AGENDA_EMBED_BASE + "&mode=AGENDA";
   var AGENDA_EMBED_MONTH = AGENDA_EMBED_BASE + "&mode=MONTH";
+  var AGENDA_YEAR_HREF = "https://calendar.google.com/calendar/u/0/r/year?cid=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com";
 
   // A fresh V8 may replace an older cached loader, while later V7 copies are
   // still locked out. This makes Forumactif's async script order harmless.
@@ -919,7 +920,7 @@
         '<article class="bh-card bh-activity-card"><span class="bh-card-number">03 / ACTIVITÉ</span><div class="bh-card-media">' + recentSharedMediaMarkup(imagesHref) + '</div></article>' +
       "</div>" +
       '<div class="bh-utility-grid">' + latestSectionMarkup +
-      '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-agenda-views" role="group" aria-label="Vue de l’agenda"><button type="button" class="bh-agenda-view active" data-bh-agenda-view="AGENDA" aria-pressed="true">Agenda</button><button type="button" class="bh-agenda-view" data-bh-agenda-view="MONTH" aria-pressed="false">Mois</button><a class="bh-agenda-view" href="' + AGENDA_EMBED_BASE + '&mode=YEAR" target="_blank" rel="noopener">Année ↗</a></div><p class="bh-agenda-view-note">La vue annuelle s’ouvre en grand pour rester lisible.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
+      '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-agenda-views" role="group" aria-label="Vue de l’agenda"><button type="button" class="bh-agenda-view active" data-bh-agenda-view="AGENDA" aria-pressed="true">Agenda</button><button type="button" class="bh-agenda-view" data-bh-agenda-view="MONTH" aria-pressed="false">Mois</button><a class="bh-agenda-view" href="' + AGENDA_YEAR_HREF + '" target="_blank" rel="noopener">Année ↗</a></div><p class="bh-agenda-view-note">La vue annuelle s’ouvre dans Google Agenda pour rester lisible.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
       '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><button type="button" data-bh-wide-toggle aria-pressed="false">Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
