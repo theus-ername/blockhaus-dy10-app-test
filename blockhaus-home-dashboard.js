@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "2";
+  var VERSION = "3";
   var ROOT_ID = "bh-member-dashboard";
   var STYLE_ID = "bh-member-dashboard-v2-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
@@ -60,6 +60,8 @@
       "#" + ROOT_ID + " .bh-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:40px;padding:8px 9px;border:1px solid transparent;color:var(--bh-ink);font-weight:800}",
       "#" + ROOT_ID + " .bh-row:hover,#" + ROOT_ID + " .bh-row:focus{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
       "#" + ROOT_ID + " .bh-row.active{background:var(--bh-ink);color:var(--bh-paper)}",
+      "#" + ROOT_ID + " .bh-row[data-bh-folder]{cursor:pointer}",
+      "#" + ROOT_ID + " .bh-row .bh-chevron{justify-self:end;font:900 14px/1 monospace}",
       "#" + ROOT_ID + " .bh-row-icon{width:20px;text-align:center;font:900 15px/1 monospace}",
       "#" + ROOT_ID + " .bh-row-main{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}",
       "#" + ROOT_ID + " .bh-status{justify-self:end;padding:3px 5px;border:1px solid currentColor;font:900 9px/1 monospace;text-transform:uppercase;white-space:nowrap}",
@@ -68,6 +70,13 @@
       "#" + ROOT_ID + " .bh-preview p{margin:0 0 14px;color:#30312d;line-height:1.42}",
       "#" + ROOT_ID + " .bh-preview-meta{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 18px}",
       "#" + ROOT_ID + " .bh-preview-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}",
+      "#" + ROOT_ID + " .bh-column-toolbar{display:flex;align-items:center;gap:6px;padding:7px;border-bottom:1px solid var(--bh-ink);background:#d8d2c7}",
+      "#" + ROOT_ID + " .bh-column-toolbar button{border:1px solid var(--bh-ink);background:var(--bh-paper);color:var(--bh-ink);font:900 12px/1 monospace;padding:6px 8px;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-column-toolbar button:disabled{opacity:.4;cursor:default}",
+      "#" + ROOT_ID + " .bh-column-path{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 11px/1 monospace;color:#3f3e39}",
+      "#" + ROOT_ID + " .bh-column-scroll{overflow-x:auto;scroll-behavior:smooth}",
+      "#" + ROOT_ID + " .bh-column-scroll .bh-forum-browser{min-width:980px}",
+      "#" + ROOT_ID + " .bh-bandcamp-note{margin-top:10px;color:#5d5a53;font-size:11px;line-height:1.35}",
       "a.mainmenu[data-bh-agenda-link='true']{display:inline-flex!important;align-items:center;gap:5px;font-weight:800!important}",
       "a.mainmenu[data-bh-agenda-link='true']:before{content:'▦';font:900 14px/1 monospace}",
       "#" + BETA_NAV_ID + " .bh-beta-toggle{display:inline-flex!important;align-items:center;gap:5px;padding:4px 7px!important;border:1px solid currentColor;font-weight:900!important}",
@@ -117,6 +126,17 @@
   function chip(label, href) {
     if (!href || href === "#") return "";
     return '<a class="bh-chip" href="' + href + '">' + label + "</a>";
+  }
+
+  function externalMusicLinks() {
+    var seen = {};
+    return allLinks().filter(function (anchor) {
+      var href = anchor.getAttribute("href") || "";
+      return /^https?:\/\//i.test(href) && /bandcamp\.com/i.test(href) && !seen[href] && (seen[href] = true);
+    }).slice(0, 40).map(function (anchor) {
+      var label = normalize(anchor.textContent) || anchor.hostname.replace(/^www\./, "");
+      return { label: label.slice(0, 56), href: anchor.href };
+    });
   }
 
   function row(label, href, icon, status, active) {
@@ -204,6 +224,9 @@
     var videoHref = findLink([/Atelier Vidéo/i], "/f35-atelier-video-salle-6-etage-1-s1-6");
     var documentaryHref = findLink([/Documentaires/i], "/f32-documentaires");
     var imagesHref = "/images";
+    var musicLinks = externalMusicLinks();
+    var musicChips = musicLinks.map(function (item) { return chip(item.label, item.href); }).join("");
+    if (!musicChips) musicChips = '<span class="bh-bandcamp-note">Les liens Bandcamp ajoutés dans les sujets du forum apparaîtront ici automatiquement.</span>';
 
     var root = document.createElement("section");
     root.id = ROOT_ID;
@@ -217,7 +240,8 @@
         '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Retrouver rapidement les nouveaux messages et discussions.</p><div class="bh-actions">' + link("Nouveaux messages", "/search?search_id=newposts", true) + link("Sans réponse", "/search?search_id=unanswered", false) + link("Général", generalHref, false) + "</div></article>" +
       "</div>" +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier Forumactif reste conservé comme archive technique.</p>' + link("Voir en grand", agendaHref, true) + '</div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section>' +
-      '<section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
+      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><span class="bh-column-path" data-bh-col-path>Accueil / À lire</span><input data-bh-col-slider type="range" min="0" max="3" value="0" aria-label="Niveau de navigation"></div>' +
+      '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
           row("À lire", "/search?search_id=newposts", "!", "actif", true) +
           row("Réus", meetingHref, "R", "prio", false) +
@@ -243,15 +267,51 @@
           row("Transmission", transmissionHref, "D", "", false) +
         "</div></div>" +
         '<div class="bh-col"><div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>Vue liste / colonnes</h2><p>Cette bêta garde l’organisation du forum, mais donne une entrée plus directe aux choses à lire, aux réunions, à l’agenda et aux archives.</p><div class="bh-preview-meta"><span class="bh-chip">sans compteurs</span><span class="bh-chip">mobile en liste</span><span class="bh-chip">desktop en colonnes</span></div><p>Les nombres de sujets et de réponses restent dans l’interface classique. Ici, on privilégie les statuts utiles : nouveau, important, à lire, date, archive.</p><div class="bh-preview-actions">' + link("Ouvrir les nouveaux messages", "/search?search_id=newposts", true) + link("Revenir au forum classique", "/?bh_beta=off", false) + "</div></div></div>" +
-      "</section>" +
+      "</section></div>" +
       '<details class="bh-archives"><summary>Archives musicales & visuelles <small>niveau secondaire</small></summary><div class="bh-archive-groups">' +
-        '<section class="bh-archive-group"><h3>Musique & son</h3><div class="bh-chip-list">' + chip("The Sounds", soundHref) + chip("Set/30'", setHref) + chip("Wave Drone Orchestra", waveHref) + chip("DY DISQ", disqHref) + "</div></section>" +
+        '<section class="bh-archive-group"><h3>Musique & son</h3><div class="bh-chip-list">' + chip("The Sounds", soundHref) + chip("Set/30'", setHref) + chip("Wave Drone Orchestra", waveHref) + chip("DY DISQ", disqHref) + musicChips + "</div></section>" +
         '<section class="bh-archive-group"><h3>Images & vidéo</h3><div class="bh-chip-list">' + chip("Dernières images", imagesHref) + chip("Atelier vidéo", videoHref) + chip("Documentaires", documentaryHref) + "</div></section>" +
       "</div></details>";
 
     main.insertBefore(root, main.firstChild);
+    var scroll = root.querySelector("[data-bh-col-scroll]");
+    var slider = root.querySelector("[data-bh-col-slider]");
+    var back = root.querySelector("[data-bh-col-back]");
+    var forward = root.querySelector("[data-bh-col-forward]");
+    var path = root.querySelector("[data-bh-col-path]");
+    var level = 0;
+    function setLevel(next) {
+      level = Math.max(0, Math.min(3, next));
+      var width = scroll.scrollWidth / 4;
+      scroll.scrollTo({ left: width * level, behavior: "smooth" });
+      slider.value = String(level);
+      back.disabled = level === 0;
+      forward.disabled = level === 3;
+      path.textContent = ["Accueil / À lire", "Zones / Réunions", "Rubriques / Sujets utiles", "Aperçu / Archive"][level];
+    }
+    back.addEventListener("click", function () { setLevel(level - 1); });
+    forward.addEventListener("click", function () { setLevel(level + 1); });
+    slider.addEventListener("input", function () { setLevel(Number(slider.value)); });
+    root.querySelectorAll(".bh-row").forEach(function (entry) {
+      entry.addEventListener("click", function () {
+        var column = Array.prototype.indexOf.call(root.querySelectorAll(".bh-col"), entry.closest(".bh-col"));
+        if (column >= 0) setLevel(column);
+      });
+    });
     hideClassicHome(root, main);
     hideOldCalendar();
+  }
+
+  function buildVisitorArchive() {
+    if (document.getElementById("bh-public-archive") || !/^\/(?:index\.htm)?$/.test(window.location.pathname)) return;
+    var main = document.getElementById("main-content") || document.getElementById("main") || document.body;
+    var links = externalMusicLinks();
+    if (!links.length) return;
+    var section = document.createElement("details");
+    section.id = "bh-public-archive";
+    section.className = "bh-archives";
+    section.innerHTML = '<summary>Archives audio & liens <small>accès visiteur</small></summary><div class="bh-archive-groups"><section class="bh-archive-group"><h3>Bandcamp / sons du lieu</h3><div class="bh-chip-list">' + links.map(function (item) { return chip(item.label, item.href); }).join("") + '</div><p class="bh-bandcamp-note">Les archives restent en retrait de l’accueil et s’ouvrent seulement à la demande.</p></section></div>';
+    main.appendChild(section);
   }
 
   function rollback() {
@@ -286,6 +346,7 @@
     addStyle();
     var betaEnabled = isBetaEnabled();
     addBetaNavigation(betaEnabled);
+    buildVisitorArchive();
     if (!betaEnabled) return;
     fixAgendaNavigation();
     buildDashboard();
