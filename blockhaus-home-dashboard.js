@@ -308,7 +308,9 @@
       entry.addEventListener("click", function (event) {
         var column = Array.prototype.indexOf.call(root.querySelectorAll(".bh-col"), entry.closest(".bh-col"));
         if (column < 0) return;
-        if (!(event && (event.metaKey || event.ctrlKey || event.shiftKey))) event.preventDefault();
+        // Keep the real Forumactif link usable. The previous handler cancelled
+        // navigation, which made every folder appear dead. Column movement is
+        // handled only by the explicit back/forward controls.
         root.querySelectorAll(".bh-row.active").forEach(function (item) { item.classList.remove("active"); });
         entry.classList.add("active");
         if (column < 3) setLevel(column + 1);
