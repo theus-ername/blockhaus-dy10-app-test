@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "4";
+  var VERSION = "5";
   var ROOT_ID = "bh-member-dashboard";
   var STYLE_ID = "bh-member-dashboard-v2-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
