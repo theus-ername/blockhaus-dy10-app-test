@@ -1,10 +1,11 @@
 (function () {
   "use strict";
 
-  var VERSION = "10";
+  var VERSION = "10.1";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-style";
+  var STYLE_ID = "bh-member-dashboard-v10-1-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
+  var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
   var ORG_STORAGE_KEY = "bh_dashboard_finder_org_v1";
   var WIDE_STORAGE_KEY = "bh_dashboard_finder_wide_v1";
@@ -41,6 +42,18 @@
       "#" + ROOT_ID + " .bh-top-menu-panel a{display:block;padding:9px 8px;border-bottom:1px solid #d0cbc1;font-size:12px;font-weight:800}",
       "#" + ROOT_ID + " .bh-top-menu-panel a:last-child{border-bottom:0}",
       "#" + ROOT_ID + " .bh-top-menu-panel a:hover,#" + ROOT_ID + " .bh-top-menu-panel a:focus{background:var(--bh-ink);color:var(--bh-paper);outline:0}",
+      "#" + SITE_MENU_ID + "{display:block;position:relative;z-index:40;margin:0;padding:7px 12px;background:#928e85;border-bottom:1px solid #141513;font-family:Arial,sans-serif}",
+      "#" + SITE_MENU_ID + " summary{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:7px 12px;border:2px solid #141513;background:#141513;color:#f4f2ec;cursor:pointer;list-style:none;font:900 12px/1.1 Arial,sans-serif}",
+      "#" + SITE_MENU_ID + " summary::-webkit-details-marker{display:none}",
+      "#" + SITE_MENU_ID + " summary:before{content:'☰';font-size:17px;line-height:1}",
+      "#" + SITE_MENU_ID + " summary[aria-expanded='true'],#" + SITE_MENU_ID + "[open] summary{background:#f4f2ec;color:#141513}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-title{display:flex;flex-direction:column;gap:2px;text-align:left}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-title strong{font-size:12px;letter-spacing:.02em}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-title small{font:700 10px/1.1 Arial,sans-serif;opacity:.8}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-panel{position:absolute;top:calc(100% + 5px);left:12px;width:min(300px,calc(100vw - 24px));padding:8px;background:#f4f2ec;border:2px solid #141513;box-shadow:5px 5px 0 #141513;color:#141513}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-panel a{display:block;padding:9px 8px;border-bottom:1px solid #c8c3ba;color:#141513;text-decoration:none;font-size:12px;font-weight:800}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-panel a:last-child{border-bottom:0}",
+      "#" + SITE_MENU_ID + " .bh-site-menu-panel a:hover,#" + SITE_MENU_ID + " .bh-site-menu-panel a:focus{background:#141513;color:#f4f2ec;outline:0}",
       "body[data-bh-beta-layout='true'] .navbar{display:none!important}",
       "#" + ROOT_ID + " .bh-brand{display:flex;align-items:center;gap:12px;min-width:0}",
       "#" + ROOT_ID + " .bh-brand-logo{width:48px;height:48px;object-fit:cover;border:1px solid #d8d2c7;background:#000;flex:0 0 auto}",
@@ -48,6 +61,7 @@
       "#" + ROOT_ID + " h1{margin:0!important;padding:0!important;font-size:clamp(24px,4vw,42px)!important;line-height:.98!important;color:var(--bh-paper)!important;text-transform:uppercase;letter-spacing:.01em}",
       "#" + ROOT_ID + " .bh-version{font:700 10px/1 monospace;color:#d8d2c7}",
       "#" + ROOT_ID + " .bh-priority-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--bh-line);background:var(--bh-paper)}",
+      "#" + ROOT_ID + " .bh-priority-grid{grid-template-columns:minmax(0,1fr) minmax(270px,1.15fr) minmax(0,1fr)}",
       "#" + ROOT_ID + " .bh-card{min-width:0;padding:18px;border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-card-number{display:block;margin-bottom:15px;font:900 12px/1 monospace;color:#615f58}",
       "#" + ROOT_ID + " .bh-card h2{margin:0 0 8px!important;padding:0!important;font-size:18px!important;line-height:1.1!important;color:var(--bh-ink)!important}",
@@ -79,6 +93,10 @@
       "#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-latest-list{display:flex;flex-direction:column;gap:1px;flex:1;min-height:260px;max-height:380px;overflow-y:auto;overflow-x:hidden}",
       "#" + ROOT_ID + " .bh-latest-item{flex:0 0 auto;min-height:62px;border-bottom:1px solid #c1bcb2}",
+      "#" + ROOT_ID + " .bh-latest-priority{background:#d8d2c7;border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-latest-priority .bh-latest-head{padding:18px;border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-latest-priority .bh-latest-list{min-height:0;max-height:205px}",
+      "#" + ROOT_ID + " .bh-cr-card{background:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-agenda{display:grid;grid-template-columns:1fr;min-width:0;background:var(--bh-deep);color:var(--bh-paper);border:0}",
       "#" + ROOT_ID + " .bh-agenda-copy{padding:16px 18px;border-right:0;border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-agenda-copy h2{margin:0 0 8px!important;padding:0!important;color:var(--bh-paper)!important;font-size:18px!important}",
@@ -431,8 +449,8 @@
   function recentSharedMediaMarkup(imagesHref) {
     var seen = {};
     var items = [];
-    Array.prototype.forEach.call(document.querySelectorAll("img[src]"), function (image) {
-      var url = safeMediaUrl(image.getAttribute("src") || "");
+    Array.prototype.forEach.call(document.querySelectorAll("img[src],img[data-src],img[data-original]"), function (image) {
+      var url = safeMediaUrl(image.getAttribute("data-src") || image.getAttribute("data-original") || image.getAttribute("src") || "");
       if (!isUsefulImage(image, url) || seen[url]) return;
       seen[url] = true;
       var link = image.closest("a[href]");
@@ -447,26 +465,54 @@
   function loadRecentSharedMedia(root, imagesHref) {
     var target = root.querySelector("[data-bh-shared-media]");
     if (!target || target.querySelector("img")) return;
-    fetch(imagesHref, { credentials: "same-origin" }).then(function (response) {
-      if (!response.ok) throw new Error("gallery unavailable");
-      return response.text();
-    }).then(function (html) {
-      var doc = new DOMParser().parseFromString(html, "text/html");
+    function collect(doc, fallbackHref) {
       var seen = {};
       var items = [];
-      Array.prototype.forEach.call(doc.querySelectorAll("img[src]"), function (image) {
-        var url = safeMediaUrl(image.getAttribute("src") || "");
+      Array.prototype.forEach.call(doc.querySelectorAll("img[src],img[data-src],img[data-original]"), function (image) {
+        var url = safeMediaUrl(image.getAttribute("data-src") || image.getAttribute("data-original") || image.getAttribute("src") || "");
         if (!isUsefulImage(image, url) || seen[url]) return;
         seen[url] = true;
         var anchor = image.closest("a[href]");
-        items.push({ url: url, href: anchor ? absoluteHref(anchor.getAttribute("href") || url) : imagesHref, alt: normalize(image.getAttribute("alt") || "Image partagée") });
+        items.push({ url: url, href: anchor ? absoluteHref(anchor.getAttribute("href") || url) : fallbackHref, alt: normalize(image.getAttribute("alt") || "Image partagée") });
       });
+      return items;
+    }
+    function render(items) {
       if (!items.length) throw new Error("gallery empty");
       target.innerHTML = '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
         return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
       }).join("") + '</div>';
-    }).catch(function () {
-      target.innerHTML = '<span class="bh-card-media-empty">Aucune image récente détectée. <a href="' + escapeHtml(imagesHref) + '">Ouvrir la galerie</a></span>';
+    }
+    function fetchRecentTopicImages() {
+      return fetch("/search?search_id=newposts", { credentials: "same-origin" }).then(function (response) {
+        if (!response.ok) throw new Error("recent topics unavailable");
+        return response.text();
+      }).then(function (html) {
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        var topicLinks = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle[href],a[href*='/t']")).map(function (anchor) {
+          return absoluteHref(anchor.getAttribute("href") || "");
+        }).filter(function (href, index, array) { return href && array.indexOf(href) === index; }).slice(0, 8);
+        return Promise.all(topicLinks.map(function (href) {
+          return fetch(href, { credentials: "same-origin" }).then(function (response) { return response.ok ? response.text() : ""; }).catch(function () { return ""; });
+        })).then(function (pages) {
+          var items = [];
+          pages.forEach(function (page) {
+            if (!page) return;
+            items = items.concat(collect(new DOMParser().parseFromString(page, "text/html"), imagesHref));
+          });
+          var seen = {};
+          return items.filter(function (item) { if (seen[item.url]) return false; seen[item.url] = true; return true; });
+        });
+      });
+    }
+    fetch(imagesHref, { credentials: "same-origin" }).then(function (response) {
+      if (!response.ok) throw new Error("gallery unavailable");
+      return response.text();
+    }).then(function (html) {
+      var items = collect(new DOMParser().parseFromString(html, "text/html"), imagesHref);
+      return items.length ? items : fetchRecentTopicImages();
+    }).then(render).catch(function () {
+      target.innerHTML = '<span class="bh-card-media-empty">Aucune image récente dans les sujets publics. <a href="' + escapeHtml(imagesHref) + '">Ouvrir la galerie</a></span>';
     });
   }
 
@@ -604,6 +650,24 @@
     nav.appendChild(item);
   }
 
+  function mountSiteMenu(markup) {
+    var previous = document.getElementById(SITE_MENU_ID);
+    if (previous) previous.remove();
+    var wrapper = document.createElement("div");
+    wrapper.innerHTML = markup;
+    var menu = wrapper.firstElementChild;
+    if (!menu) return;
+    var pageHeader = document.querySelector("#page-header");
+    var headerbar = pageHeader && (pageHeader.querySelector(".headerbar") || pageHeader.firstElementChild);
+    var navbar = pageHeader && pageHeader.querySelector(".navbar");
+    if (pageHeader) {
+      pageHeader.insertBefore(menu, navbar || (headerbar && headerbar.nextSibling) || pageHeader.firstChild);
+      return;
+    }
+    var main = document.getElementById("main-content") || document.getElementById("main") || document.body;
+    main.insertBefore(menu, main.firstChild);
+  }
+
   function buildDashboard() {
     if (!isMember()) return;
     document.body.setAttribute("data-bh-beta-layout", "true");
@@ -641,24 +705,27 @@
     if (!musicChips) musicChips = '<span class="bh-bandcamp-note">Les liens Bandcamp ajoutés dans les sujets du forum apparaîtront ici automatiquement.</span>';
     var logoImg = document.querySelector("#logo img");
     var logoSrc = logoImg ? (logoImg.getAttribute("src") || "") : "";
-    var topMenuMarkup = '<details class="bh-top-menu"><summary>Blockos</summary><div class="bh-top-menu-panel"><span class="bh-top-menu-title">Blockos, le forum des Grey 10</span>' +
+    var topMenuMarkup = '<details id="' + SITE_MENU_ID + '"><summary><span class="bh-site-menu-title"><strong>Blockhaus-DY10</strong><small>le forum du DY10</small></span></summary><div class="bh-site-menu-panel">' +
       link("Accueil", "/", false) + link("Calendrier", agendaHref, false) + link("Événements", eventsHref, false) +
       link("Membres", "/memberlist", false) + link("Mon profil", "/profile?mode=editprofile", false) +
       link("Messages privés", "/privmsg?folder=inbox", false) + link("Se déconnecter", "/login?logout=1", false) +
       '</div></details>';
+    mountSiteMenu(topMenuMarkup);
 
     var root = document.createElement("section");
     root.id = ROOT_ID;
     root.dataset.version = VERSION;
     root.setAttribute("aria-label", "Accueil des membres du Blockhaus");
+    var crCardMarkup = '<article class="bh-card bh-cr-card"><span class="bh-card-number">02 / DERNIER CR</span><h2>Compte rendu de réunion</h2><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul></article>';
+    var latestSectionMarkup = '<section class="bh-latest bh-latest-priority"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span><h2>Dernières publications</h2><p>Les sujets récents, séparés de la ChatBox. Défilement automatique doux, pause au survol.</p></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>';
     root.innerHTML =
-      '<header class="bh-dash-head">' + topMenuMarkup + '<div class="bh-brand"><div><h1>BLOCKHAUS DY10</h1></div></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
+      '<header class="bh-dash-head"><div class="bh-brand"><div><h1>BLOCKHAUS DY10</h1></div></div><div><span class="bh-version">ACCUEIL V' + VERSION + '</span><br><a class="bh-beta-exit" href="/?bh_beta=off">Quitter la bêta</a></div></header>' +
       '<div class="bh-priority-grid">' +
         '<article class="bh-card"><span class="bh-card-number">01 / PRIORITÉ</span><h2>Réunions & décisions</h2><p>Ordres du jour, comptes rendus et décisions collectives.</p><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + "</div></article>" +
-        '<article class="bh-card"><span class="bh-card-number">02 / DERNIER CR</span><h2>Compte rendu de réunion</h2><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul><div class="bh-actions">' + link("Dernier CR", reportHref, true) + link("Dernier ODJ", odjHref, false) + link("Agenda", agendaHref, false) + "</div></article>" +
-        '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Retrouver rapidement les nouveaux messages et discussions.</p><div class="bh-card-media"><span class="bh-card-media-label">Images partagées récemment</span>' + recentSharedMediaMarkup(imagesHref) + '</div><div class="bh-actions">' + link("Nouveaux messages", "/search?search_id=newposts", true) + link("Sans réponse", "/search?search_id=unanswered", false) + link("Général", generalHref, false) + "</div></article>" +
+        latestSectionMarkup +
+        '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Images partagées récemment dans le forum.</p><div class="bh-card-media"><span class="bh-card-media-label">Images partagées récemment</span>' + recentSharedMediaMarkup(imagesHref) + '</div></article>' +
       "</div>" +
-      '<div class="bh-utility-grid"><section class="bh-latest"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span><h2>Dernières publications</h2><p>Les sujets récents, séparés de la ChatBox. Défilement automatique doux, pause au survol.</p></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>' +
+      '<div class="bh-utility-grid">' + crCardMarkup +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
       '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><button type="button" data-bh-wide-toggle aria-pressed="false">Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
@@ -987,10 +1054,12 @@
     var root = document.getElementById(ROOT_ID);
     var style = document.getElementById(STYLE_ID);
     var betaNav = document.getElementById(BETA_NAV_ID);
+    var siteMenu = document.getElementById(SITE_MENU_ID);
     if (root) root.remove();
     if (root && root._bhLatestTicker) window.clearInterval(root._bhLatestTicker);
     if (style) style.remove();
     if (betaNav) betaNav.remove();
+    if (siteMenu) siteMenu.remove();
     Array.prototype.forEach.call(document.querySelectorAll('[data-bh-old-calendar-hidden="true"]'), function (element) {
       element.removeAttribute("data-bh-old-calendar-hidden");
     });
