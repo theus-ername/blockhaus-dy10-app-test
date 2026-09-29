@@ -246,7 +246,7 @@
         '<article class="bh-card"><span class="bh-card-number">03 / ACTIVITÉ</span><h2>Ce qui bouge</h2><p>Retrouver rapidement les nouveaux messages et discussions.</p><div class="bh-actions">' + link("Nouveaux messages", "/search?search_id=newposts", true) + link("Sans réponse", "/search?search_id=unanswered", false) + link("Général", generalHref, false) + "</div></article>" +
       "</div>" +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier Forumactif reste conservé comme archive technique.</p>' + link("Voir en grand", agendaHref, true) + '</div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section>' +
-      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><input data-bh-col-slider type="range" min="0" max="3" value="0" aria-label="Niveau de navigation"><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
+      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
           row("À lire", "/search?search_id=newposts", "!", "actif", true) +
@@ -281,7 +281,6 @@
 
     main.insertBefore(root, main.firstChild);
     var scroll = root.querySelector("[data-bh-col-scroll]");
-    var slider = root.querySelector("[data-bh-col-slider]");
     var back = root.querySelector("[data-bh-col-back]");
     var forward = root.querySelector("[data-bh-col-forward]");
     var path = root.querySelector("[data-bh-col-path]");
@@ -290,14 +289,12 @@
       level = Math.max(0, Math.min(3, next));
       var width = scroll.scrollWidth / 4;
       scroll.scrollTo({ left: width * level, behavior: "smooth" });
-      slider.value = String(level);
       back.disabled = level === 0;
       forward.disabled = level === 3;
       path.textContent = ["Accueil › Zones › À lire", "Accueil › Zones › Réunions", "Accueil › Rubriques › Sujets utiles", "Accueil › Aperçu › Archive"][level];
     }
     back.addEventListener("click", function () { setLevel(level - 1); });
     forward.addEventListener("click", function () { setLevel(level + 1); });
-    slider.addEventListener("input", function () { setLevel(Number(slider.value)); });
     root.querySelectorAll(".bh-row").forEach(function (entry) {
       entry.addEventListener("click", function () {
         var column = Array.prototype.indexOf.call(root.querySelectorAll(".bh-col"), entry.closest(".bh-col"));
