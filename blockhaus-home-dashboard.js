@@ -185,7 +185,7 @@
   function forumTopicNodes(sourceHref) {
     var firstUrl = absoluteHref(sourceHref);
     var pageSize = 50;
-    var maxPages = 20;
+    var maxPages = 10;
     var all = [];
     var seen = {};
     function readPage(page) {
@@ -206,6 +206,38 @@
       });
     }
     return readPage(0);
+  }
+
+  function forumIndexNodes() {
+    var seen = {};
+    return allLinks().map(function (anchor) {
+      var href = anchor.getAttribute("href") || "";
+      var match = href.match(/^\/f\d+(?:-|$)/i);
+      var title = normalize(anchor.textContent);
+      if (!match || !title) return null;
+      var key = absoluteHref(href).split("?")[0];
+      if (seen[key]) return null;
+      seen[key] = true;
+      var row = anchor.closest("dl") || anchor.closest("tr") || anchor.closest("li") || anchor.parentElement;
+      var rowText = normalize(row && row.textContent).replace(title, "").trim();
+      var topicsEl = row && row.querySelector(".topics, [class*='topics']");
+      var postsEl = row && row.querySelector(".posts, [class*='posts']");
+      var meta = [];
+      var topics = numberFrom(topicsEl && topicsEl.textContent);
+      var posts = numberFrom(postsEl && postsEl.textContent);
+      if (topics) meta.push(topics + " sujets");
+      if (posts) meta.push(posts + " rép.");
+      return {
+        title: title,
+        icon: "F",
+        status: "rubrique",
+        href: key,
+        forumHref: key,
+        children: [],
+        meta: meta.join(" · "),
+        detail: rowText ? rowText.slice(0, 220) : "Rubrique du forum Blockhaus-DY10."
+      };
+    }).filter(Boolean);
   }
 
   function topicPreview(node, preview) {
@@ -460,6 +492,7 @@
     ].map(function (artist) {
       return { title: artist[0], icon: "♪", status: "sujet", href: artist[1], topic: true, detail: "Sujet, morceaux et liens de " + artist[0] + "." };
     });
+    var forumIndex = forumIndexNodes();
     var tree = [
       { title: "À lire", icon: "!", status: "actif", children: [
         { title: "Derniers posts", icon: ">", status: "nouveau", href: "/search?search_id=newposts", detail: "Les discussions qui attendent une lecture." },
@@ -480,6 +513,7 @@
         { title: "The Sounds", icon: "S", status: "son", forumHref: soundHref, href: soundHref, detail: "Archives et liens sonores du Blockhaus.", children: soundArtists },
         { title: "52 x Set/30'", icon: "S", status: "archive", forumHref: setHref, href: setHref, detail: "Archives des sessions Set/30'.", children: [] }
       ] },
+      { title: "Forum complet", icon: "F", status: "index", detail: "Toutes les rubriques visibles depuis Accueil / DY10.", children: forumIndex },
       { title: "ChatBox", icon: "C", status: "direct", href: "/chatbox/", detail: "Ouvrir le chat du Blockhaus dans sa page dédiée." }
     ];
     var selection = [];
