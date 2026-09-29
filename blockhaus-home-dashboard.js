@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.3";
+  var VERSION = "10.4";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-1-style";
+  var STYLE_ID = "bh-member-dashboard-v10-4-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -70,12 +70,14 @@
       "#" + ROOT_ID + " .bh-card p{min-height:34px;margin:0 0 12px;color:#514f49;font-size:13px;line-height:1.35}",
       "#" + ROOT_ID + " .bh-card-media{margin:10px 0 12px;padding-top:9px;border-top:1px solid #b3aea4}",
       "#" + ROOT_ID + " .bh-card-media-label{display:block;margin-bottom:7px;font:900 10px/1 monospace;text-transform:uppercase;color:#615f58}",
-      "#" + ROOT_ID + " .bh-card-media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}",
+      "#" + ROOT_ID + " .bh-card-media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-height:340px;overflow:auto;scrollbar-color:var(--bh-ink) #d8d2c7}",
       "#" + ROOT_ID + " .bh-card-media-grid a{display:block;min-height:48px;background:#d8d2c7;border:1px solid #817d74;overflow:hidden}",
       "#" + ROOT_ID + " .bh-card-media-grid img{display:block;width:100%;height:58px;object-fit:cover}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media{margin-top:14px;padding-top:0;border-top:0}",
-      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:340px;overflow-y:auto;align-content:start}",
+      "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid a{min-height:150px}",
       "#" + ROOT_ID + " .bh-activity-card .bh-card-media-grid img{height:150px;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-media-loading{padding:18px 0;color:#615f58;font:700 11px/1.4 monospace}",
       "#" + ROOT_ID + " .bh-card-media-empty{font-size:11px;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-cr-card{min-height:420px}",
       "#" + ROOT_ID + " .bh-cr-card h2{font-size:28px!important;line-height:1.08!important}",
@@ -417,10 +419,10 @@
   function isUsefulImage(image, url) {
     if (image && image.closest && image.closest("#logo,#logo-desc,.bh-brand,.bh-top-menu")) return false;
     var source = (url || "") + " " + (image && (image.getAttribute("alt") || "")) + " " + (image && (image.className || ""));
-    if (/2img\.net|forumactif|smil|emoji|emot|avatar|icon|icone|spacer|blank|pixel|quote|delete|trash|info|thumb/i.test(source)) return false;
+    if (/smil|emoji|emot|avatar|icon|icone|spacer|blank|pixel|quote|delete|trash|info|pp-blank/i.test(source)) return false;
     var width = image && Number(image.getAttribute("width") || 0);
     var height = image && Number(image.getAttribute("height") || 0);
-    if (width && height && width < 120 && height < 120) return false;
+    if (width && height && width < 90 && height < 90) return false;
     return !!url;
   }
 
@@ -522,33 +524,12 @@
   }
 
   function recentSharedMediaMarkup(imagesHref) {
-    var seen = {};
-    var items = [];
-    Array.prototype.forEach.call(document.querySelectorAll("img[src],img[data-src],img[data-original]"), function (image) {
-      var url = safeMediaUrl(image.getAttribute("data-src") || image.getAttribute("data-original") || image.getAttribute("src") || "");
-      if (!isUsefulImage(image, url) || seen[url]) return;
-      seen[url] = true;
-      var link = image.closest("a[href]");
-      items.push({ url: url, href: link ? absoluteHref(link.getAttribute("href") || url) : url, alt: normalize(image.getAttribute("alt") || "Image partagée") });
-    });
-    if (!items.length) items = fallbackSharedMediaItems(imagesHref);
-    var content = '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
-      return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
-    }).join("") + '</div>';
-    return '<div data-bh-shared-media>' + content + '</div>';
-  }
-
-  function fallbackSharedMediaItems(imagesHref) {
-    return [
-      { url: "https://i.servimg.com/u/f95/19/07/75/91/blockh13.jpg", href: imagesHref || "/images", alt: "Logo Blockhaus DY10" },
-      { url: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=800&q=80", href: imagesHref || "/images", alt: "Scène et lumière" },
-      { url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=800&q=80", href: imagesHref || "/images", alt: "Performance musicale" }
-    ];
+    return '<div data-bh-shared-media><div class="bh-media-loading">Chargement des images partagées…</div></div>';
   }
 
   function loadRecentSharedMedia(root, imagesHref) {
     var target = root.querySelector("[data-bh-shared-media]");
-    if (!target || target.querySelector("img")) return;
+    if (!target) return;
     function collect(doc, fallbackHref) {
       var seen = {};
       var items = [];
@@ -562,10 +543,20 @@
       return items;
     }
     function render(items) {
-      if (!items.length) items = fallbackSharedMediaItems(imagesHref);
-      target.innerHTML = '<div class="bh-card-media-grid">' + items.slice(0, 3).map(function (item) {
+      if (!items.length) {
+        target.innerHTML = '<div class="bh-card-media-empty">Aucune image publique trouvée dans la galerie ou les sujets.</div>';
+        return;
+      }
+      target.innerHTML = '<div class="bh-card-media-grid">' + items.slice(0, 24).map(function (item) {
         return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
       }).join("") + '</div>';
+    }
+    function legacyRecentImages() {
+      var candidates = Array.prototype.slice.call(document.querySelectorAll(".module,.widget,.panel,[id*='recent'],[class*='recent'],[id*='image'],[class*='image']"));
+      var source = candidates.find(function (element) {
+        return element !== root && /images\s+partagées\s+récemment/i.test(normalize(element.textContent || "")) && element.querySelector("img");
+      });
+      return source ? collect(source, imagesHref) : [];
     }
     function fetchRecentTopicImages() {
       return fetch("/search?search_id=newposts", { credentials: "same-origin" }).then(function (response) {
@@ -589,17 +580,14 @@
         });
       });
     }
+    var legacyItems = legacyRecentImages();
     fetch(imagesHref, { credentials: "same-origin" }).then(function (response) {
       if (!response.ok) throw new Error("gallery unavailable");
       return response.text();
     }).then(function (html) {
       var items = collect(new DOMParser().parseFromString(html, "text/html"), imagesHref);
       return items.length ? items : fetchRecentTopicImages();
-    }).then(render).catch(function () {
-      target.innerHTML = '<div class="bh-card-media-grid">' + fallbackSharedMediaItems(imagesHref).map(function (item) {
-        return '<a href="' + escapeHtml(item.href) + '" title="' + escapeHtml(item.alt) + '"><img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.alt) + '"></a>';
-      }).join("") + '</div>';
-    });
+    }).then(function (items) { return items.length ? items : legacyItems; }).then(render).catch(function () { render(legacyItems); });
   }
 
   function hideLegacyRecentPosts() {
