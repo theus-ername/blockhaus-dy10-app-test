@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.11";
+  var VERSION = "10.12";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-10-style";
+  var STYLE_ID = "bh-member-dashboard-v10-12-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -108,14 +108,14 @@
       "#" + ROOT_ID + " .bh-latest-item strong{display:block;margin-bottom:5px;font-size:13px;line-height:1.15}",
       "#" + ROOT_ID + " .bh-latest-item small{display:block;color:#5d5a53;font:700 10px/1.3 monospace}",
       "#" + ROOT_ID + " .bh-latest-empty{padding:18px;color:#514f49;font-size:12px}",
-      "#" + ROOT_ID + " .bh-utility-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:stretch;border-top:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
-      "#" + ROOT_ID + " .bh-latest{display:flex;flex-direction:column;min-width:0;height:100%;border-top:0;border-bottom:0}",
+      "#" + ROOT_ID + " .bh-utility-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start;border-top:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-latest{display:flex;flex-direction:column;min-width:0;height:var(--bh-utility-height,auto);border-top:0;border-bottom:0}",
       "#" + ROOT_ID + " .bh-latest-head{border-right:0;border-bottom:1px solid var(--bh-line)}",
-      "#" + ROOT_ID + " .bh-latest-list{display:flex;flex-direction:column;gap:1px;flex:1;height:100%;min-height:360px;max-height:none;overflow-y:auto;overflow-x:hidden}",
+      "#" + ROOT_ID + " .bh-latest-list{display:flex;flex-direction:column;gap:1px;flex:1;height:auto;min-height:0;max-height:none;overflow-y:auto;overflow-x:hidden}",
       "#" + ROOT_ID + " .bh-latest-item{flex:0 0 auto;min-height:62px;border-bottom:1px solid #c1bcb2}",
       "#" + ROOT_ID + " .bh-latest-priority{background:var(--bh-concrete);border-right:1px solid var(--bh-line);border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-latest-priority .bh-latest-head{padding:12px 18px 8px;border-bottom:0}",
-      "#" + ROOT_ID + " .bh-latest-priority .bh-latest-list{min-height:0;max-height:none;height:100%}",
+      "#" + ROOT_ID + " .bh-latest-priority .bh-latest-list{min-height:0;max-height:none;height:auto}",
       "#" + ROOT_ID + " .bh-cr-card{background:var(--bh-concrete)}",
       "#" + ROOT_ID + " .bh-agenda{display:grid;grid-template-columns:1fr;min-width:0;background:var(--bh-deep);color:var(--bh-paper);border:0}",
       "#" + ROOT_ID + " .bh-agenda-copy{padding:16px 18px;border-right:0;border-bottom:1px solid var(--bh-line)}",
@@ -687,6 +687,18 @@
     }, 85);
   }
 
+  function syncUtilityHeight(root) {
+    var utility = root && root.querySelector(".bh-utility-grid");
+    var agenda = root && root.querySelector(".bh-agenda");
+    if (!utility || !agenda) return;
+    if (window.matchMedia && window.matchMedia("(max-width:800px)").matches) {
+      utility.style.removeProperty("--bh-utility-height");
+      return;
+    }
+    var height = Math.ceil(agenda.getBoundingClientRect().height);
+    if (height > 0) utility.style.setProperty("--bh-utility-height", height + "px");
+  }
+
   function findLink(patterns, fallback) {
     var links = allLinks();
     for (var i = 0; i < patterns.length; i += 1) {
@@ -829,6 +841,7 @@
     if (previousRoot) {
       if (previousRoot._bhLatestTicker) window.clearInterval(previousRoot._bhLatestTicker);
       if (previousRoot._bhActivityMediaRaf) window.cancelAnimationFrame(previousRoot._bhActivityMediaRaf);
+      if (previousRoot._bhUtilityResize) window.removeEventListener("resize", previousRoot._bhUtilityResize);
       previousRoot.remove();
     }
     if (!/^\/(?:index\.htm)?$/.test(window.location.pathname) && window.BLOCKHAUS_HOME_DASHBOARD_PREVIEW !== true) return;
@@ -915,6 +928,9 @@
 
     main.insertBefore(root, main.firstChild);
     loadRecentSharedMedia(root, imagesHref);
+    syncUtilityHeight(root);
+    root._bhUtilityResize = function () { syncUtilityHeight(root); };
+    window.addEventListener("resize", root._bhUtilityResize, { passive: true });
     var scroll = root.querySelector("[data-bh-col-scroll]");
     var browser = root.querySelector(".bh-forum-browser");
     var back = root.querySelector("[data-bh-col-back]");
@@ -1235,6 +1251,7 @@
     var siteMenu = document.getElementById(SITE_MENU_ID);
     if (root && root._bhLatestTicker) window.clearInterval(root._bhLatestTicker);
     if (root && root._bhActivityMediaRaf) window.cancelAnimationFrame(root._bhActivityMediaRaf);
+    if (root && root._bhUtilityResize) window.removeEventListener("resize", root._bhUtilityResize);
     if (root) root.remove();
     if (style) style.remove();
     if (betaNav) betaNav.remove();
