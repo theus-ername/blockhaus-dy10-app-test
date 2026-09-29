@@ -233,7 +233,7 @@
     var row = topicRow(anchor);
     var href = absoluteHref(anchor.getAttribute("href") || "#");
     var title = normalize(anchor.textContent);
-    if (!title || href === "#") return null;
+    if (!title || href === "#" || !/\/t\d+(?:-|$)/i.test(href)) return null;
     var repliesEl = row && row.querySelector(".posts, .topic-replies, [class*='posts']");
     var viewsEl = row && row.querySelector(".views, .topic-views, [class*='views']");
     var lastEl = row && row.querySelector(".lastpost, .last-post, [class*='lastpost']");
@@ -277,7 +277,15 @@
         return response.text();
       }).then(function (html) {
         var doc = new DOMParser().parseFromString(html, "text/html");
-        var nodes = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle")).map(topicNodeFromAnchor).filter(Boolean);
+        var anchors = Array.prototype.slice.call(doc.querySelectorAll("a.topictitle, a.topic-title, .topic-title a, a[href*='/t']"));
+        var nodes = [];
+        var topicSeen = {};
+        anchors.forEach(function (anchor) {
+          var node = topicNodeFromAnchor(anchor);
+          if (!node || topicSeen[node.href]) return;
+          topicSeen[node.href] = true;
+          nodes.push(node);
+        });
         nodes.forEach(function (node) {
           var key = node.href;
           if (!seen[key]) { seen[key] = true; all.push(node); }
