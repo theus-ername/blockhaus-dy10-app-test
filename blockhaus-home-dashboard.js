@@ -1,16 +1,18 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.12";
+  var VERSION = "10.13";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-12-style";
+  var STYLE_ID = "bh-member-dashboard-v10-13-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
   var ORG_STORAGE_KEY = "bh_dashboard_finder_org_v1";
   var WIDE_STORAGE_KEY = "bh_dashboard_finder_wide_v1";
   var AGENDA_PATH = "/h1-google-agenda";
-  var AGENDA_EMBED = "https://calendar.google.com/calendar/embed?src=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com&ctz=Europe%2FParis&mode=AGENDA&showTitle=0&showNav=1&showTabs=0&showCalendars=0&wkst=2";
+  var AGENDA_EMBED_BASE = "https://calendar.google.com/calendar/embed?src=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com&ctz=Europe%2FParis&showTitle=0&showNav=1&showTabs=0&showCalendars=0&wkst=2";
+  var AGENDA_EMBED = AGENDA_EMBED_BASE + "&mode=AGENDA";
+  var AGENDA_EMBED_MONTH = AGENDA_EMBED_BASE + "&mode=MONTH";
 
   // A fresh V8 may replace an older cached loader, while later V7 copies are
   // still locked out. This makes Forumactif's async script order harmless.
@@ -121,6 +123,11 @@
       "#" + ROOT_ID + " .bh-agenda-copy{padding:16px 18px;border-right:0;border-bottom:1px solid var(--bh-line)}",
       "#" + ROOT_ID + " .bh-agenda-copy h2{margin:0 0 8px!important;padding:0!important;color:var(--bh-paper)!important;font-size:18px!important}",
       "#" + ROOT_ID + " .bh-agenda-copy p{margin:0 0 14px;color:#ebe5da;font-size:13px;line-height:1.4}",
+      "#" + ROOT_ID + " .bh-agenda-views{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}",
+      "#" + ROOT_ID + " .bh-agenda-view{display:inline-flex;align-items:center;min-height:30px;padding:6px 9px;border:1px solid #d8d2c7;background:transparent;color:var(--bh-paper);cursor:pointer;font:800 11px/1 Arial,sans-serif}",
+      "#" + ROOT_ID + " .bh-agenda-view:hover,#" + ROOT_ID + " .bh-agenda-view:focus{background:var(--bh-paper);color:var(--bh-ink);outline:2px solid var(--bh-paper);outline-offset:1px}",
+      "#" + ROOT_ID + " .bh-agenda-view.active{background:var(--bh-paper);color:var(--bh-ink)}",
+      "#" + ROOT_ID + " .bh-agenda-view-note{margin:0 0 12px;color:#d8d2c7;font:700 10px/1.3 monospace}",
       "#" + ROOT_ID + " .bh-agenda-frame{width:100%;height:360px;border:0;background:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-archives{border:1px solid var(--bh-line);border-top:0;background:#e5e0d7}",
       "#" + ROOT_ID + " .bh-archives summary{min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;cursor:pointer;font-weight:900;text-transform:uppercase;list-style:none}",
@@ -558,7 +565,10 @@
         target.innerHTML = '<div class="bh-card-media-empty">Aucune image publique trouvée dans la galerie ou les sujets.</div>';
         return;
       }
-      var carouselItems = items.slice(0, 24);
+      // The gallery endpoint returns the newest item first. Start at the
+      // oldest item in the 24-image window so the carousel reads 24 → 1,
+      // while retaining the same seamless left-to-right motion.
+      var carouselItems = items.slice(0, 24).reverse();
       var itemMarkup = function (item, clone) {
         var cloneAttrs = clone ? ' aria-hidden="true" tabindex="-1"' : '';
         var alt = clone ? '' : escapeHtml(item.alt);
@@ -697,6 +707,23 @@
     }
     var height = Math.ceil(agenda.getBoundingClientRect().height);
     if (height > 0) utility.style.setProperty("--bh-utility-height", height + "px");
+  }
+
+  function setupAgendaViews(root) {
+    var frame = root && root.querySelector(".bh-agenda-frame");
+    var controls = root && root.querySelectorAll("[data-bh-agenda-view]");
+    if (!frame || !controls || !controls.length) return;
+    Array.prototype.forEach.call(controls, function (control) {
+      control.addEventListener("click", function () {
+        var mode = control.getAttribute("data-bh-agenda-view");
+        frame.src = mode === "MONTH" ? AGENDA_EMBED_MONTH : AGENDA_EMBED;
+        Array.prototype.forEach.call(controls, function (item) {
+          var active = item === control;
+          item.classList.toggle("active", active);
+          item.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      });
+    });
   }
 
   function findLink(patterns, fallback) {
@@ -892,7 +919,7 @@
         '<article class="bh-card bh-activity-card"><span class="bh-card-number">03 / ACTIVITÉ</span><div class="bh-card-media">' + recentSharedMediaMarkup(imagesHref) + '</div></article>' +
       "</div>" +
       '<div class="bh-utility-grid">' + latestSectionMarkup +
-      '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
+      '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-agenda-views" role="group" aria-label="Vue de l’agenda"><button type="button" class="bh-agenda-view active" data-bh-agenda-view="AGENDA" aria-pressed="true">Agenda</button><button type="button" class="bh-agenda-view" data-bh-agenda-view="MONTH" aria-pressed="false">Mois</button><a class="bh-agenda-view" href="' + AGENDA_EMBED_BASE + '&mode=YEAR" target="_blank" rel="noopener">Année ↗</a></div><p class="bh-agenda-view-note">La vue annuelle s’ouvre en grand pour rester lisible.</p><div class="bh-actions">' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '</div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
       '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><button type="button" data-bh-wide-toggle aria-pressed="false">Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
@@ -928,6 +955,7 @@
 
     main.insertBefore(root, main.firstChild);
     loadRecentSharedMedia(root, imagesHref);
+    setupAgendaViews(root);
     syncUtilityHeight(root);
     root._bhUtilityResize = function () { syncUtilityHeight(root); };
     window.addEventListener("resize", root._bhUtilityResize, { passive: true });
