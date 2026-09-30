@@ -463,7 +463,7 @@
       var search = root.querySelector("[data-bhm-bandcamp-search]");
       if (search) search.addEventListener("input", function () { var query = text(search.value).toLowerCase(); target.querySelectorAll("[data-bhm-bandcamp-card]").forEach(function (card) { card.hidden = query && card.getAttribute("data-search").toLowerCase().indexOf(query) === -1; }); });
     }
-    fetch(FORUMS.sounds.href, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("forum"); return response.text(); }).then(function (html) { return Promise.all(topicEntries(new DOMParser().parseFromString(html, "text/html")).map(readTopic)); }).then(function (items) { var publicItems = items.filter(Boolean).filter(function (item) { return !(item.topicHref && /\/t665-urticaria-records(?:#|$)/i.test(item.topicHref) && !item.sourceLabel); }); render(publicItems.concat(curatedUrticariaAlbums())); }).catch(function () { render(curatedUrticariaAlbums()); });
+      fetch(FORUMS.sounds.href, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("forum"); return response.text(); }).then(function (html) { return Promise.all(topicEntries(new DOMParser().parseFromString(html, "text/html")).map(readTopic)); }).then(function (items) { var publicItems = items.filter(Boolean).filter(function (item) { if (item.topicHref && /\/t665-urticaria-records(?:#|$)/i.test(item.topicHref) && !item.sourceLabel) return false; if (item.topicHref && /\/t(?:148-divx|682-elastic-systems)(?:-|$)/i.test(item.topicHref)) return false; return true; }); render(publicItems.concat(curatedUrticariaAlbums())); }).catch(function () { render(curatedUrticariaAlbums()); });
   }
 
   function init() {

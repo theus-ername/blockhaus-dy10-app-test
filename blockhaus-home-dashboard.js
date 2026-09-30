@@ -158,6 +158,7 @@
       "#" + ROOT_ID + " .bh-forum-browser{display:grid;grid-template-columns:repeat(5,minmax(240px,1fr)) minmax(360px,1.25fr);height:560px;background:var(--bh-concrete);border:2px solid var(--bh-ink);border-top:0}",
       "#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:1760px;grid-template-columns:minmax(250px,1fr) minmax(290px,1.1fr) minmax(330px,1.2fr) minmax(380px,1.3fr) minmax(430px,1.4fr) minmax(470px,1.35fr)}",
       "#" + ROOT_ID + " .bh-col{min-width:0;overflow:hidden;border-right:1px solid var(--bh-ink);background:rgba(244,242,236,.28)}",
+      "#" + ROOT_ID + " .bh-col.bh-col-hidden{display:none!important}",
       "#" + ROOT_ID + " .bh-col:last-child{border-right:0}",
       "#" + ROOT_ID + " .bh-col-title{display:flex;align-items:center;min-height:40px;padding:10px 12px;border-bottom:1px solid var(--bh-ink);background:rgba(20,21,19,.88);color:var(--bh-paper);font:900 12px/1 monospace;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-list{display:flex;flex-direction:column;height:calc(100% - 40px);overflow-y:auto;padding:8px 7px;gap:4px;scrollbar-color:var(--bh-ink) var(--bh-concrete)}",
@@ -189,12 +190,12 @@
       "#" + ROOT_ID + " .bh-column-scroll .bh-col{scroll-snap-align:start}",
       "#" + ROOT_ID + " .bh-finder-bottom{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 12px;border:2px solid var(--bh-ink);border-top:0;background:var(--bh-concrete);font:800 10px/1 monospace;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-finder-bottom input{width:100%;accent-color:var(--bh-ink);cursor:pointer}",
-      "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:start;gap:8px;min-height:44px;padding:9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font-weight:800;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-node{width:100%;display:grid;grid-template-columns:22px minmax(0,1fr);grid-template-rows:auto auto;align-items:start;gap:3px 8px;min-height:44px;padding:9px;border:1px solid transparent;background:transparent;text-align:left;color:var(--bh-ink);font:800 13px/1.22 Arial,sans-serif;cursor:pointer}",
       "#" + ROOT_ID + " .bh-node:hover,#" + ROOT_ID + " .bh-node:focus,#" + ROOT_ID + " .bh-node.active{border-color:var(--bh-ink);background:var(--bh-paper);outline:0}",
       "#" + ROOT_ID + " .bh-node.active .bh-node-meta{color:var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-bandcamp-note{margin-top:10px;color:#5d5a53;font-size:11px;line-height:1.35}",
       "#" + ROOT_ID + " .bh-status-left{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid currentColor;font:900 12px/1 monospace}",
-      "#" + ROOT_ID + " .bh-node-meta{justify-self:end;color:#5d5a53;font:700 10px/1.15 monospace;white-space:normal;text-align:right}",
+      "#" + ROOT_ID + " .bh-node-meta{grid-column:2;grid-row:2;justify-self:start;max-width:100%;color:#5d5a53;font:700 10px/1.15 monospace;white-space:normal;text-align:left;overflow-wrap:anywhere}",
       "#" + ROOT_ID + " .bh-node .bh-status{display:none}",
       "#" + ROOT_ID + " .bh-topic-stats{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}",
       "#" + ROOT_ID + " .bh-topic-stat{display:inline-flex;padding:5px 7px;border:1px solid #817d74;background:#d8d2c7;font:800 10px/1 monospace;text-transform:uppercase}",
@@ -203,6 +204,8 @@
       "#" + ROOT_ID + " .bh-topic-excerpt{font-size:13px;line-height:1.45;color:#30312d;white-space:pre-line}",
       "#" + ROOT_ID + " .bh-topic-author{display:block;margin-top:9px;font:700 10px/1 monospace;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-topic-media{display:grid;gap:8px;margin:12px 0}",
+      "#" + ROOT_ID + " .bh-finder-agenda{margin:14px 0;padding:10px;border:1px solid var(--bh-line);background:rgba(244,242,236,.62)}",
+      "#" + ROOT_ID + " .bh-finder-agenda-frame{display:block;width:100%;height:300px;border:1px solid var(--bh-line);background:#fff}",
       "#" + ROOT_ID + " .bh-topic-media-label{font:900 10px/1 monospace;text-transform:uppercase;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-topic-bandcamp{display:flex;align-items:center;gap:8px;padding:9px 10px;background:#d8d2c7;border:1px solid #817d74;font-size:12px;font-weight:800}",
       "#" + ROOT_ID + " .bh-topic-bandcamp:before{content:'♫';font-size:18px}",
@@ -912,7 +915,9 @@
       return Promise.all(entries.map(readTopic));
     }).then(function (items) {
       var publicItems = items.filter(Boolean).filter(function (item) {
-        return !(item.topicHref && /\/t665-urticaria-records(?:#|$)/i.test(item.topicHref) && !item.sourceLabel);
+        if (item.topicHref && /\/t665-urticaria-records(?:#|$)/i.test(item.topicHref) && !item.sourceLabel) return false;
+        if (item.topicHref && /\/t(?:148-divx|682-elastic-systems)(?:-|$)/i.test(item.topicHref)) return false;
+        return true;
       });
       render(publicItems.concat(curatedUrticariaAlbums()));
     }).catch(function () { render(curatedUrticariaAlbums()); });
@@ -1101,7 +1106,6 @@
       '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation du forum"><button type="button" data-bh-col-back disabled aria-label="Revenir">← Retour</button><button type="button" data-bh-col-forward aria-label="Avancer" hidden>›</button><button type="button" data-bh-wide-toggle aria-pressed="false" hidden>Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info" hidden>6 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
-          row("À lire", "/search?search_id=newposts", "!", "actif", true) +
           row("Réus", meetingHref, "R", "prio", false) +
           row("Événements", eventsHref, "E", "date", false) +
           row("Agenda", agendaHref, "A", "google", false) +
@@ -1204,10 +1208,6 @@
     ];
     var forumIndex = forumIndexNodes();
     var baseTree = [
-      { title: "À lire", icon: "!", status: "actif", children: [
-        { title: "Derniers posts", icon: ">", status: "nouveau", href: "/search?search_id=newposts", detail: "Les discussions qui attendent une lecture." },
-        { title: "Sans réponse", icon: "?", status: "à suivre", href: "/search?search_id=unanswered", detail: "Sujets ouverts qui n’ont pas encore reçu de réponse." }
-      ] },
       { title: "Réunions & décisions", icon: "R", status: "prio", forumHref: CANONICAL_FORUMS.meetings.href, href: CANONICAL_FORUMS.meetings.href, children: meetingChildren, detail: "Blockhaus-DY10 › DY10 › REUNIONS. Les sous-forums réels sont chargés depuis la rubrique." },
       { title: "Événements", icon: "E", status: "date", children: [
         { title: "Agenda partagé", icon: "A", status: "google", href: agendaHref, detail: "Agenda Google du Blockhaus." },
@@ -1223,7 +1223,7 @@
       { title: "Forum complet", icon: "F", status: "index", detail: "Arborescence complète : catégories, forums, sous-forums et sujets.", children: forumIndex }
     ];
     var favoritesRoot = { title: "Favoris", icon: "★", status: "favori", children: [], detail: "Raccourcis choisis par les administrateurs de la bêta." };
-    var tree = [favoritesRoot].concat(baseTree);
+    var tree = baseTree;
     function nodeKey(node) {
       return String(node && (node.forumHref || node.href || node.title) || "").split("?")[0].toLowerCase();
     }
@@ -1344,6 +1344,9 @@
     function renderColumn(depth) {
       var list = depth === 0 ? tree : (selectedNode(depth - 1) || {}).children;
       var title = ["1. Zones", "2. Rubriques", "3. Sujets utiles", "4. Rubrique / dossier", "5. Sujets / messages"][depth] || "6. Aperçu";
+      var parent = depth > 0 ? selectedNode(depth - 1) : null;
+      var shouldShow = depth === 5 || depth === 0 || depth < selection.length || (depth === selection.length && !!(list && list.length || (parent && (parent.forumLoading || parent.forumError))));
+      columns[depth].classList.toggle("bh-col-hidden", !shouldShow);
       if (depth === 5) {
         var item = selection.length ? selectedNode(selection.length - 1) : null;
         var crumb = selection.map(function (_, i) { var n = selectedNode(i); return n ? n.title : ""; }).filter(Boolean);
@@ -1351,7 +1354,8 @@
         var topicBox = item && item.topic ? '<div class="bh-topic-preview" data-bh-topic-preview><span class="bh-topic-preview-label">Aperçu du dernier post</span><div class="bh-topic-excerpt">Lecture du sujet…</div></div>' : '';
         var isFavorite = item && organization.favorites.indexOf(nodeKey(item)) !== -1;
         var adminTools = isAdmin() && item && item !== favoritesRoot ? '<div class="bh-admin-tools"><small>Organisation locale de la bêta — favoris visibles dans la première zone de ce navigateur</small><button type="button" data-bh-org-action="up">↑ Monter</button><button type="button" data-bh-org-action="down">↓ Descendre</button><button type="button" data-bh-org-action="' + (isFavorite ? 'unfavorite' : 'favorite') + '">' + (isFavorite ? '☆ Retirer des favoris' : '★ Ajouter aux favoris') + '</button><button type="button" data-bh-org-action="hide">Masquer</button><button type="button" data-bh-org-action="reset">Réinitialiser</button></div>' : '';
-        columns[depth].innerHTML = '<div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>' + (item ? escapeHtml(item.title) : "Choisir un dossier") + '</h2><p>' + escapeHtml(item && item.detail ? item.detail : "Sélectionne une zone, puis une rubrique et enfin un sujet.") + '</p>' + stats + topicBox + '<p><strong>Chemin :</strong><br>' + (crumb.length ? "Accueil › " + crumb.map(escapeHtml).join(" › ") : "Accueil") + '</p>' + adminTools + '<div class="bh-preview-actions">' + (item && item.href ? link("Ouvrir le sujet complet", item.href, true) : "") + (item && item.lastHref ? link("Aller au dernier post", item.lastHref, false) : "") + '</div></div>';
+        var agendaPreview = item && item.status === "google" ? '<div class="bh-finder-agenda"><span class="bh-topic-preview-label">Agenda Google</span><iframe class="bh-finder-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + escapeHtml(AGENDA_EMBED) + '"></iframe></div>' : '';
+        columns[depth].innerHTML = '<div class="bh-col-title">6. Aperçu</div><div class="bh-preview"><h2>' + (item ? escapeHtml(item.title) : "Choisir un dossier") + '</h2><p>' + escapeHtml(item && item.detail ? item.detail : "Sélectionne une zone, puis une rubrique et enfin un sujet.") + '</p>' + agendaPreview + stats + topicBox + '<p><strong>Chemin :</strong><br>' + (crumb.length ? "Accueil › " + crumb.map(escapeHtml).join(" › ") : "Accueil") + '</p>' + adminTools + '<div class="bh-preview-actions">' + (item && item.href ? link("Ouvrir le sujet complet", item.href, true) : "") + (item && item.lastHref ? link("Aller au dernier post", item.lastHref, false) : "") + '</div></div>';
         if (item && item.topic) topicPreview(item, columns[depth]);
         columns[depth].querySelectorAll("[data-bh-org-action]").forEach(function (button) {
           button.addEventListener("click", function () {
@@ -1364,7 +1368,6 @@
         columns[depth].innerHTML = '<div class="bh-col-title">' + title + '</div><div class="bh-list"></div>';
         return;
       }
-      var parent = depth > 0 ? selectedNode(depth - 1) : null;
       var emptyMessage = parent && parent.forumLoading ? "Lecture des forums et sujets…" : (parent && parent.forumError ? (parent.forumError === "protected" ? "Cette branche est réservée aux membres connectés." : "Branche indisponible pour le moment.") : "Aucun sous-dossier ici.");
       columns[depth].innerHTML = '<div class="bh-col-title">' + title + '</div><div class="bh-list">' + (list && list.length ? list.map(function (node, index) { return nodeButton(node, index, selection[depth] === index); }).join("") : '<p class="bh-preview">' + emptyMessage + '</p>') + '</div>';
       columns[depth].querySelectorAll("[data-bh-node-index]").forEach(function (button) {
@@ -1404,7 +1407,8 @@
       bottomLevel.textContent = (level + 1) + " / 6";
       back.disabled = level === 0;
       forward.disabled = level === 5;
-      scroll.scrollLeft = (scroll.scrollWidth / columns.length) * level;
+      var targetColumn = columns[level] && !columns[level].classList.contains("bh-col-hidden") ? columns[level] : columns[5];
+      scroll.scrollLeft = targetColumn ? Math.max(0, targetColumn.offsetLeft - 4) : 0;
     }
     function setLevel(next) {
       level = Math.max(0, Math.min(5, next));
