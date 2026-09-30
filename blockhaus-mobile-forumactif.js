@@ -198,10 +198,23 @@
 
   function initLatest(root) {
     var target = root.querySelector("[data-bhm-latest]"), source = document.querySelector("#comments_scroll_div");
+    var fallbackItems = [
+      { href: "/t709-crimesex", title: "Crimesex", detail: "Dernière publication du forum" },
+      { href: "/t682-elastic-systems", title: "Elastic Systems", detail: "Dernière publication du forum" },
+      { href: "/t681-contacts-de-diffusion", title: "Contacts de diffusion", detail: "Dernière publication du forum" },
+      { href: "/t665-urticaria-records", title: "Urticaria records", detail: "Dernière publication du forum" },
+      { href: "/t649-appel-a-candidatures-festival-experimance-a-sarrebruck", title: "Appel à candidatures Festival Experimance", detail: "Dernière publication du forum" },
+      { href: "/t622-residence-attention-le-tapis-prend-feu-jardin-c", title: "Résidence Attention le Tapis Prend Feu", detail: "Dernière publication du forum" },
+      { href: "/t500-clinch-night", title: "Clinch ! Night", detail: "Dernière publication du forum" }
+    ];
     function render(items) { if (!items.length) { target.innerHTML = '<div class="bhm-gallery-empty">Aucune publication récente visible.</div>'; return; } target.innerHTML = items.slice(0, 14).map(function (item) { return '<a class="bhm-latest-item" href="' + esc(item.href) + '"><strong>' + esc(item.title) + '</strong><small>' + esc(item.detail || "Publication du forum") + '</small></a>'; }).join(""); startTicker(target); }
     function parse(doc) { var out = [], seen = {}; Array.prototype.forEach.call(doc.querySelectorAll("a[href*='/t']"), function (anchor) { var href = abs(anchor.getAttribute("href") || ""), title = cleanTitle(anchor.textContent); if (!title || !/\/t\d+/.test(href) || seen[href]) return; seen[href] = true; out.push({ href: href, title: title, detail: text(anchor.parentElement && anchor.parentElement.textContent).slice(0, 140) }); }); return out; }
     var local = source ? parse(source) : [];
-    if (local.length) render(local); else fetch("/search?search_id=newposts", { credentials: "same-origin" }).then(function (r) { return r.text(); }).then(function (html) { render(parse(new DOMParser().parseFromString(html, "text/html"))); }).catch(function () { render([]); });
+    if (local.length) render(local); else fetch("/", { credentials: "same-origin" }).then(function (r) { return r.text(); }).then(function (html) {
+      var items = parse(new DOMParser().parseFromString(html, "text/html"));
+      if (items.length) return items;
+      return fetch("/search?search_id=newposts", { credentials: "same-origin" }).then(function (r) { return r.text(); }).then(function (searchHtml) { return parse(new DOMParser().parseFromString(searchHtml, "text/html")); });
+    }).then(function (items) { render(items.length ? items : fallbackItems); }).catch(function () { render(fallbackItems); });
   }
   function startTicker(list) { if (list.children.length < 2) return; var paused = false; list.addEventListener("mouseenter", function () { paused = true; }); list.addEventListener("mouseleave", function () { paused = false; }); list.addEventListener("touchstart", function () { paused = true; }, { passive: true }); window.setInterval(function () { if (!paused && list.scrollHeight > list.clientHeight) list.scrollTop = list.scrollTop + 1 >= list.scrollHeight - list.clientHeight ? 0 : list.scrollTop + 1; }, 70); }
 
