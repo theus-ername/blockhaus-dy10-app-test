@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.1.0-mobile-shell";
+  var VERSION = "0.1.1-mobile-shell";
   var ROOT_ID = "bh-mobile-shell";
-  var STYLE_ID = "bh-mobile-shell-v010-style";
+  var STYLE_ID = "bh-mobile-shell-v011-style";
   var preview = window.BLOCKHAUS_MOBILE_PREVIEW === true;
   var params = new URLSearchParams(window.location.search);
   var isMobileTemplate = !!(document.body && (document.body.id === "mpage-body-modern" || document.querySelector("#tab-bar")));
@@ -11,13 +11,26 @@
   // requested. The public loader is present for every visitor, but this shell
   // only takes over on the mobile template with bh_beta=1 (or in the prototype).
   var betaKey = "blockhaus-mobile-beta";
+  var betaCookie = "blockhaus-mobile-beta";
   var betaRequested = params.get("bh_mobile_beta") === "1" || params.get("bh_beta") === "1";
   var betaDisabled = params.get("bh_beta") === "off";
   var betaStored = false;
   try {
-    if (betaRequested) window.localStorage.setItem(betaKey, "1");
-    if (betaDisabled) window.localStorage.removeItem(betaKey);
-    betaStored = window.localStorage.getItem(betaKey) === "1";
+    if (betaRequested) {
+      window.localStorage.setItem(betaKey, "1");
+      // Forumactif can switch between subdomains during login. The shared
+      // cookie keeps the opt-in across that redirect, while the host-only
+      // fallback also works on preview hosts where Domain is rejected.
+      document.cookie = betaCookie + "=1; Max-Age=31536000; Path=/; SameSite=Lax";
+      document.cookie = betaCookie + "=1; Max-Age=31536000; Path=/; Domain=.forumactif.com; SameSite=Lax";
+    }
+    if (betaDisabled) {
+      window.localStorage.removeItem(betaKey);
+      document.cookie = betaCookie + "=; Max-Age=0; Path=/; SameSite=Lax";
+      document.cookie = betaCookie + "=; Max-Age=0; Path=/; Domain=.forumactif.com; SameSite=Lax";
+    }
+    var storedInCookie = new RegExp("(?:^|;\\s*)" + betaCookie + "=1(?:;|$)").test(document.cookie || "");
+    betaStored = window.localStorage.getItem(betaKey) === "1" || storedInCookie;
   } catch (storageError) {}
   var enabled = preview || betaRequested || betaStored;
 
