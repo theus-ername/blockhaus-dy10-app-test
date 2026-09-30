@@ -155,8 +155,8 @@
       "#" + ROOT_ID + " .bh-archive-group h3{margin:0 0 10px!important;padding:0!important;color:var(--bh-ink)!important;font-size:14px!important;text-transform:uppercase}",
       "#" + ROOT_ID + " .bh-chip-list{display:flex;flex-wrap:wrap;gap:7px}",
       "#" + ROOT_ID + " .bh-chip{display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;background:#d6d1c8;border:1px solid #8d887e;font-size:12px;font-weight:700}",
-      "#" + ROOT_ID + " .bh-forum-browser{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(280px,1.05fr) minmax(360px,1.35fr) minmax(340px,1.1fr);height:560px;background:var(--bh-concrete);border:2px solid var(--bh-ink);border-top:0}",
-      "#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:1420px;grid-template-columns:minmax(270px,1fr) minmax(340px,1.2fr) minmax(470px,1.55fr) minmax(430px,1.25fr)}",
+      "#" + ROOT_ID + " .bh-forum-browser{display:grid;grid-template-columns:repeat(5,minmax(240px,1fr)) minmax(360px,1.25fr);height:560px;background:var(--bh-concrete);border:2px solid var(--bh-ink);border-top:0}",
+      "#" + ROOT_ID + " .bh-forum-browser.bh-wide{min-width:1760px;grid-template-columns:minmax(250px,1fr) minmax(290px,1.1fr) minmax(330px,1.2fr) minmax(380px,1.3fr) minmax(430px,1.4fr) minmax(470px,1.35fr)}",
       "#" + ROOT_ID + " .bh-col{min-width:0;overflow:hidden;border-right:1px solid var(--bh-ink);background:rgba(244,242,236,.28)}",
       "#" + ROOT_ID + " .bh-col:last-child{border-right:0}",
       "#" + ROOT_ID + " .bh-col-title{display:flex;align-items:center;min-height:40px;padding:10px 12px;border-bottom:1px solid var(--bh-ink);background:rgba(20,21,19,.88);color:var(--bh-paper);font:900 12px/1 monospace;text-transform:uppercase}",
@@ -213,6 +213,18 @@
       "#" + ROOT_ID + " .bh-admin-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0;padding:10px;border:1px dashed #817d74;background:#e1ddd5}",
       "#" + ROOT_ID + " .bh-admin-tools small{flex:1 1 100%;font:800 10px/1.3 monospace;text-transform:uppercase;color:#5d5a53}",
       "#" + ROOT_ID + " .bh-admin-tools button{padding:6px 8px;border:1px solid var(--bh-ink);background:var(--bh-paper);font:800 11px/1 monospace;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-bandcamp-archive{border:2px solid var(--bh-ink);border-top:0;background:var(--bh-concrete)}",
+      "#" + ROOT_ID + " .bh-bandcamp-head{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--bh-line)}",
+      "#" + ROOT_ID + " .bh-bandcamp-head h2{margin:0!important;padding:0!important;font-size:20px!important;color:var(--bh-ink)!important}",
+      "#" + ROOT_ID + " .bh-bandcamp-head p{margin:4px 0 0;color:#514f49;font-size:12px}",
+      "#" + ROOT_ID + " .bh-bandcamp-search{width:min(260px,100%);padding:9px 10px;border:1px solid var(--bh-ink);background:var(--bh-paper);color:var(--bh-ink);font:700 12px Arial}",
+      "#" + ROOT_ID + " .bh-bandcamp-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;padding:14px 18px}",
+      "#" + ROOT_ID + " .bh-bandcamp-card{display:block;min-width:0;color:var(--bh-ink)}",
+      "#" + ROOT_ID + " .bh-bandcamp-cover{display:grid;place-items:center;aspect-ratio:1;background:#77736a;border:1px solid var(--bh-ink);overflow:hidden;font:900 34px/1 monospace;color:var(--bh-paper)}",
+      "#" + ROOT_ID + " .bh-bandcamp-cover img{display:block;width:100%;height:100%;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-bandcamp-card strong{display:block;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}",
+      "#" + ROOT_ID + " .bh-bandcamp-card small{display:block;margin-top:2px;color:#5d5a53;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:10px/1.2 monospace}",
+      "#" + ROOT_ID + " .bh-bandcamp-empty{grid-column:1/-1;padding:20px;color:#5d5a53;font:12px/1.4 monospace}",
       "#" + ROOT_ID + " .bh-admin-tools button:hover,#" + ROOT_ID + " .bh-admin-tools button:focus{background:var(--bh-ink);color:var(--bh-paper)}",
       "a.mainmenu[data-bh-agenda-link='true']{display:inline-flex!important;align-items:center;gap:5px;font-weight:800!important}",
       "a.mainmenu[data-bh-agenda-link='true']:before{content:'▦';font:900 14px/1 monospace}",
@@ -791,6 +803,66 @@
     });
   }
 
+  function bandcampArchiveMarkup() {
+    return '<section class="bh-bandcamp-archive" data-bh-bandcamp-archive><div class="bh-bandcamp-head"><div><span class="bh-card-number">ARCHIVES SON</span><h2>Pochettes & liens Bandcamp</h2><p>Les liens musicaux publics du forum, réunis au même endroit.</p></div><input class="bh-bandcamp-search" data-bh-bandcamp-search type="search" placeholder="Rechercher un artiste" aria-label="Rechercher un artiste"></div><div class="bh-bandcamp-grid" data-bh-bandcamp-grid><div class="bh-bandcamp-empty">Chargement des pochettes…</div></div></section>';
+  }
+
+  function loadBandcampArchive(root) {
+    var target = root && root.querySelector("[data-bh-bandcamp-grid]");
+    if (!target) return;
+    var forumHref = CANONICAL_FORUMS.sounds.href;
+    function unique(values) {
+      var seen = {};
+      return values.filter(function (value) { return value && !seen[value] && (seen[value] = true); });
+    }
+    function topicEntries(doc) {
+      var entries = [];
+      Array.prototype.forEach.call(doc.querySelectorAll("a.topictitle,a[href*='/t']"), function (anchor) {
+        var href = absoluteHref(anchor.getAttribute("href") || "");
+        var title = normalize(anchor.textContent);
+        if (!title || !/\/t\d+(?:-|$)/i.test(href) || entries.some(function (item) { return item.href === href; })) return;
+        entries.push({ href: href, title: title });
+      });
+      return entries.slice(0, 60);
+    }
+    function readTopic(entry) {
+      return fetch(entry.href, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("topic"); return response.text(); }).then(function (html) {
+        var doc = new DOMParser().parseFromString(html, "text/html"), bands = [], cover = "";
+        Array.prototype.forEach.call(doc.querySelectorAll("a[href],iframe[src]"), function (element) {
+          var raw = element.getAttribute("href") || element.getAttribute("src") || "";
+          var url = safeMediaUrl(raw);
+          if (/bandcamp\.com/i.test(url)) bands.push(url);
+        });
+        var og = doc.querySelector("meta[property='og:image'],meta[name='twitter:image']");
+        if (og) cover = safeMediaUrl(og.getAttribute("content") || "");
+        if (!cover) Array.prototype.some.call(doc.querySelectorAll("img[src],img[data-src]"), function (image) {
+          var url = safeMediaUrl(image.getAttribute("data-src") || image.getAttribute("src") || "");
+          if (!isUsefulImage(image, url)) return false;
+          cover = url;
+          return true;
+        });
+        if (!bands.length) return null;
+        return { title: entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], cover: cover };
+      }).catch(function () { return null; });
+    }
+    function render(items) {
+      var cards = items.map(function (item) {
+        var cover = item.cover ? '<img loading="lazy" src="' + escapeHtml(item.cover) + '" alt="Pochette — ' + escapeHtml(item.title) + '">' : '♫';
+        return '<a class="bh-bandcamp-card" data-bh-bandcamp-card data-search="' + escapeHtml(item.title) + '" href="' + escapeHtml(item.bandcampHref) + '" target="_blank" rel="noopener"><span class="bh-bandcamp-cover">' + cover + '</span><strong>' + escapeHtml(item.title) + '</strong><small>Écouter sur Bandcamp ↗</small></a>';
+      }).join("");
+      target.innerHTML = cards || '<div class="bh-bandcamp-empty">Aucun lien Bandcamp public détecté dans les sujets sonores.</div>';
+      var search = root.querySelector("[data-bh-bandcamp-search]");
+      if (search) search.addEventListener("input", function () {
+        var query = normalize(search.value).toLowerCase();
+        target.querySelectorAll("[data-bh-bandcamp-card]").forEach(function (card) { card.hidden = query && card.getAttribute("data-search").toLowerCase().indexOf(query) === -1; });
+      });
+    }
+    fetch(forumHref, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("forum"); return response.text(); }).then(function (html) {
+      var entries = topicEntries(new DOMParser().parseFromString(html, "text/html"));
+      return Promise.all(entries.map(readTopic));
+    }).then(function (items) { render(items.filter(Boolean)); }).catch(function () { render([]); });
+  }
+
   function statusIcon(status) {
     var key = normalize(status).toLowerCase();
     if (/favori/.test(key)) return "★";
@@ -955,8 +1027,9 @@
       root.innerHTML = '<header class="bh-dash-head"><div class="bh-brand"><div><h1>ARCHIVES SON</h1><p>Blockhaus DY10 · accès public</p></div></div><div><span class="bh-version">BÊTA PUBLIQUE</span></div></header>' +
         '<article class="bh-card bh-guest-archive"><span class="bh-card-number">ARCHIVES SON</span><h2>The Sounds of the Blockhaus DY10</h2><p>Les archives musicales publiques et les liens Bandcamp accessibles sans compte.</p><div class="bh-actions">' +
         chip("The Sounds", soundHref) + chip("52 x Set/30'", setHref) + chip("Collège son", CANONICAL_FORUMS.collegeSon.href) +
-        '</div><div class="bh-chip-list">' + musicChips + '</div><p class="bh-bandcamp-note">Les autres sections du forum restent réservées aux membres.</p></article>';
+        '</div><div class="bh-chip-list">' + musicChips + '</div><p class="bh-bandcamp-note">Les autres sections du forum restent réservées aux membres.</p></article>' + bandcampArchiveMarkup();
       main.insertBefore(root, main.firstChild);
+      loadBandcampArchive(root);
       hideClassicHome(root, main);
       return;
     }
@@ -970,7 +1043,7 @@
       "</div>" +
       '<div class="bh-utility-grid">' + latestSectionMarkup +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions bh-agenda-actions" role="group" aria-label="Vue et accès à l’agenda"><button type="button" class="bh-action bh-agenda-view active" data-bh-agenda-view="AGENDA" aria-pressed="true">Agenda</button><button type="button" class="bh-action bh-agenda-view" data-bh-agenda-view="MONTH" aria-pressed="false">Mois</button>' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '<a class="bh-action bh-agenda-view" href="' + AGENDA_YEAR_HREF + '" target="_blank" rel="noopener">Année ↗</a></div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
-      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation du forum"><button type="button" data-bh-col-back disabled aria-label="Revenir">← Retour</button><button type="button" data-bh-col-forward aria-label="Avancer" hidden>›</button><button type="button" data-bh-wide-toggle aria-pressed="false" hidden>Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info" hidden>4 niveaux · vue Finder</span></div>' +
+      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation du forum"><button type="button" data-bh-col-back disabled aria-label="Revenir">← Retour</button><button type="button" data-bh-col-forward aria-label="Avancer" hidden>›</button><button type="button" data-bh-wide-toggle aria-pressed="false" hidden>Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info" hidden>6 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
           row("À lire", "/search?search_id=newposts", "!", "actif", true) +
@@ -996,16 +1069,19 @@
           row("Intermix", intermixHref, "D", "", false) +
           row("Transmission", transmissionHref, "D", "", false) +
         "</div></div>" +
-        '<div class="bh-col"><div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>Vue liste / colonnes</h2><p>Cette bêta garde l’organisation du forum, mais donne une entrée plus directe aux choses à lire, aux réunions, à l’agenda et aux archives.</p><div class="bh-preview-meta"><span class="bh-chip">sans compteurs</span><span class="bh-chip">mobile en liste</span><span class="bh-chip">desktop en colonnes</span></div><p>Les nombres de sujets et de réponses restent dans l’interface classique. Ici, on privilégie les statuts utiles : nouveau, important, à lire, date, archive.</p><div class="bh-preview-actions">' + link("Ouvrir les nouveaux messages", "/search?search_id=newposts", true) + "</div></div></div>" +
+        '<div class="bh-col"><div class="bh-col-title">4. Rubrique / dossier</div><div class="bh-list"></div></div>' +
+        '<div class="bh-col"><div class="bh-col-title">5. Sujets / messages</div><div class="bh-list"></div></div>' +
+        '<div class="bh-col"><div class="bh-col-title">6. Aperçu</div><div class="bh-preview"></div></div>' +
       "</section></div>" +
       '<details class="bh-archives"><summary>Archives musicales & visuelles <small>niveau secondaire</small></summary><div class="bh-archive-groups">' +
         '<section class="bh-archive-group"><h3>Musique & son</h3><div class="bh-chip-list">' + chip("The Sounds", soundHref) + chip("Set/30'", setHref) + chip("Wave Drone Orchestra", waveHref) + chip("DY DISQ", disqHref) + musicChips + "</div></section>" +
         '<section class="bh-archive-group"><h3>Images & vidéo</h3><div class="bh-chip-list">' + chip("Dernières images", imagesHref) + chip("Atelier vidéo", videoHref) + chip("Documentaires", documentaryHref) + "</div></section>" +
       "</div></details>" +
-      '<div class="bh-finder-bottom" aria-label="Chemin Finder"><span data-bh-bottom-path>Accueil</span><input data-bh-level-slider type="range" min="0" max="3" value="0" step="1" aria-label="Niveau de navigation"><span data-bh-bottom-level>1 / 4</span></div>';
+      '<div class="bh-finder-bottom" aria-label="Chemin Finder"><span data-bh-bottom-path>Accueil</span><input data-bh-level-slider type="range" min="0" max="5" value="0" step="1" aria-label="Niveau de navigation"><span data-bh-bottom-level>1 / 6</span></div>' + bandcampArchiveMarkup();
 
     main.insertBefore(root, main.firstChild);
     loadRecentSharedMedia(root, imagesHref);
+    loadBandcampArchive(root);
     setupAgendaViews(root);
     syncUtilityHeight(root);
     root._bhUtilityResize = function () { syncUtilityHeight(root); };
@@ -1212,9 +1288,9 @@
     }
     function renderColumn(depth) {
       var list = depth === 0 ? tree : (selectedNode(depth - 1) || {}).children;
-      var title = ["1. Zones", "2. Rubriques", "3. Sujets utiles"][depth] || "4. Aperçu";
-      if (depth === 3) {
-        var item = selectedNode(2) || selectedNode(1) || selectedNode(0);
+      var title = ["1. Zones", "2. Rubriques", "3. Sujets utiles", "4. Rubrique / dossier", "5. Sujets / messages"][depth] || "6. Aperçu";
+      if (depth === 5) {
+        var item = selection.length ? selectedNode(selection.length - 1) : null;
         var crumb = selection.map(function (_, i) { var n = selectedNode(i); return n ? n.title : ""; }).filter(Boolean);
         var stats = item && item.topic ? '<div class="bh-topic-stats">' + (item.replies ? '<span class="bh-topic-stat">' + escapeHtml(item.replies) + ' réponses</span>' : '') + (item.views ? '<span class="bh-topic-stat">' + escapeHtml(item.views) + ' vues</span>' : '') + (item.lastText ? '<span class="bh-topic-stat">dernier message repéré</span>' : '') + '</div>' : '';
         var topicBox = item && item.topic ? '<div class="bh-topic-preview" data-bh-topic-preview><span class="bh-topic-preview-label">Aperçu du dernier post</span><div class="bh-topic-excerpt">Lecture du sujet…</div></div>' : '';
@@ -1227,6 +1303,10 @@
             organizeCurrent(button.getAttribute("data-bh-org-action"));
           });
         });
+        return;
+      }
+      if (depth > 0 && selectedNode(depth - 1) && selectedNode(depth - 1).topic) {
+        columns[depth].innerHTML = '<div class="bh-col-title">' + title + '</div><div class="bh-list"></div>';
         return;
       }
       var parent = depth > 0 ? selectedNode(depth - 1) : null;
@@ -1260,19 +1340,19 @@
       });
     }
     function renderFinder() {
-      renderColumn(0); renderColumn(1); renderColumn(2); renderColumn(3);
+      for (var columnIndex = 0; columnIndex < columns.length; columnIndex += 1) renderColumn(columnIndex);
       var crumb = selection.map(function (_, i) { var n = selectedNode(i); return n ? n.title : ""; }).filter(Boolean);
       path.textContent = crumb.length ? "Accueil › " + crumb.join(" › ") : "Accueil › Zones";
       bottomPath.textContent = path.textContent;
-      level = Math.min(3, selection.length);
+      level = Math.min(5, selection.length);
       slider.value = String(level);
-      bottomLevel.textContent = (level + 1) + " / 4";
+      bottomLevel.textContent = (level + 1) + " / 6";
       back.disabled = level === 0;
-      forward.disabled = level === 3;
-      scroll.scrollLeft = (scroll.scrollWidth / 4) * level;
+      forward.disabled = level === 5;
+      scroll.scrollLeft = (scroll.scrollWidth / columns.length) * level;
     }
     function setLevel(next) {
-      level = Math.max(0, Math.min(3, next));
+      level = Math.max(0, Math.min(5, next));
       selection = selection.slice(0, level);
       renderFinder();
     }
