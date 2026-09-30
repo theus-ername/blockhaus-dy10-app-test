@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "10.15";
+  var VERSION = "10.16";
   var ROOT_ID = "bh-member-dashboard";
-  var STYLE_ID = "bh-member-dashboard-v10-15-style";
+  var STYLE_ID = "bh-member-dashboard-v10-16-style";
   var BETA_NAV_ID = "bh-dashboard-beta-nav";
   var SITE_MENU_ID = "bh-forum-site-menu";
   var BETA_STORAGE_KEY = "bh_dashboard_beta_v1";
@@ -14,6 +14,22 @@
   var AGENDA_EMBED = AGENDA_EMBED_BASE + "&mode=AGENDA";
   var AGENDA_EMBED_MONTH = AGENDA_EMBED_BASE + "&mode=MONTH";
   var AGENDA_YEAR_HREF = "https://calendar.google.com/calendar/u/0/r/year?cid=4o90q8lq7lv50fh0o03c3mma9o%40group.calendar.google.com";
+
+  // Stable Forumactif paths. The Finder is an editorial view, but its links
+  // must always resolve to the real forum tree instead of whichever duplicate
+  // navigation link happens to be present on the current page.
+  var CANONICAL_FORUMS = {
+    dy10: { title: "DY10", href: "/c1-dy10", kind: "catégorie" },
+    meetings: { title: "REUNIONS", href: "/f39-reunions", kind: "rubrique" },
+    agendas: { title: "Ordres du jour", href: "/f17-ordres-du-jour", kind: "rubrique" },
+    reports: { title: "Comptes rendus", href: "/f16-comptes-rendus", kind: "rubrique" },
+    polls: { title: "Sondages et votes", href: "/f45-sondages-et-votes", kind: "rubrique" },
+    anniversary: { title: "30 ans Blockhaus DY10", href: "/f46-30-ans-blockhaus-dy10", kind: "rubrique" },
+    sounds: { title: "The Sounds", href: "/f27-the-sounds-of-the-blockhaus-dy10", kind: "rubrique" },
+    sets: { title: "52 x Set/30' Archives", href: "/f37-52-x-set-30-archives", kind: "rubrique" },
+    collegeSon: { title: "Collège son", href: "/f4-college-son", kind: "rubrique" },
+    bloghaus: { title: "Bloghaus DY10", href: "/f23-bloghaus-dy10", kind: "rubrique" }
+  };
 
   // A fresh V8 may replace an older cached loader, while later V7 copies are
   // still locked out. This makes Forumactif's async script order harmless.
@@ -345,11 +361,23 @@
         // repeat global navigation and the “Derniers sujets” marquee. These
         // selectors stay inside the forum/category lists only.
         var forumAnchors = Array.prototype.slice.call(doc.querySelectorAll(
-          ".forabg a.forumtitle, .forumbg a.forumtitle, .forumlist a.forumtitle, dl.icon a.forumtitle, #main-content a.forumtitle, #main a.forumtitle"
+          "#main-content .forabg a.forumtitle, #main-content .forumbg a.forumtitle, #main .forabg a.forumtitle, #main .forumbg a.forumtitle, .forumlist a.forumtitle, dl.icon a.forumtitle"
         ));
+        // Only read the topic list belonging to the requested forum. The
+        // previous fallbacks also matched Forumactif's global “Derniers
+        // sujets” widget, which made ODJ/CR topics appear inside The Sounds.
         var topicAnchors = Array.prototype.slice.call(doc.querySelectorAll(
-          "ul.topiclist.topics li.row a.topictitle, ul.topiclist.topics li.row a[href*='/t'], .forumbg ul.topiclist.topics li.row a.topictitle, .forumbg ul.topiclist.topics li.row a[href*='/t'], .topic-title-container a[href*='/t'], .topic-title a[href*='/t'], #main-content ul.topiclist a[href*='/t'], #main ul.topiclist a[href*='/t']"
-        ));
+          "#main-content .forumbg ul.topiclist.topics > li.row a.topictitle, #main-content .forumbg ul.topiclist.topics > li.row a[href*='/t'], #main-content .forabg ul.topiclist.topics > li.row a.topictitle, #main-content .forabg ul.topiclist.topics > li.row a[href*='/t'], #main .forumbg ul.topiclist.topics > li.row a.topictitle, #main .forumbg ul.topiclist.topics > li.row a[href*='/t'], #main .forabg ul.topiclist.topics > li.row a.topictitle, #main .forabg ul.topiclist.topics > li.row a[href*='/t']"
+        )).filter(function (anchor, index, list) {
+          if (list.indexOf(anchor) !== index) return false;
+          if (anchor.closest("#comments_scroll_div, .module, .recent-topics, .latest-topics, [id*='recent' i], [class*='recent' i], [id*='latest' i], [class*='latest' i]")) return false;
+          return true;
+        });
+        if (!topicAnchors.length) {
+          topicAnchors = Array.prototype.slice.call(doc.querySelectorAll("ul.topiclist.topics > li.row a.topictitle, ul.topiclist.topics > li.row a[href*='/t']")).filter(function (anchor) {
+            return !anchor.closest("#comments_scroll_div, .module, .recent-topics, .latest-topics");
+          });
+        }
         forumAnchors.forEach(addForum);
         topicAnchors.forEach(addTopic);
         var pageTopics = topicAnchors.map(function (anchor) { return topicNodeFromAnchor(anchor); }).filter(Boolean);
@@ -370,7 +398,13 @@
 
   function forumIndexNodes() {
     var seen = {};
-    var nodes = allLinks().map(function (anchor) {
+    var nodes = [];
+    [CANONICAL_FORUMS.dy10, CANONICAL_FORUMS.meetings, CANONICAL_FORUMS.sounds, CANONICAL_FORUMS.sets, CANONICAL_FORUMS.collegeSon, CANONICAL_FORUMS.bloghaus].forEach(function (item) {
+      var key = item.href;
+      seen[key] = true;
+      nodes.push({ title: item.title, icon: item.kind === "catégorie" ? "C" : "F", status: item.kind, href: key, forumHref: key, children: [], detail: "Branche canonique du forum Blockhaus-DY10." });
+    });
+    nodes = nodes.concat(allLinks().map(function (anchor) {
       var href = anchor.getAttribute("href") || "";
       var match = href.match(/^\/f\d+(?:-|$)/i);
       var title = cleanForumTitle(anchor.textContent);
@@ -397,22 +431,7 @@
         meta: meta.join(" · "),
         detail: rowText ? rowText.slice(0, 220) : "Rubrique du forum Blockhaus-DY10."
       };
-    }).filter(Boolean);
-    // The homepage does not expose protected branches to guests. Keep the
-    // canonical roots in the index so the Finder can request them lazily with
-    // the current session instead of silently losing them.
-    [
-      ["DY10", "/c1-dy10", "catégorie"],
-      ["REUNIONS", "/f39-reunions", "rubrique"],
-      ["The Sounds", "/f27-the-sounds-of-the-blockhaus-dy10", "rubrique"],
-      ["52 x Set/30' Archives", "/f37-52-x-set-30-archives", "rubrique"],
-      ["Collège son", "/f4-college-son", "rubrique"]
-    ].forEach(function (item) {
-      var key = item[1];
-      if (seen[key]) return;
-      seen[key] = true;
-      nodes.push({ title: item[0], icon: item[2] === "catégorie" ? "C" : "F", status: item[2], href: key, forumHref: key, children: [], detail: "Branche canonique du forum Blockhaus-DY10." });
-    });
+    }).filter(Boolean));
     return nodes;
   }
 
@@ -738,6 +757,19 @@
     return fallback || "#";
   }
 
+  function findForumHref(patterns, fallback) {
+    var links = allLinks();
+    for (var i = 0; i < patterns.length; i += 1) {
+      var pattern = patterns[i];
+      var found = links.find(function (link) {
+        var href = link.getAttribute("href") || "";
+        return /^\/f\d+(?:-|$)/i.test(href) && pattern.test(normalize((link.textContent || "") + " " + (link.getAttribute("title") || "")));
+      });
+      if (found) return absoluteHref(found.getAttribute("href"));
+    }
+    return fallback || "#";
+  }
+
   function link(label, href, primary) {
     if (!href || href === "#") return "";
     return '<a class="bh-action' + (primary ? " primary" : "") + '" href="' + href + '">' + label + "</a>";
@@ -874,21 +906,21 @@
     if (!/^\/(?:index\.htm)?$/.test(window.location.pathname) && window.BLOCKHAUS_HOME_DASHBOARD_PREVIEW !== true) return;
 
     var main = document.getElementById("main-content") || document.getElementById("main") || document.body;
-    var meetingHref = findLink([/^REUNIONS$/i, /réunions/i], "/f39-reunions");
+    var meetingHref = CANONICAL_FORUMS.meetings.href;
     var agendaHref = AGENDA_PATH;
     var oldAgendaHref = findLink([/^Calendrier$/i, /calendrier Forumactif/i], "/calendar");
-    var odjSectionHref = findLink([/^Ordres du jour$/i, /ordres du jour/i], "/f17-ordres-du-jour");
+    var odjSectionHref = CANONICAL_FORUMS.agendas.href;
     var odjHref = findLink([/^ODJ\b/i, /ordre(?:s)? du jour/i]);
-    var reportHref = findLink([/compte(?:s)? rendu(?:s)?/i, /^CR\b/i]);
+    var reportHref = CANONICAL_FORUMS.reports.href;
     var generalHref = findLink([/^Discussion générale$/i, /^Général$/i]);
-    var eventsHref = findLink([/^Évènements du calendrier$/i, /^Evènements du calendrier$/i, /propositions d.?évènements/i], "/events");
+    var eventsHref = findForumHref([/^Évènements du calendrier$/i, /^Evènements du calendrier$/i, /propositions d.?évènements/i], "/events");
     var rulesHref = findLink([/Règlement et adhésions/i], "#");
     var projectHref = findLink([/notre projet/i], "#");
     var consentHref = findLink([/Consenthaus|charte des bons comportements/i], "#");
     var transmissionHref = findLink([/Transmission/i, /Atelier soudure/i], "#");
     var intermixHref = findLink([/Intermix/i, /Chambre intermix/i], "#");
-    var soundHref = findLink([/^The sounds of the Blockhaus DY10$/i, /^Collège son$/i], "/f27-the-sounds-of-the-blockhaus-dy10");
-    var setHref = findLink([/52\s*x\s*Set\/30/i, /^set\/30/i], "/f37-52-x-set-30-archives");
+    var soundHref = CANONICAL_FORUMS.sounds.href;
+    var setHref = CANONICAL_FORUMS.sets.href;
     var waveHref = findLink([/Wave Drone Orchestra/i], "/f19-wave-drone-orchestra");
     var disqHref = findLink([/BLOCKHAUS DY DISQ/i], "/f21-blockhaus-dy-disq");
     var videoHref = findLink([/Atelier Vidéo/i], "/f35-atelier-video-salle-6-etage-1-s1-6");
@@ -1014,21 +1046,28 @@
     ].map(function (artist) {
       return { title: artist[0], icon: "♪", status: "sujet", href: artist[1], topic: true, detail: "Sujet, morceaux et liens de " + artist[0] + "." };
     });
+    var meetingChildren = [
+      { title: CANONICAL_FORUMS.agendas.title, icon: "▦", status: "rubrique", href: CANONICAL_FORUMS.agendas.href, forumHref: CANONICAL_FORUMS.agendas.href, children: [], detail: "Ordres du jour des réunions." },
+      { title: CANONICAL_FORUMS.reports.title, icon: "▦", status: "rubrique", href: CANONICAL_FORUMS.reports.href, forumHref: CANONICAL_FORUMS.reports.href, children: [], detail: "Comptes rendus et décisions des réunions." },
+      { title: CANONICAL_FORUMS.polls.title, icon: "▦", status: "rubrique", href: CANONICAL_FORUMS.polls.href, forumHref: CANONICAL_FORUMS.polls.href, children: [], detail: "Sondages et votes du collectif." },
+      { title: CANONICAL_FORUMS.anniversary.title, icon: "▦", status: "rubrique", href: CANONICAL_FORUMS.anniversary.href, forumHref: CANONICAL_FORUMS.anniversary.href, children: [], detail: "Archives des 30 ans du Blockhaus DY10." }
+    ];
     var forumIndex = forumIndexNodes();
     var baseTree = [
       { title: "À lire", icon: "!", status: "actif", children: [
         { title: "Derniers posts", icon: ">", status: "nouveau", href: "/search?search_id=newposts", detail: "Les discussions qui attendent une lecture." },
         { title: "Sans réponse", icon: "?", status: "à suivre", href: "/search?search_id=unanswered", detail: "Sujets ouverts qui n’ont pas encore reçu de réponse." }
       ] },
-      { title: "Réunions & décisions", icon: "R", status: "prio", forumHref: meetingHref, children: [], detail: "Blockhaus-DY10 › DY10 › REUNIONS. Sous-forums et sujets réels chargés depuis le forum." },
+      { title: "Réunions & décisions", icon: "R", status: "prio", forumHref: CANONICAL_FORUMS.meetings.href, href: CANONICAL_FORUMS.meetings.href, children: meetingChildren, detail: "Blockhaus-DY10 › DY10 › REUNIONS. Les sous-forums réels sont chargés depuis la rubrique." },
       { title: "Événements", icon: "E", status: "date", children: [
         { title: "Agenda partagé", icon: "A", status: "google", href: agendaHref, detail: "Agenda Google du Blockhaus." },
         { title: "Ancien agenda", icon: "A", status: "archive", href: oldAgendaHref, detail: "Calendrier historique Forumactif conservé comme archive technique." },
         { title: "Événements du forum", icon: "E", status: "forum", href: eventsHref, detail: "Propositions et événements publiés sur le forum." }
       ] },
       { title: "Archives son", icon: "S", status: "son", children: [
-        { title: "The Sounds", icon: "S", status: "son", forumHref: soundHref, href: soundHref, detail: "Archives et liens sonores du Blockhaus.", children: [] },
-        { title: "52 x Set/30'", icon: "S", status: "archive", forumHref: setHref, href: setHref, detail: "Archives des sessions Set/30'.", children: [] }
+        { title: "The Sounds", icon: "S", status: "son", forumHref: CANONICAL_FORUMS.sounds.href, href: CANONICAL_FORUMS.sounds.href, detail: "Archives et liens sonores du Blockhaus. Les artistes sont les sujets de cette rubrique.", children: soundArtists.slice() },
+        { title: "52 x Set/30'", icon: "S", status: "archive", forumHref: CANONICAL_FORUMS.sets.href, href: CANONICAL_FORUMS.sets.href, detail: "Archives des sessions Set/30'. Les années et sujets sont chargés depuis la rubrique.", children: [] },
+        { title: "Collège son", icon: "S", status: "son", forumHref: CANONICAL_FORUMS.collegeSon.href, href: CANONICAL_FORUMS.collegeSon.href, detail: "Discussions et archives du collège son.", children: [] }
       ] },
       { title: "Forum complet", icon: "F", status: "index", detail: "Arborescence complète : catégories, forums, sous-forums et sujets.", children: forumIndex }
     ];
