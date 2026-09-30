@@ -222,7 +222,10 @@
       "#" + ROOT_ID + " .bh-bandcamp-card{display:block;min-width:0;color:var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-bandcamp-cover{display:grid;place-items:center;aspect-ratio:1;background:#77736a;border:1px solid var(--bh-ink);overflow:hidden;font:900 34px/1 monospace;color:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-bandcamp-cover img{display:block;width:100%;height:100%;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-bandcamp-player{width:100%;aspect-ratio:1/1.18;overflow:hidden;border:1px solid var(--bh-ink);background:#fff}",
+      "#" + ROOT_ID + " .bh-bandcamp-player iframe{display:block;width:100%;height:100%;min-height:260px;border:0;background:#fff}",
       "#" + ROOT_ID + " .bh-bandcamp-card strong{display:block;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}",
+      "#" + ROOT_ID + " .bh-bandcamp-topic{display:block;margin-top:5px;color:var(--bh-ink);font:800 10px/1.2 monospace;text-decoration:underline}",
       "#" + ROOT_ID + " .bh-bandcamp-card small{display:block;margin-top:2px;color:#5d5a53;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:10px/1.2 monospace}",
       "#" + ROOT_ID + " .bh-bandcamp-empty{grid-column:1/-1;padding:20px;color:#5d5a53;font:12px/1.4 monospace}",
       "#" + ROOT_ID + " .bh-admin-tools button:hover,#" + ROOT_ID + " .bh-admin-tools button:focus{background:var(--bh-ink);color:var(--bh-paper)}",
@@ -817,38 +820,39 @@
     }
     function topicEntries(doc) {
       var entries = [];
-      Array.prototype.forEach.call(doc.querySelectorAll("a.topictitle,a[href*='/t']"), function (anchor) {
+      var selectors = "#main-content .forumbg ul.topiclist.topics > li.row a.topictitle,#main-content .forumbg ul.topiclist.topics > li.row a[href*='/t'],#main .forumbg ul.topiclist.topics > li.row a.topictitle,#main .forumbg ul.topiclist.topics > li.row a[href*='/t'],ul.topiclist.topics > li.row a.topictitle";
+      Array.prototype.forEach.call(doc.querySelectorAll(selectors), function (anchor) {
         var href = absoluteHref(anchor.getAttribute("href") || "");
         var title = normalize(anchor.textContent);
-        if (!title || !/\/t\d+(?:-|$)/i.test(href) || entries.some(function (item) { return item.href === href; })) return;
+        if (!title || !/\/t\d+(?:-|$)/i.test(href) || anchor.closest("#comments_scroll_div,.module,.recent-topics,.latest-topics,[id*='recent' i],[class*='recent' i],[id*='latest' i],[class*='latest' i]") || entries.some(function (item) { return item.href === href; })) return;
         entries.push({ href: href, title: title });
       });
       return entries.slice(0, 60);
     }
     function readTopic(entry) {
       return fetch(entry.href, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("topic"); return response.text(); }).then(function (html) {
-        var doc = new DOMParser().parseFromString(html, "text/html"), bands = [], cover = "";
+        var doc = new DOMParser().parseFromString(html, "text/html"), bands = [], player = "", cover = "";
         Array.prototype.forEach.call(doc.querySelectorAll("a[href],iframe[src]"), function (element) {
           var raw = element.getAttribute("href") || element.getAttribute("src") || "";
           var url = safeMediaUrl(raw);
-          if (/bandcamp\.com/i.test(url)) bands.push(url);
+          if (/bandcamp\.com/i.test(url)) { bands.push(url); if (!player && /\/EmbeddedPlayer\//i.test(url)) player = url; }
         });
         var og = doc.querySelector("meta[property='og:image'],meta[name='twitter:image']");
-        if (og) cover = safeMediaUrl(og.getAttribute("content") || "");
+        if (og) { var ogUrl = safeMediaUrl(og.getAttribute("content") || ""); if (!/blockh|logo|header/i.test(ogUrl)) cover = ogUrl; }
         if (!cover) Array.prototype.some.call(doc.querySelectorAll("img[src],img[data-src]"), function (image) {
           var url = safeMediaUrl(image.getAttribute("data-src") || image.getAttribute("src") || "");
-          if (!isUsefulImage(image, url)) return false;
+          if (!isUsefulImage(image, url) || /blockh|logo|header/i.test(url + " " + (image.alt || ""))) return false;
           cover = url;
           return true;
         });
         if (!bands.length) return null;
-        return { title: entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], cover: cover };
+        return { title: entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], playerHref: player, cover: cover };
       }).catch(function () { return null; });
     }
     function render(items) {
       var cards = items.map(function (item) {
-        var cover = item.cover ? '<img loading="lazy" src="' + escapeHtml(item.cover) + '" alt="Pochette — ' + escapeHtml(item.title) + '">' : '♫';
-        return '<a class="bh-bandcamp-card" data-bh-bandcamp-card data-search="' + escapeHtml(item.title) + '" href="' + escapeHtml(item.bandcampHref) + '" target="_blank" rel="noopener"><span class="bh-bandcamp-cover">' + cover + '</span><strong>' + escapeHtml(item.title) + '</strong><small>Écouter sur Bandcamp ↗</small></a>';
+        var media = item.playerHref ? '<div class="bh-bandcamp-player"><iframe loading="lazy" title="Lecteur Bandcamp — ' + escapeHtml(item.title) + '" src="' + escapeHtml(item.playerHref) + '"></iframe></div>' : (item.cover ? '<span class="bh-bandcamp-cover"><img loading="lazy" src="' + escapeHtml(item.cover) + '" alt="Pochette — ' + escapeHtml(item.title) + '"></span>' : '<span class="bh-bandcamp-cover">♫</span>');
+        return '<article class="bh-bandcamp-card" data-bh-bandcamp-card data-search="' + escapeHtml(item.title) + '">' + media + '<strong>' + escapeHtml(item.title) + '</strong><a class="bh-bandcamp-topic" href="' + escapeHtml(item.topicHref) + '">Ouvrir le sujet du forum</a></article>';
       }).join("");
       target.innerHTML = cards || '<div class="bh-bandcamp-empty">Aucun lien Bandcamp public détecté dans les sujets sonores.</div>';
       var search = root.querySelector("[data-bh-bandcamp-search]");
