@@ -91,6 +91,7 @@
       "body#mpage-body-modern #header,body#mpage-body-modern #mhead,body#mpage-body-modern #tab-bar,body#mpage-body-modern .mobile-navbar,body#mpage-body-modern #mobile-nav,body#mpage-body-modern #mfoot{display:none!important}",
       "@media(max-width:430px){#" + ROOT_ID + " .bhm-head-row{gap:7px;padding:7px}#" + ROOT_ID + " .bhm-brand strong{font-size:15px}#" + ROOT_ID + " .bhm-brand small{font-size:10px}#" + ROOT_ID + " .bhm-head-tool{display:none}#" + ROOT_ID + " .bhm-agenda-frame{height:390px}#" + ROOT_ID + " .bhm-gallery-frame{height:220px}}@media(max-width:340px){#" + ROOT_ID + " .bhm-bottom-nav a{font-size:10px!important;padding-left:0!important;padding-right:0!important}#" + ROOT_ID + " .bhm-bottom-nav span{font-size:18px!important}}"
     ].join("\n");
+    style.appendChild(document.createTextNode("#" + ROOT_ID + " .bhm-bandcamp-player[data-bhm-bandcamp-src*='tracklist=true']{height:560px;min-height:560px}"));
     document.head.appendChild(style);
   }
 
@@ -474,6 +475,9 @@
           var observer = new IntersectionObserver(function (entries) { entries.forEach(function (entry) { if (entry.isIntersecting) { load(entry.target); observer.unobserve(entry.target); } }); }, { rootMargin: "240px" });
           Array.prototype.forEach.call(boxes, function (box) { observer.observe(box); });
         } else Array.prototype.slice.call(boxes, 0, 2).forEach(load);
+        // Keep the complete Bandcamp player (including its track list) visible
+        // in every card; the iframe itself remains browser-lazy.
+        Array.prototype.forEach.call(boxes, load);
       }
       target.innerHTML = items.map(function (item) { var media = item.playerHref ? '<div class="bhm-bandcamp-player" data-bhm-bandcamp-src="' + esc(item.playerHref) + '" data-bhm-bandcamp-title="Lecteur Bandcamp — ' + esc(item.title) + '">' + (item.cover ? '<span class="bhm-bandcamp-lazy-cover"><img loading="lazy" src="' + esc(item.cover) + '" alt="Pochette — ' + esc(item.title) + '"></span>' : '<span class="bhm-bandcamp-cover">♫</span>') + '<button type="button" class="bhm-bandcamp-load">▶ Écouter</button></div>' : (item.bandcampHref ? '<a class="bhm-bandcamp-external" href="' + esc(item.bandcampHref) + '" target="_blank" rel="noopener">Ouvrir le lien Bandcamp</a>' : (item.cover ? '<span class="bhm-bandcamp-cover"><img loading="lazy" src="' + esc(item.cover) + '" alt="Pochette — ' + esc(item.title) + '"></span>' : '<span class="bhm-bandcamp-cover">♫</span>')); return '<article class="bhm-bandcamp-card" data-bhm-bandcamp-card data-search="' + esc(item.title) + '">' + media + '<strong>' + esc(item.title) + '</strong>' + (item.sourceLabel ? '<small>' + esc(item.sourceLabel) + '</small>' : '') + '<a class="bhm-bandcamp-topic" href="' + esc(item.topicHref) + '">Ouvrir le sujet du forum</a></article>'; }).join("") || '<div class="bhm-bandcamp-empty">Aucun lien Bandcamp public détecté dans les sujets sonores.</div>';
       hydratePlayers();
