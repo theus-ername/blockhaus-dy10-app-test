@@ -861,7 +861,10 @@
   }
 
   function addBetaNavigation(enabled) {
-    if (!isMember() || document.getElementById(BETA_NAV_ID)) return;
+    // The beta shell is public on the index. Keep the entry point visible to
+    // guests as well; Forumactif still enforces permissions for private
+    // categories and topics after navigation.
+    if (document.getElementById(BETA_NAV_ID)) return;
     var nav = document.querySelector("ul.linklist.navlinks") || document.querySelector(".navbar ul") || document.querySelector(".navbar");
     if (!nav) return;
     var item = document.createElement(nav.tagName === "UL" ? "li" : "span");
@@ -892,7 +895,8 @@
   }
 
   function buildDashboard() {
-    if (!isMember()) return;
+    // Public beta shell: guests may use the interface, while each forum
+    // category/topic still remains protected by Forumactif permissions.
     document.body.setAttribute("data-bh-beta-layout", "true");
     // Replace an older beta container left in the DOM after its Forumactif
     // script was disabled; the classic forum markup remains untouched.
