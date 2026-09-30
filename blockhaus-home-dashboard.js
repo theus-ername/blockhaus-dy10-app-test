@@ -222,8 +222,12 @@
       "#" + ROOT_ID + " .bh-bandcamp-card{display:block;min-width:0;color:var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-bandcamp-cover{display:grid;place-items:center;aspect-ratio:1;background:#77736a;border:1px solid var(--bh-ink);overflow:hidden;font:900 34px/1 monospace;color:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-bandcamp-cover img{display:block;width:100%;height:100%;object-fit:cover}",
-      "#" + ROOT_ID + " .bh-bandcamp-player{width:100%;height:390px;overflow:hidden;border:1px solid var(--bh-ink);background:#fff}",
+      "#" + ROOT_ID + " .bh-bandcamp-player{position:relative;width:100%;height:390px;overflow:hidden;border:1px solid var(--bh-ink);background:#fff}",
       "#" + ROOT_ID + " .bh-bandcamp-player iframe{display:block;width:100%;height:100%;min-height:260px;border:0;background:#fff}",
+      "#" + ROOT_ID + " .bh-bandcamp-lazy-cover{display:block;width:100%;height:100%;opacity:.72}",
+      "#" + ROOT_ID + " .bh-bandcamp-lazy-cover img{display:block;width:100%;height:100%;object-fit:cover}",
+      "#" + ROOT_ID + " .bh-bandcamp-player button{position:absolute;left:10px;bottom:10px;z-index:2;padding:8px 10px;border:1px solid var(--bh-ink);background:var(--bh-ink);color:var(--bh-paper);font:900 11px/1 monospace;cursor:pointer}",
+      "#" + ROOT_ID + " .bh-bandcamp-external{display:flex;align-items:center;justify-content:center;min-height:390px;padding:12px;border:1px solid var(--bh-ink);background:var(--bh-paper);color:var(--bh-ink);font:900 12px/1.3 monospace;text-decoration:underline;text-align:center}",
       "#" + ROOT_ID + " .bh-bandcamp-card strong{display:block;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}",
       "#" + ROOT_ID + " .bh-bandcamp-topic{display:block;margin-top:5px;color:var(--bh-ink);font:800 10px/1.2 monospace;text-decoration:underline}",
       "#" + ROOT_ID + " .bh-bandcamp-card small{display:block;margin-top:2px;color:#5d5a53;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:10px/1.2 monospace}",
@@ -865,12 +869,38 @@
         return { title: /\/t148-divx(?:-|$)/i.test(entry.href) ? "D/I/V/X FR-006" : entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], playerHref: player, cover: cover };
       }).catch(function () { return null; });
     }
+    function hydratePlayers() {
+      var boxes = target.querySelectorAll("[data-bh-bandcamp-src]");
+      function load(box) {
+        if (!box || box.getAttribute("data-bh-bandcamp-loaded") === "true") return;
+        box.setAttribute("data-bh-bandcamp-loaded", "true");
+        var frame = document.createElement("iframe");
+        frame.loading = "lazy";
+        frame.title = box.getAttribute("data-bh-bandcamp-title") || "Lecteur Bandcamp";
+        frame.src = box.getAttribute("data-bh-bandcamp-src") || "";
+        box.innerHTML = "";
+        box.appendChild(frame);
+      }
+      Array.prototype.forEach.call(boxes, function (box) {
+        var button = box.querySelector("button");
+        if (button) button.addEventListener("click", function () { load(box); });
+      });
+      if (window.IntersectionObserver) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) { if (entry.isIntersecting) { load(entry.target); observer.unobserve(entry.target); } });
+        }, { rootMargin: "240px" });
+        Array.prototype.forEach.call(boxes, function (box) { observer.observe(box); });
+      } else {
+        Array.prototype.slice.call(boxes, 0, 2).forEach(load);
+      }
+    }
     function render(items) {
       var cards = items.map(function (item) {
-        var media = item.playerHref ? '<div class="bh-bandcamp-player"><iframe loading="lazy" title="Lecteur Bandcamp — ' + escapeHtml(item.title) + '" src="' + escapeHtml(item.playerHref) + '"></iframe></div>' : (item.cover ? '<span class="bh-bandcamp-cover"><img loading="lazy" src="' + escapeHtml(item.cover) + '" alt="Pochette — ' + escapeHtml(item.title) + '"></span>' : '<span class="bh-bandcamp-cover">♫</span>');
+        var media = item.playerHref ? '<div class="bh-bandcamp-player" data-bh-bandcamp-src="' + escapeHtml(item.playerHref) + '" data-bh-bandcamp-title="Lecteur Bandcamp — ' + escapeHtml(item.title) + '">' + (item.cover ? '<span class="bh-bandcamp-lazy-cover"><img loading="lazy" src="' + escapeHtml(item.cover) + '" alt="Pochette — ' + escapeHtml(item.title) + '"></span>' : '<span class="bh-bandcamp-cover">♫</span>') + '<button type="button" class="bh-bandcamp-load">▶ Écouter</button></div>' : (item.bandcampHref ? '<a class="bh-bandcamp-external" href="' + escapeHtml(item.bandcampHref) + '" target="_blank" rel="noopener">Ouvrir le lien Bandcamp</a>' : (item.cover ? '<span class="bh-bandcamp-cover"><img loading="lazy" src="' + escapeHtml(item.cover) + '" alt="Pochette — ' + escapeHtml(item.title) + '"></span>' : '<span class="bh-bandcamp-cover">♫</span>'));
         return '<article class="bh-bandcamp-card" data-bh-bandcamp-card data-search="' + escapeHtml(item.title) + '">' + media + '<strong>' + escapeHtml(item.title) + '</strong>' + (item.sourceLabel ? '<small>' + escapeHtml(item.sourceLabel) + '</small>' : '') + '<a class="bh-bandcamp-topic" href="' + escapeHtml(item.topicHref) + '">Ouvrir le sujet du forum</a></article>';
       }).join("");
       target.innerHTML = cards || '<div class="bh-bandcamp-empty">Aucun lien Bandcamp public détecté dans les sujets sonores.</div>';
+      hydratePlayers();
       var search = root.querySelector("[data-bh-bandcamp-search]");
       if (search) search.addEventListener("input", function () {
         var query = normalize(search.value).toLowerCase();
@@ -880,7 +910,12 @@
     fetch(forumHref, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("forum"); return response.text(); }).then(function (html) {
       var entries = topicEntries(new DOMParser().parseFromString(html, "text/html"));
       return Promise.all(entries.map(readTopic));
-    }).then(function (items) { render(items.filter(Boolean).concat(curatedUrticariaAlbums())); }).catch(function () { render(curatedUrticariaAlbums()); });
+    }).then(function (items) {
+      var publicItems = items.filter(Boolean).filter(function (item) {
+        return !(item.topicHref && /\/t665-urticaria-records(?:#|$)/i.test(item.topicHref) && !item.sourceLabel);
+      });
+      render(publicItems.concat(curatedUrticariaAlbums()));
+    }).catch(function () { render(curatedUrticariaAlbums()); });
   }
 
   function statusIcon(status) {
