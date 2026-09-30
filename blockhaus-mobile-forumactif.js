@@ -62,7 +62,7 @@
   }
   function numberFrom(value) { var m = text(value).match(/\d[\d .,'\u00a0]*/); return m ? m[0].replace(/[^\d]/g, "") : ""; }
   function rowFor(anchor) { return anchor.closest("li") || anchor.closest("dl") || anchor.closest("tr") || anchor.parentElement; }
-  function cleanTitle(value) { return text(value).replace(/^\s*[›»•]\s*/, "").replace(/\s+/g, " "); }
+  function cleanTitle(value) { return text(value).replace(/<[^>]*>/g, "").replace(/^\s*[›»•]\s*/, "").replace(/\s+/g, " "); }
 
   function addStyle() {
     if (document.getElementById(STYLE_ID)) return;
@@ -436,10 +436,10 @@
           var url = safeWebHref(element.getAttribute("src") || element.getAttribute("href") || "");
           if (!/bandcamp\.com/i.test(url)) return;
           var player = /\/EmbeddedPlayer\//i.test(url) ? url : "";
-          var title = text(element.textContent || "").replace(/\s+by\s+.+$/i, "");
-          if (!title) { var heading = element.previousElementSibling; while (heading && !/^H[1-6]$/i.test(heading.tagName)) heading = heading.previousElementSibling; if (heading) title = text(heading.textContent || ""); }
+          var title = cleanTitle(element.textContent || "").replace(/\s+by\s+.+$/i, "");
+          if (!title) { var heading = element.previousElementSibling; while (heading && !/^H[1-6]$/i.test(heading.tagName)) heading = heading.previousElementSibling; if (heading) title = cleanTitle(heading.textContent || ""); }
           var parent = element.parentElement;
-          while (!title && parent) { var candidate = parent.querySelector("h1,h2,h3,h4"); if (candidate) title = text(candidate.textContent || ""); parent = parent.parentElement; }
+          while (!title && parent) { var candidate = parent.querySelector("h1,h2,h3,h4"); if (candidate) title = cleanTitle(candidate.textContent || ""); parent = parent.parentElement; }
           if (!title) title = entry.title;
           var key = player || url;
           if (!embeds.some(function (item) { return item.key === key; })) embeds.push({ key: key, player: player, href: url, title: title });

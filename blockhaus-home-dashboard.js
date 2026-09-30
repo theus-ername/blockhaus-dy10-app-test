@@ -271,6 +271,10 @@
     return (text || "").replace(/\s+/g, " ").trim();
   }
 
+  function cleanBandcampTitle(text) {
+    return normalize(String(text || "").replace(/<[^>]*>/g, ""));
+  }
+
   function escapeHtml(text) {
     return String(text == null ? "" : text).replace(/[&<>\"']/g, function (character) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
@@ -840,7 +844,7 @@
       var selectors = "#main-content .forumbg ul.topiclist.topics > li.row a.topictitle,#main-content .forumbg ul.topiclist.topics > li.row a[href*='/t'],#main .forumbg ul.topiclist.topics > li.row a.topictitle,#main .forumbg ul.topiclist.topics > li.row a[href*='/t'],ul.topiclist.topics a.topictitle,.forum .forum-content h3 > a[href]";
       Array.prototype.forEach.call(doc.querySelectorAll(selectors), function (anchor) {
         var href = absoluteHref(anchor.getAttribute("href") || "");
-        var title = normalize(anchor.textContent);
+        var title = cleanBandcampTitle(anchor.textContent);
         if (!title || !/\/t\d+(?:-|$)/i.test(href) || anchor.closest("#comments_scroll_div,.module,.recent-topics,.latest-topics,[id*='recent' i],[class*='recent' i],[id*='latest' i],[class*='latest' i]") || entries.some(function (item) { return item.href === href; })) return;
         entries.push({ href: href, title: title });
       });
@@ -864,16 +868,16 @@
           var url = safeMediaUrl(raw);
           if (!/bandcamp\.com/i.test(url)) return;
           var player = /\/EmbeddedPlayer\//i.test(url) ? url : "";
-          var title = normalize(element.textContent || "").replace(/\s+by\s+.+$/i, "");
+          var title = cleanBandcampTitle(element.textContent || "").replace(/\s+by\s+.+$/i, "");
           if (!title) {
             var heading = element.previousElementSibling;
             while (heading && !/^H[1-6]$/i.test(heading.tagName)) heading = heading.previousElementSibling;
-            if (heading) title = normalize(heading.textContent || "");
+            if (heading) title = cleanBandcampTitle(heading.textContent || "");
           }
           var parent = element.parentElement;
           while (!title && parent) {
             var candidate = parent.querySelector("h1,h2,h3,h4");
-            if (candidate) title = normalize(candidate.textContent || "");
+            if (candidate) title = cleanBandcampTitle(candidate.textContent || "");
             parent = parent.parentElement;
           }
           if (!title) title = entry.title;
