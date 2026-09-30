@@ -814,7 +814,7 @@
   }
 
   function bandcampArchiveMarkup() {
-    return '<section class="bh-bandcamp-archive" data-bh-bandcamp-archive><div class="bh-bandcamp-head"><div><span class="bh-card-number">ARCHIVES SON</span><h2>Pochettes & liens Bandcamp</h2><p>Les liens musicaux publics du forum, réunis au même endroit.</p></div><input class="bh-bandcamp-search" data-bh-bandcamp-search type="search" placeholder="Rechercher un artiste" aria-label="Rechercher un artiste"></div><div class="bh-bandcamp-grid" data-bh-bandcamp-grid><div class="bh-bandcamp-empty">Chargement des pochettes…</div></div></section>';
+    return '<section class="bh-bandcamp-archive" data-bh-bandcamp-archive><div class="bh-bandcamp-head"><div><span class="bh-card-number">ARCHIVES SON</span><h2>Artistes &amp; Records</h2><p>Artistes, albums et archives Set/30\' du forum, réunis au même endroit.</p></div><input class="bh-bandcamp-search" data-bh-bandcamp-search type="search" placeholder="Rechercher un artiste ou un Set/30\'" aria-label="Rechercher un artiste ou un Set/30\'"></div><div class="bh-bandcamp-grid" data-bh-bandcamp-grid><div class="bh-bandcamp-empty">Chargement des pochettes…</div></div></section>';
   }
 
   function curatedUrticariaAlbums() {
@@ -831,7 +831,6 @@
   function loadBandcampArchive(root) {
     var target = root && root.querySelector("[data-bh-bandcamp-grid]");
     if (!target) return;
-    var forumHref = CANONICAL_FORUMS.sounds.href;
     function unique(values) {
       var seen = {};
       return values.filter(function (value) { return value && !seen[value] && (seen[value] = true); });
@@ -847,7 +846,7 @@
       });
       return entries.slice(0, 60);
     }
-    function readTopic(entry) {
+    function readTopic(entry, sourceLabel) {
       return fetch(entry.href, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("topic"); return response.text(); }).then(function (html) {
         var doc = new DOMParser().parseFromString(html, "text/html"), bands = [], player = "", cover = "";
         Array.prototype.forEach.call(doc.querySelectorAll("a[href],iframe[src]"), function (element) {
@@ -869,7 +868,7 @@
           else if (/\/size=large\//i.test(player)) player = player.replace(/\/size=large\//i, "/size=large/tracklist=true/");
           else player = player.replace(/\/(bgcol|linkcol|transparent)=/i, "/tracklist=true/$&");
         }
-        return { title: /\/t148-divx(?:-|$)/i.test(entry.href) ? "D/I/V/X FR-006" : entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], playerHref: player, cover: cover };
+        return { title: /\/t148-divx(?:-|$)/i.test(entry.href) ? "D/I/V/X FR-006" : entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], playerHref: player, cover: cover, sourceLabel: sourceLabel || "" };
       }).catch(function () { return null; });
     }
     function hydratePlayers() {
@@ -910,12 +909,18 @@
         target.querySelectorAll("[data-bh-bandcamp-card]").forEach(function (card) { card.hidden = query && card.getAttribute("data-search").toLowerCase().indexOf(query) === -1; });
       });
     }
-    fetch(forumHref, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("forum"); return response.text(); }).then(function (html) {
-      var entries = topicEntries(new DOMParser().parseFromString(html, "text/html"));
-      return Promise.all(entries.map(readTopic));
-    }).then(function (items) {
-      var publicItems = items.filter(Boolean).filter(function (item) {
-        if (item.topicHref && /\/t665-urticaria-records(?:#|$)/i.test(item.topicHref) && !item.sourceLabel) return false;
+    function readArchiveTopics(forumHref, sourceLabel) {
+      return fetch(forumHref, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("forum"); return response.text(); }).then(function (html) {
+        var entries = topicEntries(new DOMParser().parseFromString(html, "text/html"));
+        return Promise.all(entries.map(function (entry) { return readTopic(entry, sourceLabel); }));
+      });
+    }
+    Promise.all([
+      readArchiveTopics(CANONICAL_FORUMS.sounds.href, "The Sounds of the Blockhaus DY10"),
+      readArchiveTopics(CANONICAL_FORUMS.sets.href, "52 x Set/30' Archives")
+    ]).then(function (groups) {
+      var publicItems = groups.reduce(function (all, items) { return all.concat(items); }, []).filter(Boolean).filter(function (item) {
+        if (item.topicHref && /\/t665-urticaria-records(?:#|$)/i.test(item.topicHref)) return false;
         if (item.topicHref && /\/t(?:148-divx|682-elastic-systems)(?:-|$)/i.test(item.topicHref)) return false;
         return true;
       });
