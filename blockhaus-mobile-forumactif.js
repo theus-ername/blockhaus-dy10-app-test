@@ -113,7 +113,10 @@
       var parent = current.parentElement;
       if (!parent) break;
       Array.prototype.forEach.call(parent.children, function (sibling) {
-        if (sibling !== current && sibling.tagName !== "SCRIPT" && sibling.tagName !== "STYLE") sibling.hidden = true;
+        if (sibling !== current && sibling.tagName !== "SCRIPT" && sibling.tagName !== "STYLE") {
+          sibling.hidden = true;
+          sibling.style.setProperty("display", "none", "important");
+        }
       });
       current = parent;
     }
