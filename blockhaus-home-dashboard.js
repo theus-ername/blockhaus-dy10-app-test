@@ -222,7 +222,7 @@
       "#" + ROOT_ID + " .bh-bandcamp-card{display:block;min-width:0;color:var(--bh-ink)}",
       "#" + ROOT_ID + " .bh-bandcamp-cover{display:grid;place-items:center;aspect-ratio:1;background:#77736a;border:1px solid var(--bh-ink);overflow:hidden;font:900 34px/1 monospace;color:var(--bh-paper)}",
       "#" + ROOT_ID + " .bh-bandcamp-cover img{display:block;width:100%;height:100%;object-fit:cover}",
-      "#" + ROOT_ID + " .bh-bandcamp-player{width:100%;aspect-ratio:1/1.18;overflow:hidden;border:1px solid var(--bh-ink);background:#fff}",
+      "#" + ROOT_ID + " .bh-bandcamp-player{width:100%;height:390px;overflow:hidden;border:1px solid var(--bh-ink);background:#fff}",
       "#" + ROOT_ID + " .bh-bandcamp-player iframe{display:block;width:100%;height:100%;min-height:260px;border:0;background:#fff}",
       "#" + ROOT_ID + " .bh-bandcamp-card strong{display:block;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}",
       "#" + ROOT_ID + " .bh-bandcamp-topic{display:block;margin-top:5px;color:var(--bh-ink);font:800 10px/1.2 monospace;text-decoration:underline}",
@@ -810,6 +810,17 @@
     return '<section class="bh-bandcamp-archive" data-bh-bandcamp-archive><div class="bh-bandcamp-head"><div><span class="bh-card-number">ARCHIVES SON</span><h2>Pochettes & liens Bandcamp</h2><p>Les liens musicaux publics du forum, réunis au même endroit.</p></div><input class="bh-bandcamp-search" data-bh-bandcamp-search type="search" placeholder="Rechercher un artiste" aria-label="Rechercher un artiste"></div><div class="bh-bandcamp-grid" data-bh-bandcamp-grid><div class="bh-bandcamp-empty">Chargement des pochettes…</div></div></section>';
   }
 
+  function curatedUrticariaAlbums() {
+    var forumTopic = "/t665-urticaria-records";
+    return [
+      { title: "Affective Experience Of Urban Space — Moleskine", topicHref: forumTopic, playerHref: "https://bandcamp.com/EmbeddedPlayer/v=2/album=3437921555/size=large/tracklist=true/bgcol=ffffff/linkcol=0687f5/transparent=true/", cover: "https://f4.bcbits.com/img/a2030787755_5.jpg", sourceLabel: "Urticaria Records · Bloc K7" },
+      { title: "Tempio Inganno — Astio", topicHref: forumTopic, playerHref: "https://bandcamp.com/EmbeddedPlayer/v=2/album=3224862747/size=large/tracklist=true/bgcol=ffffff/linkcol=0687f5/transparent=true/", cover: "https://f4.bcbits.com/img/a0817284476_5.jpg", sourceLabel: "Urticaria Records · Bloc K7" },
+      { title: "Some Colored Backs Of Great Contempt — S.M.E.F.", topicHref: forumTopic, playerHref: "https://bandcamp.com/EmbeddedPlayer/v=2/album=3494235568/size=large/tracklist=true/bgcol=ffffff/linkcol=0687f5/transparent=true/", cover: "https://f4.bcbits.com/img/a1908280271_5.jpg", sourceLabel: "Urticaria Records · Bloc K7" },
+      { title: "I.C.B.B. EP — Ectoplasm", topicHref: forumTopic, playerHref: "https://bandcamp.com/EmbeddedPlayer/v=2/album=4191241484/size=large/tracklist=true/bgcol=ffffff/linkcol=0687f5/transparent=true/", cover: "https://f4.bcbits.com/img/a2657575687_5.jpg", sourceLabel: "Urticaria Records · Bloc K7" },
+      { title: "Falser Truths — Corker", topicHref: forumTopic, playerHref: "https://bandcamp.com/EmbeddedPlayer/v=2/album=3139572151/size=large/tracklist=true/bgcol=ffffff/linkcol=0687f5/transparent=true/", cover: "https://f4.bcbits.com/img/a1275839877_5.jpg", sourceLabel: "Urticaria Records · Bloc K7" }
+    ];
+  }
+
   function loadBandcampArchive(root) {
     var target = root && root.querySelector("[data-bh-bandcamp-grid]");
     if (!target) return;
@@ -820,7 +831,7 @@
     }
     function topicEntries(doc) {
       var entries = [];
-      var selectors = "#main-content .forumbg ul.topiclist.topics > li.row a.topictitle,#main-content .forumbg ul.topiclist.topics > li.row a[href*='/t'],#main .forumbg ul.topiclist.topics > li.row a.topictitle,#main .forumbg ul.topiclist.topics > li.row a[href*='/t'],ul.topiclist.topics > li.row a.topictitle";
+      var selectors = "#main-content .forumbg ul.topiclist.topics > li.row a.topictitle,#main-content .forumbg ul.topiclist.topics > li.row a[href*='/t'],#main .forumbg ul.topiclist.topics > li.row a.topictitle,#main .forumbg ul.topiclist.topics > li.row a[href*='/t'],ul.topiclist.topics a.topictitle,.forum .forum-content h3 > a[href]";
       Array.prototype.forEach.call(doc.querySelectorAll(selectors), function (anchor) {
         var href = absoluteHref(anchor.getAttribute("href") || "");
         var title = normalize(anchor.textContent);
@@ -846,13 +857,18 @@
           return true;
         });
         if (!bands.length) return null;
-        return { title: entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], playerHref: player, cover: cover };
+        if (player && !/\/track=/i.test(player)) {
+          if (/\/tracklist=/i.test(player)) player = player.replace(/\/tracklist=(?:false|true)/i, "/tracklist=true");
+          else if (/\/size=large\//i.test(player)) player = player.replace(/\/size=large\//i, "/size=large/tracklist=true/");
+          else player = player.replace(/\/(bgcol|linkcol|transparent)=/i, "/tracklist=true/$&");
+        }
+        return { title: /\/t148-divx(?:-|$)/i.test(entry.href) ? "D/I/V/X FR-006" : entry.title, topicHref: entry.href, bandcampHref: unique(bands)[0], playerHref: player, cover: cover };
       }).catch(function () { return null; });
     }
     function render(items) {
       var cards = items.map(function (item) {
         var media = item.playerHref ? '<div class="bh-bandcamp-player"><iframe loading="lazy" title="Lecteur Bandcamp — ' + escapeHtml(item.title) + '" src="' + escapeHtml(item.playerHref) + '"></iframe></div>' : (item.cover ? '<span class="bh-bandcamp-cover"><img loading="lazy" src="' + escapeHtml(item.cover) + '" alt="Pochette — ' + escapeHtml(item.title) + '"></span>' : '<span class="bh-bandcamp-cover">♫</span>');
-        return '<article class="bh-bandcamp-card" data-bh-bandcamp-card data-search="' + escapeHtml(item.title) + '">' + media + '<strong>' + escapeHtml(item.title) + '</strong><a class="bh-bandcamp-topic" href="' + escapeHtml(item.topicHref) + '">Ouvrir le sujet du forum</a></article>';
+        return '<article class="bh-bandcamp-card" data-bh-bandcamp-card data-search="' + escapeHtml(item.title) + '">' + media + '<strong>' + escapeHtml(item.title) + '</strong>' + (item.sourceLabel ? '<small>' + escapeHtml(item.sourceLabel) + '</small>' : '') + '<a class="bh-bandcamp-topic" href="' + escapeHtml(item.topicHref) + '">Ouvrir le sujet du forum</a></article>';
       }).join("");
       target.innerHTML = cards || '<div class="bh-bandcamp-empty">Aucun lien Bandcamp public détecté dans les sujets sonores.</div>';
       var search = root.querySelector("[data-bh-bandcamp-search]");
@@ -864,7 +880,7 @@
     fetch(forumHref, { credentials: "same-origin" }).then(function (response) { if (!response.ok) throw new Error("forum"); return response.text(); }).then(function (html) {
       var entries = topicEntries(new DOMParser().parseFromString(html, "text/html"));
       return Promise.all(entries.map(readTopic));
-    }).then(function (items) { render(items.filter(Boolean)); }).catch(function () { render([]); });
+    }).then(function (items) { render(items.filter(Boolean).concat(curatedUrticariaAlbums())); }).catch(function () { render(curatedUrticariaAlbums()); });
   }
 
   function statusIcon(status) {
@@ -1030,7 +1046,7 @@
     if (!member) {
       root.innerHTML = '<header class="bh-dash-head"><div class="bh-brand"><div><h1>ARCHIVES SON</h1><p>Blockhaus DY10 · accès public</p></div></div><div><span class="bh-version">BÊTA PUBLIQUE</span></div></header>' +
         '<article class="bh-card bh-guest-archive"><span class="bh-card-number">ARCHIVES SON</span><h2>The Sounds of the Blockhaus DY10</h2><p>Les archives musicales publiques et les liens Bandcamp accessibles sans compte.</p><div class="bh-actions">' +
-        chip("The Sounds", soundHref) + chip("52 x Set/30'", setHref) + chip("Collège son", CANONICAL_FORUMS.collegeSon.href) +
+        chip("The Sounds", soundHref) + chip("52 x Set/30'", setHref) + chip("Collège son", CANONICAL_FORUMS.collegeSon.href) + chip("Bloghaus DY10", CANONICAL_FORUMS.bloghaus.href) +
         '</div><div class="bh-chip-list">' + musicChips + '</div><p class="bh-bandcamp-note">Les autres sections du forum restent réservées aux membres.</p></article>' + bandcampArchiveMarkup();
       main.insertBefore(root, main.firstChild);
       loadBandcampArchive(root);
@@ -1113,9 +1129,9 @@
       ["Aneth Penny", "/t170-aneth-penny"],
       ["Crimesex", "/t709-crimesex"],
       ["DCIM", "/t145-dcim"],
-      ["Divx", "/t148-divx"],
+      ["D/I/V/X FR-006", "/t148-divx-electronica"],
       ["DY10 ORCHESTRA", "/t346-dy10-orchestra"],
-      ["Elastic Systems", "/t682-elastic-systems"],
+      ["Elastic Systems", "https://blockhaus-dy10.forumactif.com/t682-elastic-systems"],
       ["Eva Durand", "/t146-eva-durand"],
       ["Extreme Shoegaze", "/t159-extreme-shoegaze"],
       ["France Reverb", "/t144-france-reverb"],
@@ -1388,8 +1404,8 @@
       ["Wave Drone Orchestra", "/f19-wave-drone-orchestra"],
       ["DY DISQ", "/f21-blockhaus-dy-disq"],
       ["Aalpes", "/t153-aalpes"], ["Aneth Penny", "/t170-aneth-penny"], ["Crimesex", "/t709-crimesex"],
-      ["DCIM", "/t145-dcim"], ["Divx", "/t148-divx"], ["DY10 ORCHESTRA", "/t346-dy10-orchestra"],
-      ["Elastic Systems", "/t682-elastic-systems"], ["Eva Durand", "/t146-eva-durand"], ["Extreme Shoegaze", "/t159-extreme-shoegaze"],
+      ["DCIM", "/t145-dcim"], ["D/I/V/X FR-006", "/t148-divx-electronica"], ["DY10 ORCHESTRA", "/t346-dy10-orchestra"],
+      ["Elastic Systems", "https://blockhaus-dy10.forumactif.com/t682-elastic-systems"], ["Eva Durand", "/t146-eva-durand"], ["Extreme Shoegaze", "/t159-extreme-shoegaze"],
       ["France Reverb", "/t144-france-reverb"], ["Ground", "/t157-ground"], ["Jencks", "/t225-jencks"],
       ["Justine et Kyoko", "/t162-justine-et-kyoko"], ["Kosmos Natur Furor", "/t167-kosmos-natur-furor"], ["Nerfs", "/t226-nerfs"],
       ["OBC", "/t165-obc"], ["Omnisphynx", "/t154-omnisphynx"], ["Peninsula", "/t171-peninsula"],
