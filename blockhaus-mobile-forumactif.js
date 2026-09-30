@@ -283,6 +283,9 @@
 
   function initFinder(root) {
     var list = root.querySelector("[data-bhm-list]"), preview = root.querySelector("[data-bhm-preview]"), pathEl = root.querySelector("[data-bhm-path]"), status = root.querySelector("[data-bhm-status]"), tools = root.querySelector("[data-bhm-tools]"), panel = root.querySelector(".bhm-finder");
+    // The guest shell intentionally contains no Finder. Keep this initializer
+    // harmless when Forumactif serves the public-only view.
+    if (!list || !preview || !pathEl || !status || !tools || !panel) return { openForum: function () {} };
     var home = { title: "Forum", children: [FORUMS.meetings, FORUMS.events, FORUMS.forum, FORUMS.sounds] }, stack = [home], revision = 0;
     function current() { return stack[stack.length - 1]; }
     function focusPanel() { root.querySelector("[data-bhm-finder-title]").focus({ preventScroll: true }); panel.scrollIntoView({ behavior: "auto", block: "start" }); }
@@ -347,11 +350,13 @@
 
   function initAgenda(root) {
     var frame = root.querySelector("[data-bhm-agenda]"), controls = root.querySelectorAll("[data-bhm-agenda-view]");
+    if (!frame) return;
     Array.prototype.forEach.call(controls, function (button) { button.addEventListener("click", function () { var mode = button.getAttribute("data-bhm-agenda-view"); frame.src = AGENDA_BASE + "&mode=" + (mode === "MONTH" ? "MONTH" : "AGENDA"); Array.prototype.forEach.call(controls, function (item) { item.classList.toggle("active", item === button); }); }); });
   }
 
   function initLatest(root) {
     var target = root.querySelector("[data-bhm-latest]"), source = document.querySelector("#comments_scroll_div");
+    if (!target) return;
     var fallbackItems = [
       { href: "/t709-crimesex", title: "Crimesex", detail: "Dernière publication du forum" },
       { href: "/t682-elastic-systems", title: "Elastic Systems", detail: "Dernière publication du forum" },
@@ -374,6 +379,7 @@
 
   function initGallery(root) {
     var target = root.querySelector("[data-bhm-gallery]");
+    if (!target) return;
     function render(items) {
       if (!items.length) { target.innerHTML = '<div class="bhm-gallery-empty">Aucune image publique trouvée.</div>'; return; }
       items = items.slice(0, 24).reverse();
@@ -390,7 +396,13 @@
   function init() {
     try {
       var root = createShell();
-      initAgenda(root); initLatest(root); initGallery(root); var finder = initFinder(root);
+      // The guest view is deliberately a minimal public archive. Its DOM does
+      // not contain agenda, feed, gallery or Finder targets, so do not start
+      // those member-only initializers on it.
+      var finder = { openForum: function () {} };
+      if (isMember()) {
+        initAgenda(root); initLatest(root); initGallery(root); finder = initFinder(root);
+      }
       window.BlockhausMobileShell = { version: VERSION, root: root, openForum: finder && finder.openForum };
     } catch (error) {
       var marker = document.createElement("div"); marker.style.cssText = "margin:12px;padding:12px;background:#f4f2ec;color:#171815;border:2px solid #171815;font:14px monospace"; marker.textContent = "Erreur interface mobile : " + (error && error.message ? error.message : error); document.body.insertBefore(marker, document.body.firstChild);
