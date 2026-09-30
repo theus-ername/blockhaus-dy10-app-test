@@ -8,6 +8,12 @@ const instrumented = source.replace(/  if \(document.readyState === "loading"\)[
 const origin = "https://blockhaus-dy10.forumactif.com";
 const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 function env() {
+  const dom = new JSDOM('<body id="mpage-body-modern"><a href="/login?logout=1">Déconnexion</a><main></main></body>', { url: origin + '/?bh_beta=1', runScripts: "outside-only" });
+  dom.window.HTMLElement.prototype.scrollIntoView = function () {};
+  dom.window.eval(instrumented);
+  return dom;
+}
+function guestEnv() {
   const dom = new JSDOM('<body id="mpage-body-modern"><main></main></body>', { url: origin + '/?bh_beta=1', runScripts: "outside-only" });
   dom.window.HTMLElement.prototype.scrollIntoView = function () {};
   dom.window.eval(instrumented);
@@ -43,6 +49,16 @@ Deno.test("mobile beta keeps the compact navigation and full-width Blockhaus hea
     assert.ok(menu.indexOf('Agenda Google') < menu.indexOf('Forum complet'));
     assert.match(source, /__BLOCKHAUS_MOBILE_SHELL_BOOTSTRAPPED__/);
     assert.ok(source.includes("grid-template-columns:repeat(4,minmax(0,1fr))"));
+  } finally { dom.window.close(); }
+});
+
+Deno.test("mobile guest shell exposes only public sound archives", () => {
+  const dom = guestEnv();
+  try {
+    const root = dom.window.testFinder.createShell();
+    assert.match(root.textContent, /Archives son/);
+    assert.doesNotMatch(root.textContent, /Résumé du dernier CR|Agenda Google|activité/i);
+    assert.deepEqual([...root.querySelectorAll('.bhm-bottom-nav a')].map(a => a.textContent.replace(/\s+/g, ' ').trim()), ['↪Connexion']);
   } finally { dom.window.close(); }
 });
 

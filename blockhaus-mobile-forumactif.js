@@ -94,6 +94,11 @@
 
   function link(href, label, primary) { return '<a class="bhm-action' + (primary ? ' primary' : '') + '" href="' + esc(href) + '">' + esc(label) + '</a>'; }
   function findMain() { return document.querySelector("#main-content, #content, main, #main") || document.body; }
+  function isMember() {
+    return Array.prototype.some.call(document.querySelectorAll("a"), function (anchor) {
+      return /déconnexion|logout/i.test(text(anchor.textContent || "") + " " + (anchor.getAttribute("href") || ""));
+    });
+  }
 
   function hideNativeChrome(main) {
     ["#mwrap > #header", "#mwrap > #mhead", "#mwrap > #tab-bar", "#tab-bar", "#mobile-nav", ".mobile-navbar", ".mobile-header", ".mobile-footer"].forEach(function (selector) {
@@ -108,6 +113,15 @@
     var root = document.createElement("section");
     root.id = ROOT_ID;
     root.setAttribute("aria-label", "Interface mobile Blockhaus");
+    if (!isMember()) {
+      root.innerHTML = '<header class="bhm-head"><div class="bhm-head-row"><div class="bhm-brand"><strong>Archives son</strong><small>Blockhaus DY10 · accès public</small></div></div><img class="bhm-header-image" src="' + HEADER_IMAGE_URL + '" alt="Blockhaus DY10"></header>' +
+        '<main class="bhm-main"><section class="bhm-card bhm-guest-archive"><span class="bhm-eyebrow">ARCHIVES SON</span><h1>The Sounds of the Blockhaus DY10</h1><p class="bhm-summary">Archives musicales publiques et liens Bandcamp accessibles sans compte.</p><div class="bhm-actions">' +
+        link("/f27-the-sounds-of-the-blockhaus-dy10", "The Sounds", true) + link("/f37-52-x-set-30-archives", "52 x Set/30'") + link("/f4-college-son", "Collège son") +
+        '</div><p class="bhm-status">Les autres sections du forum restent réservées aux membres.</p></section></main><nav class="bhm-bottom-nav" aria-label="Navigation publique"><a href="/login"><span>↪</span>Connexion</a></nav>';
+      if (main === document.body) document.body.insertBefore(root, document.body.firstChild); else main.insertBefore(root, main.firstChild);
+      hideNativeChrome(main);
+      return root;
+    }
     root.innerHTML =
       '<header class="bhm-head"><div class="bhm-head-row"><div class="bhm-brand"><strong>Blockhaus-DY10</strong><small>le forum du DY10</small></div><div class="bhm-head-tools"><a class="bhm-head-tool" href="/notifications" aria-label="Notifications">●</a><details class="bhm-menu"><summary aria-label="Ouvrir le menu">⋯</summary><div class="bhm-menu-panel">' +
       link("/", "Accueil") + link("/images", "Dernières images") + link("/calendar", "Événements") + link(AGENDA_HREF, "Agenda Google") + link("/?bh_beta=1&bh_mobile_beta=1&bh_open=forum#bh-mobile-shell", "Forum complet") + link("/memberlist", "Membres") + link("/profile", "Mon profil") + link("/privmsg", "Messages privés") + link("/search", "Rechercher") + link("/login?logout=1", "Se déconnecter") + link("/?bh_beta=off", "Version web classique") + '<button type="button" data-bhm-theme>Mode sombre</button><a href="/privacy">Cookies</a></div></details></div></div><img class="bhm-header-image" src="' + HEADER_IMAGE_URL + '" alt="Blockhaus DY10"></header>' +

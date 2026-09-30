@@ -897,6 +897,7 @@
   function buildDashboard() {
     // Public beta shell: guests may use the interface, while each forum
     // category/topic still remains protected by Forumactif permissions.
+    var member = isMember();
     document.body.setAttribute("data-bh-beta-layout", "true");
     // Replace an older beta container left in the DOM after its Forumactif
     // script was disabled; the classic forum markup remains untouched.
@@ -935,17 +936,30 @@
     if (!musicChips) musicChips = '<span class="bh-bandcamp-note">Les liens Bandcamp ajoutés dans les sujets du forum apparaîtront ici automatiquement.</span>';
     var logoImg = document.querySelector("#logo img");
     var logoSrc = logoImg ? (logoImg.getAttribute("src") || "") : "";
-    var topMenuMarkup = '<details id="' + SITE_MENU_ID + '"><summary><span class="bh-site-menu-title"><strong>Blockhaus-DY10</strong><small>le forum du DY10</small></span></summary><div class="bh-site-menu-panel">' +
-      link("Accueil", "/", false) + link("Agenda", agendaHref, false) + link("Forum complet", "/?bh_beta=1#bh-member-dashboard", false) + link("Événements", eventsHref, false) +
-      link("Membres", "/memberlist", false) + link("Mon profil", "/profile?mode=editprofile", false) +
-      link("Messages privés", "/privmsg?folder=inbox", false) + link("Se déconnecter", "/login?logout=1", false) +
-      '</div></details>';
+    var topMenuMarkup = member
+      ? '<details id="' + SITE_MENU_ID + '"><summary><span class="bh-site-menu-title"><strong>Blockhaus-DY10</strong><small>le forum du DY10</small></span></summary><div class="bh-site-menu-panel">' +
+        link("Accueil", "/", false) + link("Agenda", agendaHref, false) + link("Forum complet", "/?bh_beta=1#bh-member-dashboard", false) + link("Événements", eventsHref, false) +
+        link("Membres", "/memberlist", false) + link("Mon profil", "/profile?mode=editprofile", false) +
+        link("Messages privés", "/privmsg?folder=inbox", false) + link("Se déconnecter", "/login?logout=1", false) +
+        '</div></details>'
+      : '<details id="' + SITE_MENU_ID + '"><summary><span class="bh-site-menu-title"><strong>Archives son</strong><small>accès public</small></span></summary><div class="bh-site-menu-panel">' +
+        link("Archives son", soundHref, false) + link("Se connecter", "/login", false) +
+        '</div></details>';
     mountSiteMenu(topMenuMarkup);
 
     var root = document.createElement("section");
     root.id = ROOT_ID;
     root.dataset.version = VERSION;
-    root.setAttribute("aria-label", "Accueil des membres du Blockhaus");
+    root.setAttribute("aria-label", member ? "Accueil des membres du Blockhaus" : "Archives son publiques du Blockhaus");
+    if (!member) {
+      root.innerHTML = '<header class="bh-dash-head"><div class="bh-brand"><div><h1>ARCHIVES SON</h1><p>Blockhaus DY10 · accès public</p></div></div><div><span class="bh-version">BÊTA PUBLIQUE</span></div></header>' +
+        '<article class="bh-card bh-guest-archive"><span class="bh-card-number">ARCHIVES SON</span><h2>The Sounds of the Blockhaus DY10</h2><p>Les archives musicales publiques et les liens Bandcamp accessibles sans compte.</p><div class="bh-actions">' +
+        chip("The Sounds", soundHref) + chip("52 x Set/30'", setHref) + chip("Collège son", CANONICAL_FORUMS.collegeSon.href) +
+        '</div><div class="bh-chip-list">' + musicChips + '</div><p class="bh-bandcamp-note">Les autres sections du forum restent réservées aux membres.</p></article>';
+      main.insertBefore(root, main.firstChild);
+      hideClassicHome(root, main);
+      return;
+    }
     var priorityCardMarkup = '<article class="bh-card bh-priority-card"><span class="bh-card-number">01 / RÉSUMÉ DU DERNIER CR</span><ul class="bh-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul><div class="bh-actions">' + link("Réunions", meetingHref, true) + link("ODJ", odjSectionHref, false) + link("Dernier ODJ", odjHref, false) + link("Dernier CR", reportHref, false) + '</div></article>';
     var latestSectionMarkup = '<section class="bh-latest bh-latest-priority"><div class="bh-latest-head"><span class="bh-card-number">FIL DU FORUM</span></div><div class="bh-latest-list">' + latestPublicationsMarkup() + '</div></section>';
     root.innerHTML =
