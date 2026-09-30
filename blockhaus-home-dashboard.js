@@ -932,7 +932,7 @@
     var logoImg = document.querySelector("#logo img");
     var logoSrc = logoImg ? (logoImg.getAttribute("src") || "") : "";
     var topMenuMarkup = '<details id="' + SITE_MENU_ID + '"><summary><span class="bh-site-menu-title"><strong>Blockhaus-DY10</strong><small>le forum du DY10</small></span></summary><div class="bh-site-menu-panel">' +
-      link("Accueil", "/", false) + link("Calendrier", agendaHref, false) + link("Événements", eventsHref, false) +
+      link("Accueil", "/", false) + link("Agenda", agendaHref, false) + link("Forum complet", "/?bh_beta=1#bh-member-dashboard", false) + link("Événements", eventsHref, false) +
       link("Membres", "/memberlist", false) + link("Mon profil", "/profile?mode=editprofile", false) +
       link("Messages privés", "/privmsg?folder=inbox", false) + link("Se déconnecter", "/login?logout=1", false) +
       '</div></details>';
@@ -952,13 +952,14 @@
       "</div>" +
       '<div class="bh-utility-grid">' + latestSectionMarkup +
       '<section class="bh-agenda"><div class="bh-agenda-copy"><span class="bh-card-number">AGENDA PARTAGÉ</span><h2>Soirées @ Blockhaus</h2><p>Google Agenda devient la vue principale. L’ancien calendrier reste conservé plus loin, dans l’archive technique.</p><div class="bh-actions bh-agenda-actions" role="group" aria-label="Vue et accès à l’agenda"><button type="button" class="bh-action bh-agenda-view active" data-bh-agenda-view="AGENDA" aria-pressed="true">Agenda</button><button type="button" class="bh-action bh-agenda-view" data-bh-agenda-view="MONTH" aria-pressed="false">Mois</button>' + link("Voir en grand", agendaHref, true) + link("Ancien agenda (archive)", oldAgendaHref, false) + '<a class="bh-action bh-agenda-view" href="' + AGENDA_YEAR_HREF + '" target="_blank" rel="noopener">Année ↗</a></div></div><iframe class="bh-agenda-frame" loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_EMBED + '"></iframe></section></div>' +
-      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation par colonnes"><span class="bh-column-brand">BLOCKHAUS / DY10</span><button type="button" data-bh-col-back disabled aria-label="Revenir">‹</button><button type="button" data-bh-col-forward aria-label="Avancer">›</button><button type="button" data-bh-wide-toggle aria-pressed="false">Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info">4 niveaux · vue Finder</span></div>' +
+      '<div class="bh-column-toolbar" role="toolbar" aria-label="Navigation du forum"><button type="button" data-bh-col-back disabled aria-label="Revenir">← Retour</button><button type="button" data-bh-col-forward aria-label="Avancer" hidden>›</button><button type="button" data-bh-wide-toggle aria-pressed="false" hidden>Élargir</button><span class="bh-column-path" data-bh-col-path>Accueil › Zones › À lire</span><span class="bh-column-info" hidden>4 niveaux · vue Finder</span></div>' +
       '<div class="bh-column-scroll" data-bh-col-scroll><section class="bh-forum-browser" aria-label="Circuler dans le forum">' +
         '<div class="bh-col"><div class="bh-col-title">1. Zones</div><div class="bh-list">' +
           row("À lire", "/search?search_id=newposts", "!", "actif", true) +
           row("Réus", meetingHref, "R", "prio", false) +
           row("Événements", eventsHref, "E", "date", false) +
           row("Agenda", agendaHref, "A", "google", false) +
+          row("Forum complet", "/?bh_beta=1#bh-member-dashboard", "F", "index", false) +
           row("Archives son", soundHref, "S", "", false) +
           row("Archives image", imagesHref, "I", "", false) +
         "</div></div>" +
@@ -977,7 +978,7 @@
           row("Intermix", intermixHref, "D", "", false) +
           row("Transmission", transmissionHref, "D", "", false) +
         "</div></div>" +
-        '<div class="bh-col"><div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>Vue liste / colonnes</h2><p>Cette bêta garde l’organisation du forum, mais donne une entrée plus directe aux choses à lire, aux réunions, à l’agenda et aux archives.</p><div class="bh-preview-meta"><span class="bh-chip">sans compteurs</span><span class="bh-chip">mobile en liste</span><span class="bh-chip">desktop en colonnes</span></div><p>Les nombres de sujets et de réponses restent dans l’interface classique. Ici, on privilégie les statuts utiles : nouveau, important, à lire, date, archive.</p><div class="bh-preview-actions">' + link("Ouvrir les nouveaux messages", "/search?search_id=newposts", true) + link("Revenir au forum classique", "/?bh_beta=off", false) + "</div></div></div>" +
+        '<div class="bh-col"><div class="bh-col-title">4. Aperçu</div><div class="bh-preview"><h2>Vue liste / colonnes</h2><p>Cette bêta garde l’organisation du forum, mais donne une entrée plus directe aux choses à lire, aux réunions, à l’agenda et aux archives.</p><div class="bh-preview-meta"><span class="bh-chip">sans compteurs</span><span class="bh-chip">mobile en liste</span><span class="bh-chip">desktop en colonnes</span></div><p>Les nombres de sujets et de réponses restent dans l’interface classique. Ici, on privilégie les statuts utiles : nouveau, important, à lire, date, archive.</p><div class="bh-preview-actions">' + link("Ouvrir les nouveaux messages", "/search?search_id=newposts", true) + "</div></div></div>" +
       "</section></div>" +
       '<details class="bh-archives"><summary>Archives musicales & visuelles <small>niveau secondaire</small></summary><div class="bh-archive-groups">' +
         '<section class="bh-archive-group"><h3>Musique & son</h3><div class="bh-chip-list">' + chip("The Sounds", soundHref) + chip("Set/30'", setHref) + chip("Wave Drone Orchestra", waveHref) + chip("DY DISQ", disqHref) + musicChips + "</div></section>" +

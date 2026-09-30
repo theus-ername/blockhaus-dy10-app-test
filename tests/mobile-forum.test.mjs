@@ -31,6 +31,19 @@ Deno.test("mobile index preserves the real groups and excludes last-post/sidebar
   } finally { dom.window.close(); }
 });
 
+Deno.test("mobile beta keeps the compact navigation and full-width Blockhaus header image", () => {
+  const dom = env();
+  try {
+    const root = dom.window.testFinder.createShell();
+    assert.equal(root.querySelectorAll('.bhm-header-image').length, 1);
+    assert.equal(root.querySelector('.bhm-header-image').getAttribute('src').includes('blockhaus-header.png'), true);
+    assert.equal(root.querySelectorAll('.bhm-logo').length, 0);
+    assert.deepEqual([...root.querySelectorAll('.bhm-bottom-nav a')].map(a => a.textContent.replace(/\s+/g, ' ').trim()), ['⌂Accueil', '▦Forum', '✉MP', '▤ChatBox']);
+    const menu = root.querySelector('.bhm-menu-panel').textContent;
+    assert.ok(menu.indexOf('Agenda Google') < menu.indexOf('Forum complet'));
+  } finally { dom.window.close(); }
+});
+
 Deno.test("desktop lists exclude breadcrumbs, embedded latest topics and last-post shortcuts", () => {
   const dom = env();
   try {
@@ -56,9 +69,9 @@ Deno.test("full navigation reaches 56 topics and message pages without leaving t
       '/t56p15-sujet': replies(2),
     };
     win.fetch = async href => { assert.ok(Object.hasOwn(pages, href), 'Unexpected request '+href); return { ok: true, url: origin+href, text: async () => pages[href] }; };
-    const root = win.testFinder.createShell(); win.testFinder.initFinder(root);
+    const root = win.testFinder.createShell(); const finder = win.testFinder.initFinder(root);
     const clickRow = async title => { const button = [...root.querySelectorAll('[data-bhm-index]')].find(b => b.querySelector('.bhm-row-title').textContent === title); assert.ok(button, 'Missing '+title); button.click(); await tick(); };
-    root.querySelector('[data-bhm-open-forum]').click(); await tick();
+    finder.openForum(); await tick();
     await clickRow('DY10'); await clickRow('REUNIONS');
     assert.equal(root.querySelectorAll('[data-bhm-index]').length, 5);
     await clickRow('Ordres du jour');
@@ -96,12 +109,12 @@ Deno.test("a delayed folder response cannot replace a different selected branch"
   try {
     let release;
     win.fetch = href => href === '/' ? new Promise(resolve => { release = () => resolve({ok:true,url:origin+'/',text:async()=>index}); }) : Promise.resolve({ok:true,url:origin+href,text:async()=>group('Sujets',topic(170,'Aneth Penny'))});
-    const root = win.testFinder.createShell(); win.testFinder.initFinder(root);
-    root.querySelector('[data-bhm-open-forum]').click();
+    const root = win.testFinder.createShell(); const finder = win.testFinder.initFinder(root);
+    finder.openForum();
     root.querySelector('[data-bhm-back]').click();
     [...root.querySelectorAll('[data-bhm-index]')].find(b=>b.textContent.includes('Archives son')).click(); await tick();
     release(); await tick();
-    assert.deepEqual([...root.querySelectorAll('.bhm-row-title')].slice(1).map(n=>n.textContent), ['Aneth Penny']);
+    assert.deepEqual([...root.querySelectorAll('.bhm-row-title')].map(n=>n.textContent), ['Aneth Penny']);
     assert.match(root.querySelector('[data-bhm-path]').textContent, /Archives son$/);
   } finally { dom.window.close(); }
 });
