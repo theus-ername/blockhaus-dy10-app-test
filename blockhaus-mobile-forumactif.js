@@ -7,10 +7,10 @@
   var preview = window.BLOCKHAUS_MOBILE_PREVIEW === true;
   var params = new URLSearchParams(window.location.search);
   var isMobileTemplate = !!(document.body && (document.body.id === "mpage-body-modern" || document.querySelector("#tab-bar")));
-  // The public loader selects this file only for mobile, so real phones should
-  // not need a special query string. Keep the query/preview switches for the
-  // standalone prototype while enabling the live Forumactif mobile template.
-  var enabled = preview || params.get("bh_mobile_beta") === "1" || isMobileTemplate || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
+  // Keep the normal Forumactif mobile page intact until the beta is explicitly
+  // requested. The public loader is present for every visitor, but this shell
+  // only takes over on the mobile template with bh_beta=1 (or in the prototype).
+  var enabled = preview || params.get("bh_mobile_beta") === "1" || params.get("bh_beta") === "1";
 
   if (!enabled || (!isMobileTemplate && !preview) || document.getElementById(ROOT_ID)) return;
 
@@ -121,7 +121,7 @@
       '<section class="bhm-card bhm-finder"><div class="bhm-finder-head"><h2>Explorer le forum</h2><div class="bhm-path" data-bhm-path></div></div><div class="bhm-list" data-bhm-list></div><div class="bhm-preview" data-bhm-preview hidden></div><div class="bhm-status" data-bhm-status></div></section></main>';
     if (main === document.body) document.body.insertBefore(root, document.body.firstChild);
     else main.insertBefore(root, main.firstChild);
-    if (preview) {
+    if (preview || (isMobileTemplate && params.get("bh_beta") === "1")) {
       var legacyHeader = document.querySelector("#mwrap > #header");
       if (legacyHeader) legacyHeader.hidden = true;
       Array.prototype.forEach.call(main.children, function (child) {
