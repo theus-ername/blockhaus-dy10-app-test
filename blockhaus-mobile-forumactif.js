@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.2.0-mobile-shell";
+  var VERSION = "0.3.0-mobile-forum";
   var ROOT_ID = "bh-mobile-shell";
-  var STYLE_ID = "bh-mobile-shell-v020-style";
+  var STYLE_ID = "bh-mobile-shell-v030-style";
   var BETA_KEY = "blockhaus-mobile-beta";
   var BETA_COOKIE = "blockhaus-mobile-beta";
   var THEME_KEY = "blockhaus-mobile-theme";
@@ -35,24 +35,13 @@
   if (!enabled || (!isMobileTemplate && !previewMode) || document.getElementById(ROOT_ID)) return;
 
   var FORUMS = {
-    meetings: { title: "Réunions & décisions", meta: "REUNIONS · 4 rubriques", href: "/f39-reunions", forumHref: "/f39-reunions", icon: "★", kind: "folder", children: [
-      { title: "Ordres du jour", meta: "56 sujets · 375 réponses", href: "/f17-ordres-du-jour", forumHref: "/f17-ordres-du-jour", icon: "▦", kind: "folder", children: [] },
-      { title: "Comptes rendus", meta: "47 sujets · 67 réponses", href: "/f16-comptes-rendus", forumHref: "/f16-comptes-rendus", icon: "▦", kind: "folder", children: [] },
-      { title: "Sondages et votes", meta: "1 sujet · 4 réponses", href: "/f45-sondages-et-votes", forumHref: "/f45-sondages-et-votes", icon: "▦", kind: "folder", children: [] },
-      { title: "30 ans Blockhaus DY10", meta: "5 sujets · 11 réponses", href: "/f46-30-ans-blockhaus-dy10", forumHref: "/f46-30-ans-blockhaus-dy10", icon: "▦", kind: "folder", children: [] }
-    ] },
+    meetings: { title: "Réunions & décisions", meta: "Ordres du jour, comptes rendus et votes", href: "/f39-reunions", forumHref: "/f39-reunions", icon: "★", kind: "folder", children: [] },
     events: { title: "Événements", meta: "Agenda et événements", href: "/calendar", icon: "◷", kind: "folder", children: [
       { title: "Agenda Google", meta: "Vue agenda, mois et année", href: AGENDA_HREF, icon: "▦", kind: "link" },
       { title: "Événements du forum", meta: "Calendrier historique", href: OLD_AGENDA_HREF, icon: "◷", kind: "link" }
     ] },
     sounds: { title: "Archives son", meta: "Sons et liens publics", href: "/f27-the-sounds-of-the-blockhaus-dy10", forumHref: "/f27-the-sounds-of-the-blockhaus-dy10", icon: "♫", kind: "folder", children: [] },
-    forum: { title: "Forum complet", meta: "Arborescence réelle Forumactif", href: "/c1-dy10", forumHref: "/c1-dy10", icon: "⌘", kind: "folder", children: [
-      { title: "Réunions & décisions", meta: "REUNIONS", href: "/f39-reunions", forumHref: "/f39-reunions", icon: "★", kind: "folder", children: [] },
-      { title: "The Sounds", meta: "Archives son", href: "/f27-the-sounds-of-the-blockhaus-dy10", forumHref: "/f27-the-sounds-of-the-blockhaus-dy10", icon: "♫", kind: "folder", children: [] },
-      { title: "52 x Set/30' Archives", meta: "Archives musicales", href: "/f37-52-x-set-30-archives", forumHref: "/f37-52-x-set-30-archives", icon: "♫", kind: "folder", children: [] },
-      { title: "Collège son", meta: "Discussions son", href: "/f4-college-son", forumHref: "/f4-college-son", icon: "♫", kind: "folder", children: [] },
-      { title: "Bloghaus DY10", meta: "Forum principal", href: "/f23-bloghaus-dy10", forumHref: "/f23-bloghaus-dy10", icon: "B", kind: "folder", children: [] }
-    ] }
+    forum: { title: "Forum complet", meta: "Toutes les catégories, rubriques et discussions", href: "/", forumHref: "/", icon: "▦", kind: "folder", children: [] }
   };
 
   function esc(value) {
@@ -87,6 +76,7 @@
       "#" + ROOT_ID + " .bhm-finder{padding:0;overflow:hidden}#" + ROOT_ID + " .bhm-finder-head{padding:14px;background:var(--deep);color:var(--paper)}#" + ROOT_ID + " .bhm-finder-head h2{margin:0;font-size:21px}#" + ROOT_ID + " .bhm-path{display:flex;gap:5px;overflow:auto;margin-top:7px;color:#e4dfd5;font:700 11px/1.3 monospace;white-space:nowrap}#" + ROOT_ID + " .bhm-path button{border:0;background:none;color:inherit;padding:0;text-decoration:underline;cursor:pointer}#" + ROOT_ID + " .bhm-list{padding:6px;background:var(--bg)}#" + ROOT_ID + " .bhm-row{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:9px 8px;border:0;border-bottom:1px solid #b3aea4;background:transparent;color:var(--ink);text-align:left;cursor:pointer}#" + ROOT_ID + " .bhm-row:hover,#" + ROOT_ID + " .bhm-row:focus{background:var(--paper);outline:0}#" + ROOT_ID + " .bhm-row-icon{display:grid;place-items:center;width:30px;height:30px;flex:none;border:1px solid currentColor;font-weight:900}#" + ROOT_ID + " .bhm-row-copy{min-width:0;flex:1}#" + ROOT_ID + " .bhm-row-title{display:block;font-weight:900;overflow-wrap:anywhere}#" + ROOT_ID + " .bhm-row-meta{display:block;margin-top:2px;color:var(--muted);font:11px/1.25 monospace}#" + ROOT_ID + " .bhm-row-arrow{font:900 20px/1 monospace}",
       "#" + ROOT_ID + " .bhm-preview{padding:15px;background:var(--paper);border-top:1px solid var(--line)}#" + ROOT_ID + " .bhm-preview p{margin:0 0 9px;color:#292923}#" + ROOT_ID + " .bhm-preview-body{max-height:260px;overflow:auto;padding:10px;background:#ebe8e0;border:1px solid var(--line);font-size:13px;line-height:1.45;white-space:pre-wrap}#" + ROOT_ID + " .bhm-topic-media{margin-top:12px;padding-top:9px;border-top:1px solid #c1bcb2}#" + ROOT_ID + " .bhm-topic-media-label{display:block;margin-bottom:6px;color:var(--muted);font:900 10px monospace;text-transform:uppercase}#" + ROOT_ID + " .bhm-bandcamp-frame{display:block;width:100%;height:180px;border:1px solid var(--line);background:#fff}#" + ROOT_ID + " .bhm-preview-image{display:block;max-width:100%;max-height:190px;margin:6px 0;object-fit:contain}",
       "#" + ROOT_ID + " .bhm-bottom-nav{position:fixed;z-index:60;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);height:58px;background:var(--ink);color:var(--paper);border-top:2px solid var(--paper)}#" + ROOT_ID + " .bhm-bottom-nav a{display:grid;place-items:center;gap:1px;padding:5px 2px;color:inherit;font-size:11px;font-weight:900;text-align:center}#" + ROOT_ID + " .bhm-bottom-nav span{display:block;font-size:20px;line-height:1}",
+      "#" + ROOT_ID + " .bhm-forum-entry{background:var(--bg);border:1px solid var(--ink);margin-bottom:10px}#" + ROOT_ID + " .bhm-finder{scroll-margin-top:74px}#" + ROOT_ID + " .bhm-path button{min-height:32px;font:inherit}#" + ROOT_ID + " .bhm-finder-tools{display:flex;flex-wrap:wrap;gap:8px;padding:8px}#" + ROOT_ID + " .bhm-status{padding:8px 14px;color:var(--muted);font-size:12px}#" + ROOT_ID + " .bhm-post{padding:12px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}#" + ROOT_ID + " .bhm-post-text{white-space:pre-wrap;line-height:1.5}#" + ROOT_ID + " .bhm-post small{display:block;margin-bottom:8px;color:#4e4c46}#" + ROOT_ID + " .bhm-preview .bhm-bandcamp-frame{height:470px;max-width:400px}#" + ROOT_ID + " .bhm-preview [hidden],#" + ROOT_ID + " [data-bhm-list][hidden]{display:none}",
       "#" + ROOT_ID + ".bhm-dark{--bg:#353631;--paper:#e8e5dd;--ink:#11120f;--deep:#252621;--line:#77786e;--muted:#d0cbc1}",
       "body#mpage-body-modern #header,body#mpage-body-modern #mhead,body#mpage-body-modern #tab-bar,body#mpage-body-modern .mobile-navbar,body#mpage-body-modern #mobile-nav,body#mpage-body-modern #mfoot{display:none!important}",
       "@media(max-width:420px){#" + ROOT_ID + " .bhm-head{gap:7px;padding:7px}#" + ROOT_ID + " .bhm-logo{width:42px;height:42px}#" + ROOT_ID + " .bhm-brand strong{font-size:15px}#" + ROOT_ID + " .bhm-brand small{font-size:10px}#" + ROOT_ID + " .bhm-head-tool{display:none}#" + ROOT_ID + " .bhm-agenda-frame{height:390px}#" + ROOT_ID + " .bhm-gallery-frame{height:220px}}"
@@ -113,10 +103,10 @@
     root.innerHTML =
       '<header class="bhm-head"><a class="bhm-logo" href="/" aria-label="Accueil Blockhaus-DY10"><img src="' + LOGO_URL + '" alt="Blockhaus-DY10"></a><div class="bhm-brand"><strong>Blockhaus-DY10</strong><small>le forum du DY10</small></div><div class="bhm-head-tools"><a class="bhm-head-tool" href="/notifications" aria-label="Notifications">●</a><details class="bhm-menu"><summary aria-label="Ouvrir le menu">⋯</summary><div class="bhm-menu-panel">' +
       link("/", "Accueil") + link("/images", "Dernières images") + link("/calendar", "Événements") + link(AGENDA_HREF, "Agenda Google") + link("/memberlist", "Membres") + link("/profile", "Mon profil") + link("/privmsg", "Messages privés") + link("/search", "Rechercher") + link("/login?logout=1", "Se déconnecter") + link("/?bh_beta=off", "Version web classique") + '<button type="button" data-bhm-theme>Mode sombre</button><a href="/privacy">Cookies</a></div></details></div></header>' +
-      '<main class="bhm-main"><section class="bhm-card bhm-cr-card"><span class="bhm-eyebrow">01 / résumé du dernier CR</span><h1>Ce qui se décide</h1><ul class="bhm-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul><div class="bhm-actions">' + link("/f39-reunions", "Réunions", true) + link("/f17-ordres-du-jour", "ODJ") + link("/f17-ordres-du-jour", "Dernier ODJ") + link("/f16-comptes-rendus", "Dernier CR") + '</div></section>' +
+      '<main class="bhm-main"><button type="button" class="bhm-row bhm-forum-entry" data-bhm-open-forum><span class="bhm-row-icon">▦</span><span class="bhm-row-copy"><strong class="bhm-row-title">Forum complet</strong><span class="bhm-row-meta">Catégories, sous-forums et sujets</span></span><span class="bhm-row-arrow">›</span></button><section class="bhm-card bhm-cr-card"><span class="bhm-eyebrow">01 / résumé du dernier CR</span><h1>Ce qui se décide</h1><ul class="bhm-cr-summary"><li><strong>Nouveaux membres :</strong> Nicolas Plessis et Pascal Lebrun rejoignent l’association.</li><li><strong>Captation & archives :</strong> filmer les événements, clarifier l’archivage, relancer les Best Of et le projet de labo photo.</li><li><strong>Programmation :</strong> octobre à février, de Rebecca Bonté / Colombey au workshop, à la soirée noise et aux résidences.</li><li><strong>Soirées LGBT+ :</strong> projet accepté, petit comité, DJ sets et projections.</li><li><strong>K-Haus :</strong> accueillir le travail de Jean.</li><li><strong>Migration Messenger :</strong> organiser un vote Slack, Signal, Telegram, Messenger ou Discord.</li><li><strong>Espace couture :</strong> proposition de Mathieu et Hortense, plusieurs personnes intéressées.</li></ul><div class="bhm-actions">' + link("/f39-reunions", "Réunions", true) + link("/f17-ordres-du-jour", "ODJ") + link("/f17-ordres-du-jour", "Dernier ODJ") + link("/f16-comptes-rendus", "Dernier CR") + '</div></section>' +
       '<section class="bhm-card"><span class="bhm-eyebrow">02 / agenda & événements</span><h2>Soirées @ Blockhaus</h2><p class="bhm-summary">L’agenda Google est affiché ici. L’ancien calendrier reste accessible dans le Finder et le menu.</p><iframe class="bhm-agenda-frame" data-bhm-agenda loading="lazy" title="Agenda Google du Blockhaus" src="' + AGENDA_BASE + '&mode=AGENDA"></iframe><div class="bhm-agenda-controls" role="group" aria-label="Vue de l’agenda"><button class="active" type="button" data-bhm-agenda-view="AGENDA">Agenda</button><button type="button" data-bhm-agenda-view="MONTH">Mois</button><a class="bhm-action" href="' + esc(AGENDA_HREF) + '">Voir en grand</a><a class="bhm-action" href="' + esc(OLD_AGENDA_HREF) + '">Ancien agenda</a></div></section>' +
       '<section class="bhm-card bhm-activity"><span class="bhm-eyebrow">03 / activité</span><h2>Activité</h2><div class="bhm-latest-list" data-bhm-latest><div class="bhm-gallery-empty">Chargement des publications…</div></div><div class="bhm-gallery" data-bhm-gallery><div class="bhm-gallery-empty">Chargement de la galerie…</div></div></section>' +
-      '<section class="bhm-card bhm-finder"><div class="bhm-finder-head"><h2>Explorer le forum</h2><div class="bhm-path" data-bhm-path></div></div><div class="bhm-list" data-bhm-list></div><div class="bhm-preview" data-bhm-preview hidden></div><div class="bhm-status" data-bhm-status></div></section></main>' +
+      '<section class="bhm-card bhm-finder"><div class="bhm-finder-head"><h2 tabindex="-1" data-bhm-finder-title>Explorer le forum</h2><div class="bhm-path" data-bhm-path aria-label="Chemin du forum"></div></div><div class="bhm-finder-tools" data-bhm-tools></div><div class="bhm-list" data-bhm-list></div><div class="bhm-preview" data-bhm-preview hidden></div><div class="bhm-status" data-bhm-status role="status" aria-live="polite"></div></section></main>' +
       '<nav class="bhm-bottom-nav" aria-label="Navigation mobile"><a href="/"><span>⌂</span>Accueil</a><a href="/privmsg"><span>✉</span>MP</a><a href="/chatbox"><span>▤</span>ChatBox</a></nav>';
     if (main === document.body) document.body.insertBefore(root, document.body.firstChild); else main.insertBefore(root, main.firstChild);
     hideNativeChrome(main);
@@ -126,68 +116,166 @@
     return root;
   }
 
-  function forumChildren(href) {
-    return fetch(abs(href), { credentials: "same-origin", redirect: "follow" }).then(function (response) {
-      if (!response.ok) throw new Error("forum unavailable");
+  // Read only titles in the native lists: last-post links, widgets and
+  // breadcrumbs are not children of the current category.
+  var FORUM_TITLES = "ul.topiclist.forums a.forumtitle, .forum .forum-content > a[href]";
+  var TOPIC_TITLES = "ul.topiclist.topics a.topictitle, .forum .forum-content h3 > a[href]";
+  var AUXILIARY = ".module,#comments_scroll_div,.recent-topics,.latest-topics,[id^='bh-']";
+  function resourceId(href) {
+    var match = abs(href).match(/^\/([cft]\d+)(?=p\d+|-|\?|#|$)/i);
+    return match ? match[1].toLowerCase() : "";
+  }
+  function localHref(href) {
+    try { var url = new URL(href, window.location.origin); return url.origin === window.location.origin ? url.pathname + url.search : ""; }
+    catch (error) { return ""; }
+  }
+  function pageOffset(href) {
+    var url = new URL(href, window.location.origin), match = url.pathname.match(/^\/[ft]\d+p(\d+)/i);
+    return Number(url.searchParams.get("start") || (match && match[1]) || 0);
+  }
+  function nextPage(doc, href) {
+    var currentId = resourceId(href), currentOffset = pageOffset(href);
+    if (!currentId) return "";
+    return Array.prototype.map.call(doc.querySelectorAll(".pagination a[href],a.mobile_next_button[href],a[rel='next'][href],link[rel='next'][href]"), function (a) {
+      return localHref(a.getAttribute("href"));
+    }).filter(function (url) { return url && resourceId(url) === currentId && pageOffset(url) > currentOffset; }).sort(function (a, b) { return pageOffset(a) - pageOffset(b); })[0] || "";
+  }
+  function readForumDocument(href) {
+    return fetch(localHref(href), { credentials: "same-origin", redirect: "follow", cache: "no-store" }).then(function (response) {
+      if (!response.ok) throw new Error("Chargement impossible. Réessaie dans un instant.");
+      if (/\/login(?:\?|$)/i.test(response.url || "")) throw new Error("Connecte-toi à un compte autorisé pour consulter cette rubrique.");
+      if (resourceId(href) && resourceId(response.url || href) !== resourceId(href)) throw new Error("Cette rubrique n’est pas accessible avec la session actuelle.");
       return response.text();
     }).then(function (html) {
-      var doc = new DOMParser().parseFromString(html, "text/html"), forums = [], topics = [], seen = {};
-      function addForum(anchor) {
-        var linkHref = abs(anchor.getAttribute("href") || "").split("?")[0], title = cleanTitle(anchor.textContent);
-        if (!title || !/^\/(?:c|f)\d+(?:-|$)/i.test(linkHref) || seen[linkHref]) return;
-        seen[linkHref] = true;
-        var row = rowFor(anchor), topicsEl = row && row.querySelector(".topics,[class*='topics']"), postsEl = row && row.querySelector(".posts,[class*='posts']"), meta = [], topicsCount = numberFrom(topicsEl && topicsEl.textContent), postsCount = numberFrom(postsEl && postsEl.textContent);
-        if (topicsCount) meta.push(topicsCount + " sujets"); if (postsCount) meta.push(postsCount + " réponses");
-        forums.push({ title: title, meta: meta.join(" · ") || "Rubrique Forumactif", href: linkHref, forumHref: linkHref, icon: /^\/c/i.test(linkHref) ? "C" : "F", kind: "folder", children: [] });
-      }
-      function addTopic(anchor) {
-        var linkHref = abs(anchor.getAttribute("href") || "").split("?")[0], title = cleanTitle(anchor.textContent);
-        if (!title || !/\/t\d+(?:-|$)/i.test(linkHref) || seen[linkHref]) return;
-        seen[linkHref] = true;
-        var row = rowFor(anchor), repliesEl = row && row.querySelector(".posts,[class*='posts']"), viewsEl = row && row.querySelector(".views,[class*='views']"), meta = [], replies = numberFrom(repliesEl && repliesEl.textContent), views = numberFrom(viewsEl && viewsEl.textContent);
-        if (replies) meta.push(replies + " rép."); if (views) meta.push(views + " vues");
-        topics.push({ title: title, meta: meta.join(" · ") || "Sujet", href: linkHref, topic: true, icon: "▹", kind: "topic" });
-      }
-      Array.prototype.forEach.call(doc.querySelectorAll("a.forumtitle, a[href*='/f']"), addForum);
-      Array.prototype.forEach.call(doc.querySelectorAll("a.topictitle, a[href*='/t']"), function (anchor) { if (!anchor.closest("#comments_scroll_div,.module,.recent-topics,.latest-topics,[id*='recent' i],[class*='recent' i]")) addTopic(anchor); });
-      return forums.concat(topics);
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      if (doc.querySelector("input[type='password']")) throw new Error("Connecte-toi à un compte autorisé pour consulter cette rubrique.");
+      return doc;
     });
   }
+  function nativeNodes(scope, selector, kind, currentId) {
+    var seen = {};
+    return Array.prototype.map.call(scope.querySelectorAll(selector), function (a) {
+      var href = localHref(a.getAttribute("href")), id = resourceId(href);
+      var heading = a.querySelector("h3,h2"), title = cleanTitle((heading || a).textContent);
+      if (!href || !title || !id || id === currentId || seen[id] || a.closest(AUXILIARY)) return null;
+      if (kind === "folder" ? !/^[cf]/.test(id) : !/^t/.test(id)) return null;
+      seen[id] = true;
+      var row = a.closest(".forum-section,li.row,tr") || rowFor(a), meta = [];
+      var count = row.querySelector(kind === "folder" ? ".topics,.forum-statistics" : ".posts,.forum-statistics");
+      var n = numberFrom(count && count.textContent);
+      if (n) meta.push(n + (kind === "folder" ? " sujets" : " réponses"));
+      var item = { title: title, href: href, meta: meta.join(" · ") || (kind === "folder" ? "Sous-forum" : "Sujet"), kind: kind, icon: kind === "folder" ? "▦" : "▹" };
+      if (kind === "folder") { item.forumHref = href; item.children = []; } else item.topic = true;
+      return item;
+    }).filter(Boolean);
+  }
+  function parseForumPage(doc, href) {
+    var currentId = resourceId(href), children = [];
+    if (new URL(href, window.location.origin).pathname === "/") {
+      // Index headings are plain text on this forum. Keep their grouping
+      // from the rendered page instead of inventing category URLs.
+      Array.prototype.forEach.call(doc.querySelectorAll(".forabg,.forum"), function (section) {
+        if (section.closest(AUXILIARY)) return;
+        var heading = section.querySelector(".table-title h2,.table-title h3,:scope > h2"), title = heading && cleanTitle(heading.textContent);
+        var nodes = nativeNodes(section, FORUM_TITLES, "folder", "");
+        if (!title || !nodes.length) return;
+        if (nodes.length === 1 && title.toLowerCase() === nodes[0].title.toLowerCase()) children.push(nodes[0]);
+        else children.push({ title: title, kind: "folder", icon: "▦", meta: nodes.length + " rubriques", children: nodes, _loaded: true });
+      });
+      if (!children.length) children = nativeNodes(doc, FORUM_TITLES, "folder", "");
+    } else children = nativeNodes(doc, FORUM_TITLES, "folder", currentId).concat(nativeNodes(doc, TOPIC_TITLES, "topic", currentId));
+    return { children: children, next: nextPage(doc, href) };
+  }
+  function forumChildren(href) { return readForumDocument(href).then(function (doc) { return parseForumPage(doc, href); }); }
 
-  function topicPreview(item, box) {
-    box.innerHTML = '<span class="bhm-eyebrow">Aperçu du sujet</span><h2>' + esc(item.title) + '</h2><p>' + esc(item.meta || "Sujet Forumactif") + '</p><div class="bhm-preview-body">Chargement du dernier post…</div>';
-    fetch(item.href, { credentials: "same-origin" }).then(function (response) { return response.text(); }).then(function (html) {
-      var doc = new DOMParser().parseFromString(html, "text/html"), posts = Array.prototype.slice.call(doc.querySelectorAll(".postbody,.post-body,.message-body,.content")).filter(function (node) { return text(node.textContent).length > 20; });
-      var body = posts.length ? text(posts[posts.length - 1].textContent).slice(0, 900) : "Le sujet est identifié. Ouvre-le pour lire le fil complet.";
-      var links = Array.prototype.slice.call(doc.querySelectorAll("a[href]" )).map(function (a) { return a.href; }).filter(function (href) { return /bandcamp\.com/i.test(href); });
-      var images = Array.prototype.slice.call(doc.querySelectorAll(".postbody img,.post-body img,.message-body img")).map(function (img) { return img.src; }).filter(function (src) { return /^https?:/i.test(src); }).slice(0, 3);
-      var htmlOut = '<span class="bhm-eyebrow">Aperçu du dernier post</span><div class="bhm-preview-body">' + esc(body) + '</div>';
-      var embed = links.find(function (href) { return /bandcamp\.com\/EmbeddedPlayer/i.test(href); });
-      if (links.length) htmlOut += '<div class="bhm-topic-media"><span class="bhm-topic-media-label">Bandcamp</span>' + (embed ? '<iframe class="bhm-bandcamp-frame" loading="lazy" title="Lecteur Bandcamp" src="' + esc(embed) + '"></iframe>' : '') + '<a class="bhm-action primary" target="_blank" rel="noopener" href="' + esc(links[0]) + '">Ouvrir le lecteur Bandcamp</a></div>';
-      if (images.length) htmlOut += '<div class="bhm-topic-media"><span class="bhm-topic-media-label">Image du sujet</span>' + images.map(function (src) { return '<img class="bhm-preview-image" loading="lazy" src="' + esc(src) + '" alt="Image du sujet">'; }).join("") + '</div>';
-      htmlOut += '<div class="bhm-actions">' + link(item.href, "Ouvrir le sujet complet", true) + '</div>';
-      box.innerHTML = htmlOut;
-    }).catch(function () { box.innerHTML = '<span class="bhm-eyebrow">Aperçu</span><p>Le sujet est identifié mais son aperçu n’est pas disponible ici.</p><div class="bhm-actions">' + link(item.href, "Ouvrir le sujet complet", true) + '</div>'; });
+  function safeWebHref(value) {
+    try { var url = new URL(value, window.location.origin); return /^https?:$/.test(url.protocol) ? url.href : ""; }
+    catch (error) { return ""; }
+  }
+  function postMarkup(body) {
+    var copy = body.cloneNode(true);
+    copy.querySelectorAll("script,style,iframe,object,embed,.signature,.post-buttons").forEach(function (node) { node.remove(); });
+    copy.querySelectorAll("br").forEach(function (node) { node.replaceWith("\n"); });
+    copy.querySelectorAll("p,div,li,blockquote").forEach(function (node) { node.appendChild(copy.ownerDocument.createTextNode("\n")); });
+    var markup = '<div class="bhm-post-text">' + esc(copy.textContent.trim()) + '</div>', seen = {};
+    body.querySelectorAll("iframe[src]").forEach(function (frame) {
+      var src = safeWebHref(frame.getAttribute("src"));
+      if (!src || new URL(src).hostname !== "bandcamp.com" || !/^\/EmbeddedPlayer\//i.test(new URL(src).pathname) || seen[src]) return;
+      seen[src] = true;
+      markup += '<iframe class="bhm-bandcamp-frame" loading="lazy" title="Lecteur Bandcamp" src="' + esc(src) + '"></iframe>';
+    });
+    body.querySelectorAll("a[href]").forEach(function (a) {
+      var href = safeWebHref(a.getAttribute("href"));
+      if (!href || seen[href]) return;
+      seen[href] = true;
+      markup += '<div class="bhm-actions"><a class="bhm-action" href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(cleanTitle(a.textContent) || "Ouvrir le lien") + ' ↗</a></div>';
+    });
+    body.querySelectorAll("img").forEach(function (img) {
+      var src = safeWebHref(img.getAttribute("data-src") || img.getAttribute("src"));
+      if (!src || seen[src] || /smil|emoticon|\/avatars\/|\/icon|empty\.gif|\/i\/fa\//i.test(src) || img.classList.contains("emoji")) return;
+      seen[src] = true;
+      markup += '<img class="bhm-preview-image" loading="lazy" src="' + esc(src) + '" alt="' + esc(img.getAttribute("alt") || "Image du message") + '">';
+    });
+    return markup;
+  }
+  function topicPreview(item, box, isCurrent) {
+    box.innerHTML = '<h2>' + esc(item.title) + '</h2><div data-bhm-posts></div><div data-bhm-post-status role="status"></div><div class="bhm-actions">' + link(item.href, "Répondre / ouvrir le sujet", true) + '</div>';
+    var postsBox = box.querySelector("[data-bhm-posts]"), message = box.querySelector("[data-bhm-post-status]"), seen = {}, total = 0;
+    function readPage(href) {
+      message.textContent = "Chargement des messages…";
+      readForumDocument(href).then(function (doc) {
+        if (!isCurrent()) return;
+        var bodies = doc.querySelectorAll(".post-section .post-content,.post .postbody .content,.post .postbody > .content,.postbody .message-body");
+        Array.prototype.forEach.call(bodies, function (body) {
+          var post = body.closest(".post-section,.post"), id = post && post.id || href + ":" + total;
+          if (seen[id]) return;
+          seen[id] = true; total++;
+          var byline = post && post.querySelector(".post-info,.author"), article = doc.createElement("article");
+          article.className = "bhm-post";
+          article.innerHTML = '<small>' + esc(text(byline && byline.textContent)) + '</small>' + postMarkup(body);
+          postsBox.appendChild(article);
+        });
+        message.textContent = total ? total + " message" + (total > 1 ? "s" : "") + " affiché" + (total > 1 ? "s" : "") : "Les messages ne sont pas disponibles dans cet aperçu. Tu peux ouvrir le sujet ci-dessous.";
+        var next = nextPage(doc, href);
+        if (next) { var button = document.createElement("button"); button.type = "button"; button.className = "bhm-action"; button.textContent = "Afficher les messages suivants"; button.onclick = function () { readPage(next); }; message.appendChild(button); }
+      }).catch(function (error) { if (!isCurrent()) return; message.textContent = error.message; var retry = document.createElement("button"); retry.type = "button"; retry.className = "bhm-action"; retry.textContent = "Réessayer"; retry.onclick = function () { readPage(href); }; message.appendChild(retry); });
+    }
+    readPage(item.href);
   }
 
   function initFinder(root) {
-    var list = root.querySelector("[data-bhm-list]"), preview = root.querySelector("[data-bhm-preview]"), pathEl = root.querySelector("[data-bhm-path]"), status = root.querySelector("[data-bhm-status]");
-    var home = { title: "Accueil", children: [FORUMS.meetings, FORUMS.events, FORUMS.sounds, FORUMS.forum] }, stack = [{ title: "Accueil", node: home }];
-    function normalize(node) { return (node.children || []).map(function (child) { return typeof child === "string" ? { title: child, href: node.href, icon: "♫", kind: "topic" } : child; }); }
-    function hydrate(item, done) {
-      if (!item || !item.forumHref || item._loaded) { done(); return; }
-      list.innerHTML = '<div class="bhm-preview">Chargement de l’arborescence réelle…</div>';
-      forumChildren(item.forumHref).then(function (children) { if (children.length) item.children = children; item._loaded = true; done(); }).catch(function () { item._loaded = true; done(); });
+    var list = root.querySelector("[data-bhm-list]"), preview = root.querySelector("[data-bhm-preview]"), pathEl = root.querySelector("[data-bhm-path]"), status = root.querySelector("[data-bhm-status]"), tools = root.querySelector("[data-bhm-tools]"), panel = root.querySelector(".bhm-finder");
+    var home = { title: "Raccourcis", children: [FORUMS.forum, FORUMS.meetings, FORUMS.events, FORUMS.sounds] }, stack = [home], revision = 0;
+    function current() { return stack[stack.length - 1]; }
+    function focusPanel() { root.querySelector("[data-bhm-finder-title]").focus({ preventScroll: true }); panel.scrollIntoView({ behavior: "auto", block: "start" }); }
+    function hydrate(item, more) {
+      if (item._pending || !item.forumHref || (!more && item._loaded)) return;
+      var href = more ? item._next : item.forumHref;
+      if (!href) return;
+      item._pending = true; item._error = "";
+      if (current() === item) render();
+      forumChildren(href).then(function (result) {
+        if (more) { var keys = {}; item.children.forEach(function (child) { keys[resourceId(child.href) || child.title] = true; }); item.children = item.children.concat(result.children.filter(function (child) { return !keys[resourceId(child.href) || child.title]; })); }
+        else item.children = result.children;
+        item._next = result.next; item._loaded = true;
+      }).catch(function (error) { item._error = error.message; }).then(function () { item._pending = false; if (current() === item) render(); });
     }
+    function open(item) { stack.push(item); render(); hydrate(item, false); focusPanel(); }
     function render() {
-      var current = stack[stack.length - 1], items = normalize(current.node);
-      pathEl.innerHTML = stack.map(function (entry, index) { return (index ? '<span aria-hidden="true">›</span>' : '') + '<button type="button" data-bhm-path-index="' + index + '">' + esc(entry.title) + '</button>'; }).join("");
-      list.innerHTML = items.length ? items.map(function (item, index) { var hasChildren = item.children && item.children.length; return '<button type="button" class="bhm-row" data-bhm-index="' + index + '"><span class="bhm-row-icon">' + esc(item.icon || (item.topic ? "▹" : "›")) + '</span><span class="bhm-row-copy"><span class="bhm-row-title">' + esc(item.title) + '</span><span class="bhm-row-meta">' + esc(item.meta || (item.topic ? "Sujet" : "Rubrique Forumactif")) + '</span></span><span class="bhm-row-arrow">' + (hasChildren || item.forumHref ? "›" : "↗") + '</span></button>'; }).join("") : '<div class="bhm-preview">Aucun sous-dossier visible à ce niveau.</div>';
-      status.textContent = items.length + " entrée" + (items.length > 1 ? "s" : "") + " · arborescence Forumactif";
-      preview.hidden = true;
-      list.querySelectorAll("[data-bhm-index]").forEach(function (button) { button.addEventListener("click", function () { var item = items[Number(button.getAttribute("data-bhm-index"))]; if (item.topic) { preview.hidden = false; topicPreview(item, preview); return; } if (item.children && item.children.length) { stack.push({ title: item.title, node: item }); render(); root.scrollIntoView({ behavior: "smooth", block: "start" }); hydrate(item, render); return; } if (item.forumHref) { hydrate(item, function () { stack.push({ title: item.title, node: item }); render(); }); return; } preview.hidden = false; preview.innerHTML = '<span class="bhm-eyebrow">Aperçu</span><h2>' + esc(item.title) + '</h2><p>' + esc(item.meta || "Lien Forumactif") + '</p><div class="bhm-actions">' + link(item.href, "Ouvrir", true) + '</div>'; }); });
-      pathEl.querySelectorAll("[data-bhm-path-index]").forEach(function (button) { button.addEventListener("click", function () { stack = stack.slice(0, Number(button.getAttribute("data-bhm-path-index")) + 1); render(); }); });
+      var node = current(), items = node.children || [], token = ++revision;
+      pathEl.innerHTML = stack.map(function (entry, index) { return (index ? '<span aria-hidden="true">›</span>' : '') + '<button type="button" data-bhm-path-index="' + index + '"' + (index === stack.length - 1 ? ' aria-current="page"' : '') + '>' + esc(entry.title) + '</button>'; }).join("");
+      tools.innerHTML = (stack.length > 1 ? '<button type="button" class="bhm-action" data-bhm-back>‹ Retour</button>' : '') + (node.forumHref ? link(node.forumHref, "Voir dans le forum classique") : '');
+      pathEl.querySelectorAll("[data-bhm-path-index]").forEach(function (button) { button.onclick = function () { stack = stack.slice(0, Number(button.getAttribute("data-bhm-path-index")) + 1); render(); }; });
+      var back = tools.querySelector("[data-bhm-back]"); if (back) back.onclick = function () { stack.pop(); render(); };
+      preview.hidden = true; list.hidden = !!node.topic; status.textContent = "";
+      if (node.topic) { preview.hidden = false; topicPreview(node, preview, function () { return token === revision; }); return; }
+      list.innerHTML = items.map(function (item, index) { return '<button type="button" class="bhm-row" data-bhm-index="' + index + '"><span class="bhm-row-icon">' + esc(item.icon || "▦") + '</span><span class="bhm-row-copy"><span class="bhm-row-title">' + esc(item.title) + '</span><span class="bhm-row-meta">' + esc(item.meta || "Rubrique") + '</span></span><span class="bhm-row-arrow">›</span></button>'; }).join("");
+      if (!items.length && !node._pending && !node._error) list.innerHTML = '<div class="bhm-preview">Aucun sujet ou sous-forum visible ici.</div>';
+      status.textContent = node._pending ? "Chargement…" : node._error || items.length + " entrée" + (items.length > 1 ? "s" : "") + " visible" + (items.length > 1 ? "s" : "");
+      if (!node._pending && (node._next || node._error)) { var more = document.createElement("button"); more.type = "button"; more.className = "bhm-action"; more.textContent = node._error ? "Réessayer" : "Afficher les sujets suivants"; more.onclick = function () { hydrate(node, !!node._next); }; status.appendChild(more); }
+      list.querySelectorAll("[data-bhm-index]").forEach(function (button) { button.onclick = function () { var item = items[Number(button.getAttribute("data-bhm-index"))]; if (item.kind !== "link") { open(item); return; } preview.hidden = false; preview.innerHTML = '<h2>' + esc(item.title) + '</h2><div class="bhm-actions">' + link(item.href, "Ouvrir", true) + '</div>'; }; });
     }
+    root.querySelector("[data-bhm-open-forum]").onclick = function () { stack = [home]; open(FORUMS.forum); };
     render();
   }
 
