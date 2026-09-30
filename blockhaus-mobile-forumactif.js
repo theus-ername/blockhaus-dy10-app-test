@@ -6,8 +6,11 @@
   var STYLE_ID = "bh-mobile-shell-v010-style";
   var preview = window.BLOCKHAUS_MOBILE_PREVIEW === true;
   var params = new URLSearchParams(window.location.search);
-  var enabled = preview || params.get("bh_mobile_beta") === "1";
   var isMobileTemplate = !!(document.body && (document.body.id === "mpage-body-modern" || document.querySelector("#tab-bar")));
+  // The public loader selects this file only for mobile, so real phones should
+  // not need a special query string. Keep the query/preview switches for the
+  // standalone prototype while enabling the live Forumactif mobile template.
+  var enabled = preview || params.get("bh_mobile_beta") === "1" || isMobileTemplate || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
 
   if (!enabled || (!isMobileTemplate && !preview) || document.getElementById(ROOT_ID)) return;
 
