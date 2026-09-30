@@ -1065,6 +1065,7 @@
         { title: "Ancien agenda", icon: "A", status: "archive", href: oldAgendaHref, detail: "Calendrier historique Forumactif conservé comme archive technique." },
         { title: "Événements du forum", icon: "E", status: "forum", href: eventsHref, detail: "Propositions et événements publiés sur le forum." }
       ] },
+      { title: "Agenda", icon: "A", status: "google", href: agendaHref, detail: "Agenda Google du Blockhaus." },
       { title: "Archives son", icon: "S", status: "son", children: [
         { title: "The Sounds", icon: "S", status: "son", forumHref: CANONICAL_FORUMS.sounds.href, href: CANONICAL_FORUMS.sounds.href, detail: "Archives et liens sonores du Blockhaus. Les artistes sont les sujets de cette rubrique.", children: soundArtists.slice() },
         { title: "52 x Set/30'", icon: "S", status: "archive", forumHref: CANONICAL_FORUMS.sets.href, href: CANONICAL_FORUMS.sets.href, detail: "Archives des sessions Set/30'. Les années et sujets sont chargés depuis la rubrique.", children: [] },
