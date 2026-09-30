@@ -107,6 +107,18 @@
     Array.prototype.forEach.call(main.children || [], function (child) { if (child.id !== ROOT_ID) child.hidden = true; });
   }
 
+  function isolateGuestShell(root) {
+    var current = root;
+    while (current && current !== document.body) {
+      var parent = current.parentElement;
+      if (!parent) break;
+      Array.prototype.forEach.call(parent.children, function (sibling) {
+        if (sibling !== current && sibling.tagName !== "SCRIPT" && sibling.tagName !== "STYLE") sibling.hidden = true;
+      });
+      current = parent;
+    }
+  }
+
   function createShell() {
     addStyle();
     var main = findMain();
@@ -120,6 +132,7 @@
         '</div><p class="bhm-status">Les autres sections du forum restent réservées aux membres.</p></section></main><nav class="bhm-bottom-nav" aria-label="Navigation publique"><a href="/login"><span>↪</span>Connexion</a></nav>';
       if (main === document.body) document.body.insertBefore(root, document.body.firstChild); else main.insertBefore(root, main.firstChild);
       hideNativeChrome(main);
+      isolateGuestShell(root);
       return root;
     }
     root.innerHTML =
