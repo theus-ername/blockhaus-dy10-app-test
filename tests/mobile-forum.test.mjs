@@ -41,7 +41,15 @@ Deno.test("mobile beta keeps the compact navigation and full-width Blockhaus hea
     assert.deepEqual([...root.querySelectorAll('.bhm-bottom-nav a')].map(a => a.textContent.replace(/\s+/g, ' ').trim()), ['⌂Accueil', '▦Forum', '✉MP', '▤ChatBox']);
     const menu = root.querySelector('.bhm-menu-panel').textContent;
     assert.ok(menu.indexOf('Agenda Google') < menu.indexOf('Forum complet'));
+    assert.match(source, /__BLOCKHAUS_MOBILE_SHELL_BOOTSTRAPPED__/);
+    assert.ok(source.includes("grid-template-columns:repeat(4,minmax(0,1fr))"));
   } finally { dom.window.close(); }
+});
+
+Deno.test("mobile Finder synchronizes its stack with the phone back gesture", () => {
+  assert.match(source, /window\.history\.pushState\(state/);
+  assert.match(source, /window\.addEventListener\("popstate"/);
+  assert.match(source, /event\.preventDefault\(\); stack = \[home\]; open\(FORUMS\.forum\)/);
 });
 
 Deno.test("desktop lists exclude breadcrumbs, embedded latest topics and last-post shortcuts", () => {

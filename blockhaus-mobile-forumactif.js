@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.4.0-mobile-forum";
+  var VERSION = "0.4.1-mobile-forum";
   var ROOT_ID = "bh-mobile-shell";
-  var STYLE_ID = "bh-mobile-shell-v040-style";
+  var STYLE_ID = "bh-mobile-shell-v041-style";
   var BETA_KEY = "blockhaus-mobile-beta";
   var BETA_COOKIE = "blockhaus-mobile-beta";
   var THEME_KEY = "blockhaus-mobile-theme";
@@ -35,7 +35,11 @@
   // The public mobile shell is available on the forum index for guests too.
   // Private branches remain protected by Forumactif and readForumDocument().
   var enabled = !betaDisabled && (previewMode || betaRequested || betaStored || (isMobileTemplate && isForumIndex));
-  if (!enabled || (!isMobileTemplate && !previewMode) || document.getElementById(ROOT_ID)) return;
+  if (!enabled || (!isMobileTemplate && !previewMode) || document.getElementById(ROOT_ID) || window.__BLOCKHAUS_MOBILE_SHELL_BOOTSTRAPPED__) return;
+  // Forumactif can evaluate the same custom script more than once during a
+  // partial navigation. Set a synchronous guard before creating any DOM so
+  // two initialisations cannot race and duplicate the header/navigation.
+  window.__BLOCKHAUS_MOBILE_SHELL_BOOTSTRAPPED__ = VERSION;
 
   var FORUMS = {
     meetings: { title: "Réunions & décisions", meta: "Ordres du jour, comptes rendus et votes", href: "/f39-reunions", forumHref: "/f39-reunions", icon: "★", kind: "folder", children: [] },
@@ -64,10 +68,10 @@
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = [
-      "#" + ROOT_ID + "{--bg:#98948b;--paper:#f4f2ec;--ink:#171815;--deep:#5f5d55;--line:#77736a;--muted:#4e4c46;display:block;margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Arial,sans-serif}",
+      "#" + ROOT_ID + "{--bg:#98948b;--paper:#f4f2ec;--ink:#171815;--deep:#5f5d55;--line:#77736a;--muted:#4e4c46;display:block;width:100%;max-width:100%;min-width:0;overflow-x:hidden;margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Arial,sans-serif}",
       "#" + ROOT_ID + " *{box-sizing:border-box}#" + ROOT_ID + " a{color:inherit;text-decoration:none}",
-      "#" + ROOT_ID + " .bhm-head{position:relative;z-index:50;background:var(--ink);color:var(--paper);border-bottom:3px solid var(--bg);box-shadow:0 2px 0 #0005}",
-      "#" + ROOT_ID + " .bhm-head-row{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;min-height:58px;padding:8px 10px;background:var(--ink)}",
+      "#" + ROOT_ID + " .bhm-head{position:relative;z-index:50;width:100%;background:var(--ink);color:var(--paper);border-bottom:3px solid var(--bg);box-shadow:0 2px 0 #0005}",
+      "#" + ROOT_ID + " .bhm-head-row{position:relative;z-index:2;display:flex;align-items:center;gap:10px;min-height:58px;padding:8px 10px;background:var(--ink)}",
       "#" + ROOT_ID + " .bhm-brand{min-width:0;flex:1}#" + ROOT_ID + " .bhm-brand strong{display:block;font-size:17px;line-height:1.1}#" + ROOT_ID + " .bhm-brand small{display:block;color:#d8d2c7;font-size:11px;line-height:1.2}",
       "#" + ROOT_ID + " .bhm-header-image{display:block;width:100%;height:auto;max-width:100%;object-fit:contain;background:#000;border-top:1px solid var(--bg)}",
       "#" + ROOT_ID + " .bhm-head-tools{display:flex;align-items:center;gap:6px;flex:none}#" + ROOT_ID + " .bhm-head-tool{display:grid;place-items:center;width:34px;height:34px;border:1px solid #d8d2c7;background:transparent;color:var(--paper);font-size:16px;cursor:pointer}",
@@ -79,11 +83,11 @@
       "#" + ROOT_ID + " .bhm-activity{overflow:hidden}#" + ROOT_ID + " .bhm-latest-list{height:210px;overflow-y:auto;border:1px solid var(--line);background:var(--bg);scroll-behavior:smooth}#" + ROOT_ID + " .bhm-latest-item{display:block;padding:11px 12px;border-bottom:1px solid #b5b0a7;background:var(--paper)}#" + ROOT_ID + " .bhm-latest-item strong{display:block;font-size:14px}#" + ROOT_ID + " .bhm-latest-item small{display:block;margin-top:3px;color:var(--muted);font:11px/1.3 monospace}#" + ROOT_ID + " .bhm-gallery{margin-top:12px}#" + ROOT_ID + " .bhm-gallery-frame{position:relative;width:100%;height:250px;background:var(--bg);border:1px solid var(--line);overflow:hidden}#" + ROOT_ID + " .bhm-gallery-frame a{display:none;width:100%;height:100%}#" + ROOT_ID + " .bhm-gallery-frame a.active{display:block}#" + ROOT_ID + " .bhm-gallery-frame img{display:block;width:100%;height:100%;object-fit:contain;background:var(--bg)}#" + ROOT_ID + " .bhm-gallery-controls{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:7px;margin-top:7px;color:var(--muted);font:800 10px/1 monospace;text-transform:uppercase}#" + ROOT_ID + " .bhm-gallery-controls input{width:100%;accent-color:var(--ink)}#" + ROOT_ID + " .bhm-gallery-empty{padding:18px;text-align:center;color:var(--muted);font:12px monospace}",
       "#" + ROOT_ID + " .bhm-finder{padding:0;overflow:hidden}#" + ROOT_ID + " .bhm-finder-head{padding:7px 10px;background:var(--deep);color:var(--paper)}#" + ROOT_ID + " .bhm-finder-head h2{display:none}#" + ROOT_ID + " .bhm-path{display:flex;gap:5px;overflow:auto;margin:0;color:#e4dfd5;font:700 11px/1.3 monospace;white-space:nowrap}#" + ROOT_ID + " .bhm-path button{border:0;background:none;color:inherit;padding:0;text-decoration:underline;cursor:pointer}#" + ROOT_ID + " .bhm-list{padding:6px;background:var(--bg)}#" + ROOT_ID + " .bhm-row{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:9px 8px;border:0;border-bottom:1px solid #b3aea4;background:transparent;color:var(--ink);text-align:left;cursor:pointer}#" + ROOT_ID + " .bhm-row:hover,#" + ROOT_ID + " .bhm-row:focus{background:var(--paper);outline:0}#" + ROOT_ID + " .bhm-row-icon{display:grid;place-items:center;width:30px;height:30px;flex:none;border:1px solid currentColor;font-weight:900}#" + ROOT_ID + " .bhm-row-copy{min-width:0;flex:1}#" + ROOT_ID + " .bhm-row-title{display:block;font-weight:900;overflow-wrap:anywhere}#" + ROOT_ID + " .bhm-row-meta{display:block;margin-top:2px;color:var(--muted);font:11px/1.25 monospace}#" + ROOT_ID + " .bhm-row-arrow{font:900 20px/1 monospace}",
       "#" + ROOT_ID + " .bhm-preview{padding:15px;background:var(--paper);border-top:1px solid var(--line)}#" + ROOT_ID + " .bhm-preview p{margin:0 0 9px;color:#292923}#" + ROOT_ID + " .bhm-preview-body{max-height:260px;overflow:auto;padding:10px;background:#ebe8e0;border:1px solid var(--line);font-size:13px;line-height:1.45;white-space:pre-wrap}#" + ROOT_ID + " .bhm-topic-media{margin-top:12px;padding-top:9px;border-top:1px solid #c1bcb2}#" + ROOT_ID + " .bhm-topic-media-label{display:block;margin-bottom:6px;color:var(--muted);font:900 10px monospace;text-transform:uppercase}#" + ROOT_ID + " .bhm-bandcamp-frame{display:block;width:100%;height:180px;border:1px solid var(--line);background:#fff}#" + ROOT_ID + " .bhm-preview-image{display:block;max-width:100%;max-height:190px;margin:6px 0;object-fit:contain}",
-      "#" + ROOT_ID + " .bhm-bottom-nav{position:fixed;z-index:60;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);height:58px;background:var(--ink);color:var(--paper);border-top:2px solid var(--paper)}#" + ROOT_ID + " .bhm-bottom-nav a{display:grid;place-items:center;gap:1px;padding:5px 2px;color:inherit;font-size:11px;font-weight:900;text-align:center}#" + ROOT_ID + " .bhm-bottom-nav span{display:block;font-size:20px;line-height:1}",
+      "#" + ROOT_ID + " .bhm-bottom-nav{position:fixed!important;z-index:2147483000!important;left:0!important;right:0!important;bottom:0!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important;max-width:100vw!important;height:58px!important;min-height:58px!important;margin:0!important;padding:0!important;background:var(--ink)!important;color:var(--paper)!important;border-top:2px solid var(--paper)!important;transform:none!important}#" + ROOT_ID + " .bhm-bottom-nav a{display:grid!important;grid-template-rows:24px 1fr!important;place-items:center!important;min-width:0!important;width:auto!important;height:56px!important;min-height:56px!important;margin:0!important;padding:5px 2px!important;overflow:hidden!important;color:inherit!important;font:900 11px/1 Arial,sans-serif!important;text-align:center!important;white-space:nowrap!important;text-overflow:ellipsis!important}#" + ROOT_ID + " .bhm-bottom-nav span{display:block!important;width:auto!important;height:24px!important;margin:0!important;padding:0!important;font:20px/24px Arial,sans-serif!important}",
       "#" + ROOT_ID + " .bhm-forum-entry{display:none}#" + ROOT_ID + " .bhm-finder{scroll-margin-top:64px}#" + ROOT_ID + " .bhm-path button{min-height:24px;font:inherit}#" + ROOT_ID + " .bhm-finder-tools{display:flex;flex-wrap:wrap;gap:6px;padding:6px 8px;background:var(--bg)}#" + ROOT_ID + " .bhm-finder-tools .bhm-action{min-height:28px;padding:5px 8px;font-size:11px}#" + ROOT_ID + " .bhm-status{padding:8px 14px;color:var(--muted);font-size:12px}#" + ROOT_ID + " .bhm-post{padding:12px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}#" + ROOT_ID + " .bhm-post-text{white-space:pre-wrap;line-height:1.5}#" + ROOT_ID + " .bhm-post small{display:block;margin-bottom:8px;color:#4e4c46}#" + ROOT_ID + " .bhm-preview .bhm-bandcamp-frame{height:470px;max-width:400px}#" + ROOT_ID + " .bhm-preview [hidden],#" + ROOT_ID + " [data-bhm-list][hidden]{display:none}",
       "#" + ROOT_ID + ".bhm-dark{--bg:#353631;--paper:#e8e5dd;--ink:#11120f;--deep:#252621;--line:#77786e;--muted:#d0cbc1}",
       "body#mpage-body-modern #header,body#mpage-body-modern #mhead,body#mpage-body-modern #tab-bar,body#mpage-body-modern .mobile-navbar,body#mpage-body-modern #mobile-nav,body#mpage-body-modern #mfoot{display:none!important}",
-      "@media(max-width:430px){#" + ROOT_ID + " .bhm-head-row{gap:7px;padding:7px}#" + ROOT_ID + " .bhm-brand strong{font-size:15px}#" + ROOT_ID + " .bhm-brand small{font-size:10px}#" + ROOT_ID + " .bhm-head-tool{display:none}#" + ROOT_ID + " .bhm-agenda-frame{height:390px}#" + ROOT_ID + " .bhm-gallery-frame{height:220px}}"
+      "@media(max-width:430px){#" + ROOT_ID + " .bhm-head-row{gap:7px;padding:7px}#" + ROOT_ID + " .bhm-brand strong{font-size:15px}#" + ROOT_ID + " .bhm-brand small{font-size:10px}#" + ROOT_ID + " .bhm-head-tool{display:none}#" + ROOT_ID + " .bhm-agenda-frame{height:390px}#" + ROOT_ID + " .bhm-gallery-frame{height:220px}}@media(max-width:340px){#" + ROOT_ID + " .bhm-bottom-nav a{font-size:10px!important;padding-left:0!important;padding-right:0!important}#" + ROOT_ID + " .bhm-bottom-nav span{font-size:18px!important}}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -264,13 +268,29 @@
         item._next = result.next; item._loaded = true;
       }).catch(function (error) { item._error = error.message; }).then(function () { item._pending = false; if (current() === item) render(); });
     }
-    function open(item) { stack.push(item); render(); hydrate(item, false); focusPanel(); }
+    function syncHistory(push) {
+      var state = { bhFinder: true, depth: stack.length };
+      try {
+        if (push) window.history.pushState(state, "", window.location.href);
+        else window.history.replaceState(state, "", window.location.href);
+      } catch (error) {}
+    }
+    function open(item, push) { stack.push(item); syncHistory(push !== false); render(); hydrate(item, false); focusPanel(); }
+    function goBack() {
+      if (stack.length > 1) {
+        stack.pop();
+        // Keep the visible toolbar responsive; the phone back gesture is
+        // handled separately by popstate below.
+        syncHistory(false);
+        render();
+      }
+    }
     function render() {
       var node = current(), items = node.children || [], token = ++revision;
       pathEl.innerHTML = stack.map(function (entry, index) { return (index ? '<span aria-hidden="true">›</span>' : '') + '<button type="button" data-bhm-path-index="' + index + '"' + (index === stack.length - 1 ? ' aria-current="page"' : '') + '>' + esc(entry.title) + '</button>'; }).join("");
       tools.innerHTML = stack.length > 1 ? '<button type="button" class="bhm-action" data-bhm-back>‹ Retour</button>' : '';
       pathEl.querySelectorAll("[data-bhm-path-index]").forEach(function (button) { button.onclick = function () { stack = stack.slice(0, Number(button.getAttribute("data-bhm-path-index")) + 1); render(); }; });
-      var back = tools.querySelector("[data-bhm-back]"); if (back) back.onclick = function () { stack.pop(); render(); };
+      var back = tools.querySelector("[data-bhm-back]"); if (back) back.onclick = goBack;
       preview.hidden = true; list.hidden = !!node.topic; status.textContent = "";
       if (node.topic) { preview.hidden = false; topicPreview(node, preview, function () { return token === revision; }); return; }
       list.innerHTML = items.map(function (item, index) { return '<button type="button" class="bhm-row" data-bhm-index="' + index + '"><span class="bhm-row-icon">' + esc(item.icon || "▦") + '</span><span class="bhm-row-copy"><span class="bhm-row-title">' + esc(item.title) + '</span><span class="bhm-row-meta">' + esc(item.meta || "Rubrique") + '</span></span><span class="bhm-row-arrow">›</span></button>'; }).join("");
@@ -279,9 +299,19 @@
       if (!node._pending && (node._next || node._error)) { var more = document.createElement("button"); more.type = "button"; more.className = "bhm-action"; more.textContent = node._error ? "Réessayer" : "Afficher les sujets suivants"; more.onclick = function () { hydrate(node, !!node._next); }; status.appendChild(more); }
       list.querySelectorAll("[data-bhm-index]").forEach(function (button) { button.onclick = function () { var item = items[Number(button.getAttribute("data-bhm-index"))]; if (item.kind !== "link") { open(item); return; } preview.hidden = false; preview.innerHTML = '<h2>' + esc(item.title) + '</h2><div class="bhm-actions">' + link(item.href, "Ouvrir", true) + '</div>'; }; });
     }
-    root.querySelectorAll("[data-bhm-forum-link]").forEach(function (button) { button.addEventListener("click", function () { stack = [home]; open(FORUMS.forum); }); });
+    root.querySelectorAll("[data-bhm-forum-link]").forEach(function (button) { button.addEventListener("click", function (event) { event.preventDefault(); stack = [home]; open(FORUMS.forum); }); });
+    window.addEventListener("popstate", function (event) {
+      if (!event.state || !event.state.bhFinder) return;
+      var depth = Math.max(1, Number(event.state.depth) || 1);
+      if (depth < stack.length) {
+        stack = stack.slice(0, depth);
+        render();
+        focusPanel();
+      }
+    });
+    syncHistory(false);
     render();
-    if (params.get("bh_open") === "forum") { window.setTimeout(function () { stack = [home]; open(FORUMS.forum); }, 0); }
+    if (params.get("bh_open") === "forum") { window.setTimeout(function () { stack = [home]; open(FORUMS.forum, true); }, 0); }
     return { openForum: function () { stack = [home]; open(FORUMS.forum); } };
   }
 
