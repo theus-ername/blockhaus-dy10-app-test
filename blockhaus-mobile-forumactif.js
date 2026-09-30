@@ -133,7 +133,7 @@
       root.innerHTML = '<header class="bhm-head"><div class="bhm-head-row"><div class="bhm-brand"><strong>Archives son</strong><small>Blockhaus DY10 · accès public</small></div></div><img class="bhm-header-image" src="' + HEADER_IMAGE_URL + '" alt="Blockhaus DY10"></header>' +
         '<main class="bhm-main"><section class="bhm-card bhm-guest-archive"><span class="bhm-eyebrow">ARCHIVES SON</span><h1>The Sounds of the Blockhaus DY10</h1><p class="bhm-summary">Archives musicales publiques et liens Bandcamp accessibles sans compte.</p><div class="bhm-actions">' +
         link("/f27-the-sounds-of-the-blockhaus-dy10", "The Sounds", true) + link("/f37-52-x-set-30-archives", "52 x Set/30'") + link("/f4-college-son", "Collège son") + link("/f23-bloghaus-dy10", "Bloghaus DY10") +
-        '</div><p class="bhm-status">Les autres sections du forum restent réservées aux membres.</p></section>' + bandcampArchiveMarkup() + '</main><nav class="bhm-bottom-nav" aria-label="Navigation publique"><a href="/login"><span>↪</span>Connexion</a></nav>';
+        '</div><p class="bhm-status">Les autres sections privées du forum restent réservées aux membres.</p></section>' + bandcampArchiveMarkup() + '</main><nav class="bhm-bottom-nav" aria-label="Navigation publique"><a href="/login"><span>↪</span>Connexion</a></nav>';
       if (main === document.body) document.body.insertBefore(root, document.body.firstChild); else main.insertBefore(root, main.firstChild);
       hideNativeChrome(main);
       isolateGuestShell(root);

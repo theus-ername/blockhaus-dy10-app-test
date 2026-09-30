@@ -1047,7 +1047,7 @@
       root.innerHTML = '<header class="bh-dash-head"><div class="bh-brand"><div><h1>ARCHIVES SON</h1><p>Blockhaus DY10 · accès public</p></div></div><div><span class="bh-version">BÊTA PUBLIQUE</span></div></header>' +
         '<article class="bh-card bh-guest-archive"><span class="bh-card-number">ARCHIVES SON</span><h2>The Sounds of the Blockhaus DY10</h2><p>Les archives musicales publiques et les liens Bandcamp accessibles sans compte.</p><div class="bh-actions">' +
         chip("The Sounds", soundHref) + chip("52 x Set/30'", setHref) + chip("Collège son", CANONICAL_FORUMS.collegeSon.href) + chip("Bloghaus DY10", CANONICAL_FORUMS.bloghaus.href) +
-        '</div><div class="bh-chip-list">' + musicChips + '</div><p class="bh-bandcamp-note">Les autres sections du forum restent réservées aux membres.</p></article>' + bandcampArchiveMarkup();
+        '</div><div class="bh-chip-list">' + musicChips + '</div><p class="bh-bandcamp-note">Les autres sections privées du forum restent réservées aux membres.</p></article>' + bandcampArchiveMarkup();
       main.insertBefore(root, main.firstChild);
       loadBandcampArchive(root);
       hideClassicHome(root, main);
