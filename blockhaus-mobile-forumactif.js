@@ -10,7 +10,16 @@
   // Keep the normal Forumactif mobile page intact until the beta is explicitly
   // requested. The public loader is present for every visitor, but this shell
   // only takes over on the mobile template with bh_beta=1 (or in the prototype).
-  var enabled = preview || params.get("bh_mobile_beta") === "1" || params.get("bh_beta") === "1";
+  var betaKey = "blockhaus-mobile-beta";
+  var betaRequested = params.get("bh_mobile_beta") === "1" || params.get("bh_beta") === "1";
+  var betaDisabled = params.get("bh_beta") === "off";
+  var betaStored = false;
+  try {
+    if (betaRequested) window.localStorage.setItem(betaKey, "1");
+    if (betaDisabled) window.localStorage.removeItem(betaKey);
+    betaStored = window.localStorage.getItem(betaKey) === "1";
+  } catch (storageError) {}
+  var enabled = preview || betaRequested || betaStored;
 
   if (!enabled || (!isMobileTemplate && !preview) || document.getElementById(ROOT_ID)) return;
 
